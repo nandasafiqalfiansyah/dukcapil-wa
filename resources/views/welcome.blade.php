@@ -115,7 +115,6 @@
             @endif
         </nav>
 
-        <!-- Hero Section -->
         <main class="flex-1">
             <!-- Hero Section -->
             <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
