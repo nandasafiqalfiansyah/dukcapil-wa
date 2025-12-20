@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\WhatsAppService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class WhatsAppWebhookController extends Controller
 {
-    public function __construct(protected WhatsAppService $whatsappService)
-    {
-    }
+    public function __construct(protected WhatsAppService $whatsappService) {}
 
     public function verify(Request $request): JsonResponse|string
     {

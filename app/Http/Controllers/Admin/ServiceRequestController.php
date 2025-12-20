@@ -3,20 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceRequest;
-use App\Models\WhatsAppUser;
-use App\Models\User;
 use App\Models\AuditLog;
+use App\Models\ServiceRequest;
+use App\Models\User;
 use App\Services\WhatsAppService;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ServiceRequestController extends Controller
 {
-    public function __construct(protected WhatsAppService $whatsappService)
-    {
-    }
+    public function __construct(protected WhatsAppService $whatsappService) {}
 
     public function index(Request $request): View
     {
@@ -132,7 +129,7 @@ class ServiceRequestController extends Controller
         );
 
         $serviceRequest->update([
-            'notes' => $newNote . $currentNotes,
+            'notes' => $newNote.$currentNotes,
         ]);
 
         AuditLog::log('service_request.note_added', $serviceRequest);

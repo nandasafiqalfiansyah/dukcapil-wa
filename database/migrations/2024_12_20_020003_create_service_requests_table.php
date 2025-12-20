@@ -17,14 +17,14 @@ return new class extends Migration
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
             $table->string('request_number')->unique();
             $table->enum('service_type', [
-                'ktp', 
-                'kk', 
-                'akta_lahir', 
-                'akta_kematian', 
-                'akta_nikah', 
-                'akta_cerai', 
+                'ktp',
+                'kk',
+                'akta_lahir',
+                'akta_kematian',
+                'akta_nikah',
+                'akta_cerai',
                 'surat_pindah',
-                'lainnya'
+                'lainnya',
             ]);
             $table->text('description')->nullable();
             $table->enum('status', ['pending', 'in_review', 'processing', 'approved', 'rejected', 'completed', 'cancelled'])->default('pending');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('whatsapp_user_id');
             $table->index('assigned_to');
             $table->index('status');

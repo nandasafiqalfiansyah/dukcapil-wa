@@ -2,16 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\WhatsAppUser;
 use App\Models\ConversationLog;
-use App\Models\Notification;
+use App\Models\WhatsAppUser;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
     protected string $apiUrl;
+
     protected string $accessToken;
+
     protected string $phoneNumberId;
 
     public function __construct()
@@ -70,7 +71,7 @@ class WhatsAppService
             $changes = $entry['changes'][0] ?? null;
             $value = $changes['value'] ?? null;
 
-            if (!$value || !isset($value['messages'])) {
+            if (! $value || ! isset($value['messages'])) {
                 return;
             }
 

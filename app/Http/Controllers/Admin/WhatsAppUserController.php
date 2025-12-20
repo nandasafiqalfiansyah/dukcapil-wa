@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\WhatsAppUser;
 use App\Models\AuditLog;
-use Illuminate\Http\Request;
+use App\Models\WhatsAppUser;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class WhatsAppUserController extends Controller
@@ -42,8 +42,8 @@ class WhatsAppUserController extends Controller
     {
         $whatsappUser->loadCount(['conversationLogs', 'serviceRequests']);
         $whatsappUser->load([
-            'conversationLogs' => fn($q) => $q->latest()->take(20),
-            'serviceRequests' => fn($q) => $q->latest()->take(10),
+            'conversationLogs' => fn ($q) => $q->latest()->take(20),
+            'serviceRequests' => fn ($q) => $q->latest()->take(10),
         ]);
 
         return view('admin.whatsapp-users.show', compact('whatsappUser'));

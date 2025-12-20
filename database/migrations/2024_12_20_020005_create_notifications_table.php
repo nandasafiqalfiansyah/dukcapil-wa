@@ -26,7 +26,7 @@ return new class extends Migration
             $table->integer('retry_count')->default(0);
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('whatsapp_user_id');
             $table->index('service_request_id');
             $table->index('status');

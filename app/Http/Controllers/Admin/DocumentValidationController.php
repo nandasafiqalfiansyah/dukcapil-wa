@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DocumentValidation;
-use App\Models\ServiceRequest;
 use App\Models\AuditLog;
-use Illuminate\Http\Request;
+use App\Models\DocumentValidation;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class DocumentValidationController extends Controller
 {
@@ -65,7 +64,7 @@ class DocumentValidationController extends Controller
 
     public function download(DocumentValidation $document): \Symfony\Component\HttpFoundation\StreamedResponse|RedirectResponse
     {
-        if (!$document->file_path || !Storage::exists($document->file_path)) {
+        if (! $document->file_path || ! Storage::exists($document->file_path)) {
             return redirect()->back()->with('error', 'File tidak ditemukan.');
         }
 

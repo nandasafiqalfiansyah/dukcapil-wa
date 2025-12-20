@@ -22,7 +22,7 @@ return new class extends Migration
             $table->enum('status', ['sent', 'delivered', 'read', 'failed'])->default('sent');
             $table->string('intent')->nullable();
             $table->timestamps();
-            
+
             $table->index('whatsapp_user_id');
             $table->index('direction');
             $table->index('created_at');

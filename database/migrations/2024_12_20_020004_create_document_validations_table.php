@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('validated_at')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('service_request_id');
             $table->index('validated_by');
             $table->index('validation_status');

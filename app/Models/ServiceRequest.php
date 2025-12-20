@@ -46,6 +46,7 @@ class ServiceRequest extends Model
         $prefix = 'REQ';
         $date = now()->format('Ymd');
         $random = strtoupper(Str::random(6));
+
         return "{$prefix}-{$date}-{$random}";
     }
 
@@ -91,7 +92,7 @@ class ServiceRequest extends Model
 
     public function isEscalated(): bool
     {
-        return !is_null($this->escalated_at);
+        return ! is_null($this->escalated_at);
     }
 
     public function escalate(): void

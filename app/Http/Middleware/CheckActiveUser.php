@@ -15,8 +15,9 @@ class CheckActiveUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && !$request->user()->is_active) {
+        if ($request->user() && ! $request->user()->is_active) {
             auth()->logout();
+
             return redirect()->route('login')->withErrors(['email' => 'Your account has been deactivated.']);
         }
 

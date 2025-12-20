@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ServiceRequest;
-use App\Models\WhatsAppUser;
 use App\Models\ConversationLog;
 use App\Models\DocumentValidation;
-use Illuminate\Http\Request;
+use App\Models\ServiceRequest;
+use App\Models\WhatsAppUser;
 use Illuminate\View\View;
 
 class DashboardController extends Controller

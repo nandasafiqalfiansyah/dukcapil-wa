@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\AuditLog;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\View\View;
 
 class UserManagementController extends Controller
 {
@@ -62,7 +62,7 @@ class UserManagementController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,officer,viewer',
             'is_active' => 'boolean',
@@ -88,7 +88,7 @@ class UserManagementController extends Controller
             return redirect()->back()->with('error', 'Anda tidak dapat menonaktifkan akun sendiri.');
         }
 
-        $user->update(['is_active' => !$user->is_active]);
+        $user->update(['is_active' => ! $user->is_active]);
 
         AuditLog::log('user.toggled_active', $user);
 

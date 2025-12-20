@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('status', ['active', 'blocked', 'pending'])->default('pending');
             $table->json('metadata')->nullable();
             $table->timestamps();
-            
+
             $table->index('phone_number');
             $table->index('nik');
             $table->index('is_verified');
