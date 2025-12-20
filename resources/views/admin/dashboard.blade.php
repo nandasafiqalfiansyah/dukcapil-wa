@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard Admin DUKCAPIL Ponorogo') }}
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
@@ -18,17 +18,17 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Total Pengguna</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ $stats['total_users'] }}</p>
+                                <p class="text-sm text-gray-500">Total Pengguna</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_users'] }}</p>
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="text-sm text-green-600 dark:text-green-400">{{ $stats['verified_users'] }} terverifikasi</span>
+                            <span class="text-sm text-green-600">{{ $stats['verified_users'] }} terverifikasi</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
@@ -37,17 +37,17 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Permintaan Pending</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ $stats['pending_requests'] }}</p>
+                                <p class="text-sm text-gray-500">Permintaan Pending</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['pending_requests'] }}</p>
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">dari {{ $stats['total_requests'] }} total</span>
+                            <span class="text-sm text-gray-600">dari {{ $stats['total_requests'] }} total</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-red-500 rounded-md p-3">
@@ -56,17 +56,17 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Permintaan Dieskalasi</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ $stats['escalated_requests'] }}</p>
+                                <p class="text-sm text-gray-500">Permintaan Dieskalasi</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['escalated_requests'] }}</p>
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="text-sm text-red-600 dark:text-red-400">Butuh perhatian segera</span>
+                            <span class="text-sm text-red-600">Butuh perhatian segera</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
@@ -75,12 +75,12 @@
                                 </svg>
                             </div>
                             <div class="ml-5">
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Percakapan Hari Ini</p>
-                                <p class="text-2xl font-semibold text-gray-900 dark:text-gray-100">{{ $stats['conversations_today'] }}</p>
+                                <p class="text-sm text-gray-500">Percakapan Hari Ini</p>
+                                <p class="text-2xl font-semibold text-gray-900">{{ $stats['conversations_today'] }}</p>
                             </div>
                         </div>
                         <div class="mt-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Pesan masuk & keluar</span>
+                            <span class="text-sm text-gray-600">Pesan masuk & keluar</span>
                         </div>
                     </div>
                 </div>
@@ -88,17 +88,17 @@
 
             <!-- Charts Row -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Permintaan Berdasarkan Status</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Permintaan Berdasarkan Status</h3>
                         <div class="space-y-3">
                             @foreach($requestsByStatus as $status => $count)
                                 <div>
                                     <div class="flex justify-between mb-1">
-                                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ ucfirst($status) }}</span>
-                                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $count }}</span>
+                                        <span class="text-sm text-gray-700">{{ ucfirst($status) }}</span>
+                                        <span class="text-sm font-medium text-gray-900">{{ $count }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
                                         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ ($count / $stats['total_requests']) * 100 }}%"></div>
                                     </div>
                                 </div>
@@ -107,17 +107,17 @@
                     </div>
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Permintaan Berdasarkan Jenis Layanan</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Permintaan Berdasarkan Jenis Layanan</h3>
                         <div class="space-y-3">
                             @foreach($requestsByType as $type => $count)
                                 <div>
                                     <div class="flex justify-between mb-1">
-                                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ strtoupper($type) }}</span>
-                                        <span class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $count }}</span>
+                                        <span class="text-sm text-gray-700">{{ strtoupper($type) }}</span>
+                                        <span class="text-sm font-medium text-gray-900">{{ $count }}</span>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
                                         <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ ($count / $stats['total_requests']) * 100 }}%"></div>
                                     </div>
                                 </div>
@@ -128,38 +128,38 @@
             </div>
 
             <!-- Recent Requests -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Permintaan Terbaru</h3>
-                        <a href="{{ route('admin.service-requests.index') }}" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                        <h3 class="text-lg font-semibold text-gray-900">Permintaan Terbaru</h3>
+                        <a href="{{ route('admin.service-requests.index') }}" class="text-sm text-blue-600 hover:text-blue-800">
                             Lihat Semua →
                         </a>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-900">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nomor Permintaan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pengguna</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jenis Layanan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prioritas</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tanggal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nomor Permintaan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pengguna</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Layanan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioritas</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($recentRequests as $request)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <a href="{{ route('admin.service-requests.show', $request) }}" class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                            <a href="{{ route('admin.service-requests.show', $request) }}" class="text-sm font-medium text-blue-600 hover:text-blue-800">
                                                 {{ $request->request_number }}
                                             </a>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $request->whatsappUser->name ?? $request->whatsappUser->phone_number }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ strtoupper($request->service_type) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -181,13 +181,13 @@
                                                 {{ ucfirst($request->priority) }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $request->created_at->format('d M Y H:i') }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        <td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">
                                             Tidak ada permintaan
                                         </td>
                                     </tr>
