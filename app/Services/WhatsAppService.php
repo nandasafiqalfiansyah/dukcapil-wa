@@ -173,21 +173,36 @@ class WhatsAppService
             return;
         }
 
-        $messageBody = strtolower(trim($message['body'] ?? ''));
+        $messageBody = trim($message['body'] ?? '');
         
-        // Define auto-reply triggers and responses
-        $autoReplies = [
-            'ping' => "🤖 *Pong!*\n\nBot DUKCAPIL Ponorogo aktif dan berfungsi dengan baik.\n\nWaktu: " . now()->format('d/m/Y H:i:s'),
-            'test' => "✅ *Bot Aktif*\n\nBot WhatsApp DUKCAPIL Ponorogo sedang online dan siap melayani Anda.\n\nUntuk bantuan, kirim pesan atau hubungi kantor kami.",
-            'halo' => "👋 *Halo!*\n\nSelamat datang di layanan WhatsApp DUKCAPIL Ponorogo.\n\nKami siap membantu Anda dengan:\n- Informasi layanan kependudukan\n- Status dokumen\n- Pertanyaan umum\n\nSilakan sampaikan kebutuhan Anda.",
-            'hai' => "👋 *Hai!*\n\nSelamat datang di layanan WhatsApp DUKCAPIL Ponorogo.\n\nKami siap membantu Anda dengan:\n- Informasi layanan kependudukan\n- Status dokumen\n- Pertanyaan umum\n\nSilakan sampaikan kebutuhan Anda.",
-            'help' => "ℹ️ *Bantuan*\n\nLayanan yang tersedia:\n\n1. *KTP* - Informasi e-KTP\n2. *KK* - Informasi Kartu Keluarga\n3. *Akta* - Informasi Akta Kelahiran/Kematian\n4. *Status* - Cek status dokumen\n\nKirim kata kunci di atas untuk informasi lebih lanjut.",
-            'info' => "ℹ️ *Informasi DUKCAPIL Ponorogo*\n\n📍 Alamat: [Alamat Kantor]\n📞 Telepon: [Nomor Telepon]\n🕐 Jam Layanan: Senin-Jumat, 08:00-15:00\n\nUntuk pertanyaan, silakan kirim pesan atau hubungi langsung.",
-        ];
+        // Get active auto-reply configurations ordered by priority
+        $autoReplies = \App\Models\AutoReplyConfig::active()
+            ->byPriority()
+            ->get();
 
         // Check if message matches any auto-reply trigger
-        foreach ($autoReplies as $trigger => $response) {
-            if ($messageBody === $trigger) {
+        foreach ($autoReplies as $autoReply) {
+            $trigger = $autoReply->trigger;
+            $matches = false;
+
+            if ($autoReply->case_sensitive) {
+                $matches = $messageBody === $trigger;
+            } else {
+                $matches = strtolower($messageBody) === strtolower($trigger);
+            }
+
+            if ($matches) {
+                // Replace dynamic placeholders in response
+                $response = str_replace(
+                    ['{{timestamp}}', '{{date}}', '{{time}}'],
+                    [
+                        now()->format('d/m/Y H:i:s'),
+                        now()->format('d/m/Y'),
+                        now()->format('H:i:s'),
+                    ],
+                    $autoReply->response
+                );
+
                 // Send auto-reply
                 $this->sendMessage($message['from'], $response, $bot);
                 
