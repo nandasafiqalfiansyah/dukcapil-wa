@@ -152,11 +152,53 @@ class WhatsAppService
                 'metadata' => $message,
                 'status' => 'delivered',
             ]);
+
+            // Handle auto-reply for ping messages
+            $this->handleAutoReply($bot, $message);
         } catch (\Exception $e) {
             Log::error('Error processing incoming message from bot', [
                 'error' => $e->getMessage(),
                 'data' => $data,
             ]);
+        }
+    }
+
+    /**
+     * Handle auto-reply for specific keywords like ping, test, etc.
+     */
+    protected function handleAutoReply(BotInstance $bot, array $message): void
+    {
+        // Skip if message is from bot itself
+        if (($message['fromMe'] ?? false) === true) {
+            return;
+        }
+
+        $messageBody = strtolower(trim($message['body'] ?? ''));
+        
+        // Define auto-reply triggers and responses
+        $autoReplies = [
+            'ping' => "🤖 *Pong!*\n\nBot DUKCAPIL Ponorogo aktif dan berfungsi dengan baik.\n\nWaktu: " . now()->format('d/m/Y H:i:s'),
+            'test' => "✅ *Bot Aktif*\n\nBot WhatsApp DUKCAPIL Ponorogo sedang online dan siap melayani Anda.\n\nUntuk bantuan, kirim pesan atau hubungi kantor kami.",
+            'halo' => "👋 *Halo!*\n\nSelamat datang di layanan WhatsApp DUKCAPIL Ponorogo.\n\nKami siap membantu Anda dengan:\n- Informasi layanan kependudukan\n- Status dokumen\n- Pertanyaan umum\n\nSilakan sampaikan kebutuhan Anda.",
+            'hai' => "👋 *Hai!*\n\nSelamat datang di layanan WhatsApp DUKCAPIL Ponorogo.\n\nKami siap membantu Anda dengan:\n- Informasi layanan kependudukan\n- Status dokumen\n- Pertanyaan umum\n\nSilakan sampaikan kebutuhan Anda.",
+            'help' => "ℹ️ *Bantuan*\n\nLayanan yang tersedia:\n\n1. *KTP* - Informasi e-KTP\n2. *KK* - Informasi Kartu Keluarga\n3. *Akta* - Informasi Akta Kelahiran/Kematian\n4. *Status* - Cek status dokumen\n\nKirim kata kunci di atas untuk informasi lebih lanjut.",
+            'info' => "ℹ️ *Informasi DUKCAPIL Ponorogo*\n\n📍 Alamat: [Alamat Kantor]\n📞 Telepon: [Nomor Telepon]\n🕐 Jam Layanan: Senin-Jumat, 08:00-15:00\n\nUntuk pertanyaan, silakan kirim pesan atau hubungi langsung.",
+        ];
+
+        // Check if message matches any auto-reply trigger
+        foreach ($autoReplies as $trigger => $response) {
+            if ($messageBody === $trigger) {
+                // Send auto-reply
+                $this->sendMessage($message['from'], $response, $bot);
+                
+                Log::info('Auto-reply sent', [
+                    'bot_id' => $bot->bot_id,
+                    'trigger' => $trigger,
+                    'to' => $message['from'],
+                ]);
+                
+                break;
+            }
         }
     }
 

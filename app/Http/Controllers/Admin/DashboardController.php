@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\BotInstance;
 use App\Models\ConversationLog;
 use App\Models\DocumentValidation;
 use App\Models\ServiceRequest;
@@ -21,6 +22,8 @@ class DashboardController extends Controller
             'pending_validations' => DocumentValidation::pending()->count(),
             'conversations_today' => ConversationLog::whereDate('created_at', today())->count(),
             'escalated_requests' => ServiceRequest::escalated()->count(),
+            'total_bots' => BotInstance::count(),
+            'connected_bots' => BotInstance::connected()->count(),
         ];
 
         $recentRequests = ServiceRequest::with(['whatsappUser', 'assignedOfficer'])
@@ -36,11 +39,17 @@ class DashboardController extends Controller
             ->groupBy('service_type')
             ->pluck('count', 'service_type');
 
+        // Get bot instances for tracking
+        $botInstances = BotInstance::orderBy('last_connected_at', 'desc')
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'recentRequests',
             'requestsByStatus',
-            'requestsByType'
+            'requestsByType',
+            'botInstances'
         ));
     }
 }
