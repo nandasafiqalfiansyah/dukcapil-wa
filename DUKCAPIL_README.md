@@ -1,28 +1,37 @@
 # DUKCAPIL Ponorogo WhatsApp Chatbot - Admin Dashboard
 
-Sistem administrasi berbasis web untuk DUKCAPIL Ponorogo WhatsApp Chatbot menggunakan Laravel sebagai framework backend utama.
+Sistem administrasi berbasis web untuk DUKCAPIL Ponorogo WhatsApp Chatbot menggunakan Laravel sebagai framework backend utama dengan **WhatsApp Web QR Code** untuk koneksi bot.
 
 ## Fitur Utama
 
-### 1. Autentikasi & Otorisasi
+### 1. WhatsApp Bot Management (NEW! 🎉)
+- **QR Code scanning** untuk koneksi WhatsApp Web
+- **Multiple bot instances** - jalankan beberapa bot sekaligus
+- **Real-time status monitoring** untuk setiap bot
+- **Auto-reconnection** jika bot disconnect
+- **Session management** - tidak perlu scan QR setiap restart
+- Dashboard untuk manajemen semua bot
+
+### 2. Autentikasi & Otorisasi
 - Login aman dengan Laravel Breeze
 - Role-based access control (Admin, Officer, Viewer)
 - Manajemen sesi dan token
 - Validasi email dan reset password
 
-### 2. Manajemen Pengguna WhatsApp
+### 3. Manajemen Pengguna WhatsApp
 - Daftar pengguna WhatsApp yang terverifikasi
 - Verifikasi pengguna berdasarkan NIK
 - Update status pengguna (active, blocked, pending)
 - Riwayat percakapan per pengguna
 
-### 3. Log Percakapan
+### 4. Log Percakapan
 - Menyimpan semua percakapan masuk dan keluar
 - Filter berdasarkan tanggal, arah pesan, dan intent
 - Dukungan berbagai tipe pesan (text, image, document, audio, video)
 - Status pengiriman (sent, delivered, read, failed)
+- **Tracking per bot instance**
 
-### 4. Manajemen Permintaan Layanan
+### 5. Manajemen Permintaan Layanan
 - Tracking permintaan layanan (KTP, KK, Akta, dll)
 - Status permintaan (pending, in_review, processing, approved, rejected, completed)
 - Sistem prioritas (low, normal, high, urgent)
@@ -30,23 +39,23 @@ Sistem administrasi berbasis web untuk DUKCAPIL Ponorogo WhatsApp Chatbot menggu
 - **Eskalasi ke petugas** untuk penanganan cepat
 - Catatan internal per permintaan
 
-### 5. Validasi Dokumen
+### 6. Validasi Dokumen
 - Pre-validasi dokumen yang diupload
 - Status validasi (pending, valid, invalid, needs_review)
 - Download dokumen
 - Catatan validasi
 
-### 6. Notifikasi WhatsApp
+### 7. Notifikasi WhatsApp
 - Pengiriman notifikasi otomatis ke pengguna
 - Status notifikasi dan retry mechanism
 - Tracking delivery dan read status
 
-### 7. Audit Logging
+### 8. Audit Logging
 - Pencatatan semua aktivitas admin
 - Tracking perubahan data
 - IP address dan user agent logging
 
-### 8. Dashboard & Reporting
+### 9. Dashboard & Reporting
 - Statistik real-time
 - Grafik permintaan berdasarkan status dan jenis layanan
 - Daftar permintaan terbaru
@@ -59,14 +68,16 @@ Sistem administrasi berbasis web untuk DUKCAPIL Ponorogo WhatsApp Chatbot menggu
 - **Frontend**: Blade Templates + Tailwind CSS
 - **Authentication**: Laravel Breeze
 - **Testing**: Pest
-- **WhatsApp API**: Facebook Graph API
+- **WhatsApp Integration**: WhatsApp Web (via whatsapp-web.js)
+- **Bot Server**: Node.js + Express
 
 ## Instalasi
 
 ### Prasyarat
 - PHP 8.2 atau lebih tinggi
 - Composer
-- Node.js & NPM
+- Node.js 18.x atau lebih tinggi & NPM
+- Chrome/Chromium (untuk Puppeteer)
 
 ### Langkah Instalasi
 
@@ -76,13 +87,13 @@ git clone <repository-url>
 cd dukcapil-wa
 ```
 
-2. Install dependencies
+2. Install dependencies Laravel
 ```bash
 composer install
 npm install
 ```
 
-3. Setup environment
+3. Setup environment Laravel
 ```bash
 cp .env.example .env
 php artisan key:generate
@@ -93,12 +104,11 @@ php artisan key:generate
 DB_CONNECTION=sqlite
 ```
 
-5. Konfigurasi WhatsApp Business API di `.env`
+5. **Konfigurasi WhatsApp Bot di `.env`** (PENTING!)
 ```env
-WHATSAPP_API_URL=https://graph.facebook.com/v18.0
-WHATSAPP_ACCESS_TOKEN=your_access_token
-WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
-WHATSAPP_VERIFY_TOKEN=your_verify_token
+# Generate secure token: php -r "echo bin2hex(random_bytes(32));"
+BOT_API_TOKEN=your-secure-api-token-here
+WHATSAPP_BOT_SERVER_URL=http://localhost:3000
 ```
 
 6. Jalankan migrasi dan seeder
@@ -106,15 +116,68 @@ WHATSAPP_VERIFY_TOKEN=your_verify_token
 php artisan migrate --seed
 ```
 
-7. Build assets
+7. Build assets frontend
 ```bash
 npm run build
 ```
 
-8. Jalankan server
+8. **Setup Bot Server**
+```bash
+cd bot
+npm install
+cp .env.example .env
+# Edit bot/.env dan pastikan BOT_API_TOKEN sama dengan Laravel
+```
+
+9. Jalankan sistem (development)
+
+**Terminal 1 - Laravel Server:**
 ```bash
 php artisan serve
 ```
+
+**Terminal 2 - Queue Worker:**
+```bash
+php artisan queue:work
+```
+
+**Terminal 3 - Bot Server:**
+```bash
+cd bot
+npm start
+```
+
+**Atau gunakan script dev (recommended):**
+```bash
+composer run dev
+```
+
+## Setup Bot WhatsApp
+
+Setelah sistem berjalan, ikuti langkah berikut untuk setup bot:
+
+1. **Login ke Admin Dashboard**
+   - Buka: http://localhost:8000/admin
+   - Login dengan akun admin (lihat section Akun Default di bawah)
+
+2. **Buat Bot Instance**
+   - Klik menu "Bot Management" atau akses `/admin/bots`
+   - Klik "Add New Bot"
+   - Isi Bot Name dan Bot ID (unique)
+   - Klik "Create Bot"
+
+3. **Scan QR Code**
+   - Setelah bot dibuat, akan muncul QR code
+   - Buka WhatsApp di HP
+   - Pilih Menu > Linked Devices > Link a Device
+   - Scan QR code yang ditampilkan
+   - Tunggu hingga status berubah "Connected"
+
+4. **Bot Siap Digunakan!**
+   - Bot akan otomatis menerima dan membalas pesan
+   - Semua percakapan tercatat di admin dashboard
+
+📖 **Untuk panduan lengkap, lihat [BOT_SETUP_GUIDE.md](BOT_SETUP_GUIDE.md)**
 
 ## Akun Default
 
