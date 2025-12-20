@@ -1,0 +1,9 @@
+<?php
+
+use App\Http\Controllers\Api\WhatsAppWebhookController;
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('webhook')->group(function () {
+    Route::get('whatsapp', [WhatsAppWebhookController::class, 'verify']);
+    Route::post('whatsapp', [WhatsAppWebhookController::class, 'webhook']);
+});
