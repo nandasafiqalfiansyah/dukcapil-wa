@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'is_active',
     ];
 
     /**
@@ -43,6 +45,47 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isOfficer(): bool
+    {
+        return $this->role === 'officer';
+    }
+
+    public function isViewer(): bool
+    {
+        return $this->role === 'viewer';
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return in_array($this->role, $roles);
+    }
+
+    public function assignedServiceRequests()
+    {
+        return $this->hasMany(ServiceRequest::class, 'assigned_to');
+    }
+
+    public function validatedDocuments()
+    {
+        return $this->hasMany(DocumentValidation::class, 'validated_by');
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
     }
 }
