@@ -12,9 +12,30 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    
+                    @can('role', 'admin,officer,viewer')
+                        <x-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')">
+                            {{ __('Conversations') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.service-requests.index')" :active="request()->routeIs('admin.service-requests.*')">
+                            {{ __('Requests') }}
+                        </x-nav-link>
+                    @endcan
+                    
+                    @can('role', 'admin')
+                        <x-nav-link :href="route('admin.bots.index')" :active="request()->routeIs('admin.bots.*')">
+                            {{ __('Bots') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.auto-replies.index')" :active="request()->routeIs('admin.auto-replies.*')">
+                            {{ __('Auto-Reply') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -67,9 +88,30 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            
+            @can('role', 'admin,officer,viewer')
+                <x-responsive-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')">
+                    {{ __('Conversations') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.service-requests.index')" :active="request()->routeIs('admin.service-requests.*')">
+                    {{ __('Requests') }}
+                </x-responsive-nav-link>
+            @endcan
+            
+            @can('role', 'admin')
+                <x-responsive-nav-link :href="route('admin.bots.index')" :active="request()->routeIs('admin.bots.*')">
+                    {{ __('Bots') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.auto-replies.index')" :active="request()->routeIs('admin.auto-replies.*')">
+                    {{ __('Auto-Reply') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')">
+                    {{ __('Users') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

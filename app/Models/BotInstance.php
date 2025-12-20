@@ -67,4 +67,3 @@ class BotInstance extends Model
         return $query->where('status', 'connected');
     }
 }
-

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AutoReplyConfig;
 use App\Models\BotInstance;
 use App\Models\ConversationLog;
 use App\Models\WhatsAppUser;
@@ -45,7 +46,7 @@ class WhatsAppService
     {
         $bot = $bot ?? $this->getAvailableBot();
 
-        if (!$bot) {
+        if (! $bot) {
             Log::error('No connected bot available for sending message');
 
             return [
@@ -118,7 +119,7 @@ class WhatsAppService
             $botId = $data['bot_id'] ?? null;
             $message = $data['message'] ?? null;
 
-            if (!$botId || !$message) {
+            if (! $botId || ! $message) {
                 Log::warning('Invalid webhook payload: missing bot_id or message');
 
                 return;
@@ -126,7 +127,7 @@ class WhatsAppService
 
             // Find bot instance
             $bot = BotInstance::where('bot_id', $botId)->first();
-            if (!$bot) {
+            if (! $bot) {
                 Log::warning("Bot instance not found: {$botId}");
 
                 return;
@@ -152,11 +153,68 @@ class WhatsAppService
                 'metadata' => $message,
                 'status' => 'delivered',
             ]);
+
+            // Handle auto-reply for ping messages
+            $this->handleAutoReply($bot, $message);
         } catch (\Exception $e) {
             Log::error('Error processing incoming message from bot', [
                 'error' => $e->getMessage(),
                 'data' => $data,
             ]);
+        }
+    }
+
+    /**
+     * Handle auto-reply for specific keywords like ping, test, etc.
+     */
+    protected function handleAutoReply(BotInstance $bot, array $message): void
+    {
+        // Skip if message is from bot itself
+        if (($message['fromMe'] ?? false) === true) {
+            return;
+        }
+
+        $messageBody = trim($message['body'] ?? '');
+
+        // Get active auto-reply configurations ordered by priority
+        $autoReplies = AutoReplyConfig::active()
+            ->byPriority()
+            ->get();
+
+        // Check if message matches any auto-reply trigger
+        foreach ($autoReplies as $autoReply) {
+            $trigger = $autoReply->trigger;
+            $matches = false;
+
+            if ($autoReply->case_sensitive) {
+                $matches = $messageBody === $trigger;
+            } else {
+                $matches = strtolower($messageBody) === strtolower($trigger);
+            }
+
+            if ($matches) {
+                // Replace dynamic placeholders in response
+                $response = str_replace(
+                    ['{{timestamp}}', '{{date}}', '{{time}}'],
+                    [
+                        now()->format('d/m/Y H:i:s'),
+                        now()->format('d/m/Y'),
+                        now()->format('H:i:s'),
+                    ],
+                    $autoReply->response
+                );
+
+                // Send auto-reply
+                $this->sendMessage($message['from'], $response, $bot);
+
+                Log::info('Auto-reply sent', [
+                    'bot_id' => $bot->bot_id,
+                    'trigger' => $trigger,
+                    'to' => $message['from'],
+                ]);
+
+                break;
+            }
         }
     }
 
@@ -167,7 +225,7 @@ class WhatsAppService
     {
         try {
             $botId = $data['bot_id'] ?? null;
-            if (!$botId) {
+            if (! $botId) {
                 return;
             }
 
