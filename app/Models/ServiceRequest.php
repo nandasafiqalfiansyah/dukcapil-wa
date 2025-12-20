@@ -45,9 +45,22 @@ class ServiceRequest extends Model
     {
         $prefix = 'REQ';
         $date = now()->format('Ymd');
-        $random = strtoupper(Str::random(6));
 
-        return "{$prefix}-{$date}-{$random}";
+        // Try up to 10 times to generate a unique number
+        $attempts = 0;
+        do {
+            $random = strtoupper(Str::random(6));
+            $requestNumber = "{$prefix}-{$date}-{$random}";
+            $attempts++;
+
+            if ($attempts > 10) {
+                // Fallback to timestamp if can't find unique number
+                $requestNumber = "{$prefix}-{$date}-".time().'-'.strtoupper(Str::random(3));
+                break;
+            }
+        } while (self::where('request_number', $requestNumber)->exists());
+
+        return $requestNumber;
     }
 
     public function whatsappUser(): BelongsTo

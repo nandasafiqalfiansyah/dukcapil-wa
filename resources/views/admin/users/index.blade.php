@@ -70,7 +70,7 @@
                                                 @if($user->id !== auth()->id())
                                                     <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}" class="inline">
                                                         @csrf
-                                                        <button type="submit" class="text-{{ $user->is_active ? 'red' : 'green' }}-600 hover:text-{{ $user->is_active ? 'red' : 'green' }}-900">
+                                                        <button type="submit" class="{{ $user->is_active ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900' }}">
                                                             {{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}
                                                         </button>
                                                     </form>

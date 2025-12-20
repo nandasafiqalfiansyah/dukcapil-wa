@@ -20,6 +20,15 @@ class WhatsAppService
         $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
         $this->accessToken = config('services.whatsapp.access_token');
         $this->phoneNumberId = config('services.whatsapp.phone_number_id');
+
+        // Validate required configuration
+        if (empty($this->accessToken)) {
+            throw new \RuntimeException('WhatsApp access token is not configured. Please set WHATSAPP_ACCESS_TOKEN in your .env file.');
+        }
+
+        if (empty($this->phoneNumberId)) {
+            throw new \RuntimeException('WhatsApp phone number ID is not configured. Please set WHATSAPP_PHONE_NUMBER_ID in your .env file.');
+        }
     }
 
     public function sendMessage(string $to, string $message, array $options = []): array
@@ -67,16 +76,42 @@ class WhatsAppService
     public function processIncomingMessage(array $data): void
     {
         try {
-            $entry = $data['entry'][0] ?? null;
-            $changes = $entry['changes'][0] ?? null;
-            $value = $changes['value'] ?? null;
+            // Validate webhook payload structure
+            if (! isset($data['entry']) || ! is_array($data['entry'])) {
+                Log::warning('Invalid webhook payload: missing or invalid entry field', ['data' => $data]);
 
-            if (! $value || ! isset($value['messages'])) {
                 return;
             }
 
+            $entry = $data['entry'][0] ?? null;
+            if (! $entry || ! isset($entry['changes']) || ! is_array($entry['changes'])) {
+                Log::warning('Invalid webhook payload: missing or invalid changes field');
+
+                return;
+            }
+
+            $changes = $entry['changes'][0] ?? null;
+            if (! $changes || ! isset($changes['value'])) {
+                return;
+            }
+
+            $value = $changes['value'];
+
+            if (! isset($value['messages']) || ! is_array($value['messages'])) {
+                return;
+            }
+
+            // Validate contacts field if present
+            $contacts = isset($value['contacts']) && is_array($value['contacts']) ? $value['contacts'] : [];
+
             foreach ($value['messages'] as $message) {
-                $this->handleMessage($message, $value['contacts'][0] ?? []);
+                if (! is_array($message) || ! isset($message['from'], $message['id'], $message['type'])) {
+                    Log::warning('Invalid message format in webhook payload', ['message' => $message]);
+
+                    continue;
+                }
+
+                $this->handleMessage($message, $contacts[0] ?? []);
             }
         } catch (\Exception $e) {
             Log::error('Error processing incoming WhatsApp message', [
