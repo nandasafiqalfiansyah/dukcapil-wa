@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BotInstance;
 use App\Models\ConversationLog;
 use App\Models\WhatsAppUser;
 use Illuminate\Support\Facades\Http;
@@ -9,191 +10,86 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
-    protected string $apiUrl;
+    protected string $botServerUrl;
 
-    protected string $accessToken;
-
-    protected string $phoneNumberId;
+    protected string $botApiToken;
 
     public function __construct()
     {
-        $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
-        $this->accessToken = config('services.whatsapp.access_token');
-        $this->phoneNumberId = config('services.whatsapp.phone_number_id');
+        $this->botServerUrl = config('services.whatsapp_bot.server_url', 'http://localhost:3000');
+        $this->botApiToken = config('services.whatsapp_bot.api_token', 'default-token');
+    }
 
-        // Validate required configuration
-        if (empty($this->accessToken)) {
-            throw new \RuntimeException('WhatsApp access token is not configured. Please set WHATSAPP_ACCESS_TOKEN in your .env file.');
+    /**
+     * Get a connected bot instance or the default one.
+     */
+    public function getAvailableBot(): ?BotInstance
+    {
+        return BotInstance::active()->connected()->first();
+    }
+
+    /**
+     * Extract phone number from WhatsApp ID.
+     * Handles @c.us (individual), @g.us (groups), @s.whatsapp.net formats.
+     */
+    protected function extractPhoneNumber(string $whatsappId): string
+    {
+        // Remove common WhatsApp suffixes
+        return preg_replace('/@(c\.us|g\.us|s\.whatsapp\.net)$/', '', $whatsappId);
+    }
+
+    /**
+     * Send a message using a specific bot instance.
+     */
+    public function sendMessage(string $to, string $message, ?BotInstance $bot = null): array
+    {
+        $bot = $bot ?? $this->getAvailableBot();
+
+        if (!$bot) {
+            Log::error('No connected bot available for sending message');
+
+            return [
+                'success' => false,
+                'error' => 'No connected bot available',
+            ];
         }
 
-        if (empty($this->phoneNumberId)) {
-            throw new \RuntimeException('WhatsApp phone number ID is not configured. Please set WHATSAPP_PHONE_NUMBER_ID in your .env file.');
-        }
-    }
-
-    public function sendMessage(string $to, string $message, array $options = []): array
-    {
-        $payload = [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'text',
-            'text' => [
-                'body' => $message,
-            ],
-        ];
-
-        return $this->makeApiRequest('messages', $payload);
-    }
-
-    public function sendTemplateMessage(string $to, string $templateName, array $components = []): array
-    {
-        $payload = [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'template',
-            'template' => [
-                'name' => $templateName,
-                'language' => ['code' => 'id'],
-                'components' => $components,
-            ],
-        ];
-
-        return $this->makeApiRequest('messages', $payload);
-    }
-
-    public function sendInteractiveMessage(string $to, array $interactive): array
-    {
-        $payload = [
-            'messaging_product' => 'whatsapp',
-            'to' => $to,
-            'type' => 'interactive',
-            'interactive' => $interactive,
-        ];
-
-        return $this->makeApiRequest('messages', $payload);
-    }
-
-    public function processIncomingMessage(array $data): void
-    {
         try {
-            // Validate webhook payload structure
-            if (! isset($data['entry']) || ! is_array($data['entry'])) {
-                Log::warning('Invalid webhook payload: missing or invalid entry field', ['data' => $data]);
-
-                return;
-            }
-
-            $entry = $data['entry'][0] ?? null;
-            if (! $entry || ! isset($entry['changes']) || ! is_array($entry['changes'])) {
-                Log::warning('Invalid webhook payload: missing or invalid changes field');
-
-                return;
-            }
-
-            $changes = $entry['changes'][0] ?? null;
-            if (! $changes || ! isset($changes['value'])) {
-                return;
-            }
-
-            $value = $changes['value'];
-
-            if (! isset($value['messages']) || ! is_array($value['messages'])) {
-                return;
-            }
-
-            // Validate contacts field if present
-            $contacts = isset($value['contacts']) && is_array($value['contacts']) ? $value['contacts'] : [];
-
-            foreach ($value['messages'] as $message) {
-                if (! is_array($message) || ! isset($message['from'], $message['id'], $message['type'])) {
-                    Log::warning('Invalid message format in webhook payload', ['message' => $message]);
-
-                    continue;
-                }
-
-                $this->handleMessage($message, $contacts[0] ?? []);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error processing incoming WhatsApp message', [
-                'error' => $e->getMessage(),
-                'data' => $data,
-            ]);
-        }
-    }
-
-    protected function handleMessage(array $message, array $contact): void
-    {
-        $phoneNumber = $message['from'];
-        $messageId = $message['id'];
-        $messageType = $message['type'];
-
-        $whatsappUser = WhatsAppUser::firstOrCreate(
-            ['phone_number' => $phoneNumber],
-            [
-                'name' => $contact['profile']['name'] ?? null,
-                'status' => 'pending',
-            ]
-        );
-
-        $messageContent = $this->extractMessageContent($message);
-
-        ConversationLog::create([
-            'whatsapp_user_id' => $whatsappUser->id,
-            'message_id' => $messageId,
-            'direction' => 'incoming',
-            'message_content' => $messageContent,
-            'message_type' => $messageType,
-            'metadata' => $message,
-            'status' => 'delivered',
-        ]);
-    }
-
-    protected function extractMessageContent(array $message): string
-    {
-        return match ($message['type']) {
-            'text' => $message['text']['body'] ?? '',
-            'image' => $message['image']['caption'] ?? 'Image received',
-            'document' => $message['document']['filename'] ?? 'Document received',
-            'audio' => 'Audio message received',
-            'video' => $message['video']['caption'] ?? 'Video received',
-            'location' => sprintf(
-                'Location: %s, %s',
-                $message['location']['latitude'] ?? '',
-                $message['location']['longitude'] ?? ''
-            ),
-            'interactive' => $message['interactive']['button_reply']['title'] ?? $message['interactive']['list_reply']['title'] ?? 'Interactive response',
-            default => 'Unsupported message type',
-        };
-    }
-
-    public function logOutgoingMessage(WhatsAppUser $user, string $message, string $messageType = 'text', ?string $messageId = null): ConversationLog
-    {
-        return ConversationLog::create([
-            'whatsapp_user_id' => $user->id,
-            'message_id' => $messageId ?? uniqid('msg_'),
-            'direction' => 'outgoing',
-            'message_content' => $message,
-            'message_type' => $messageType,
-            'status' => 'sent',
-        ]);
-    }
-
-    protected function makeApiRequest(string $endpoint, array $payload): array
-    {
-        try {
-            $response = Http::withToken($this->accessToken)
-                ->post("{$this->apiUrl}/{$this->phoneNumberId}/{$endpoint}", $payload);
+            $response = Http::withToken($this->botApiToken)
+                ->post("{$this->botServerUrl}/bot/{$bot->bot_id}/send", [
+                    'to' => $to,
+                    'message' => $message,
+                    'type' => 'text',
+                ]);
 
             if ($response->successful()) {
+                $data = $response->json();
+
+                // Find or create WhatsApp user
+                $phoneNumber = $this->extractPhoneNumber($to);
+                $whatsappUser = WhatsAppUser::firstOrCreate(
+                    ['phone_number' => $phoneNumber],
+                    ['status' => 'active']
+                );
+
+                // Log the outgoing message
+                ConversationLog::create([
+                    'bot_instance_id' => $bot->id,
+                    'whatsapp_user_id' => $whatsappUser->id,
+                    'message_id' => $data['message_id'] ?? uniqid('msg_'),
+                    'direction' => 'outgoing',
+                    'message_content' => $message,
+                    'message_type' => 'text',
+                    'status' => 'sent',
+                ]);
+
                 return [
                     'success' => true,
-                    'data' => $response->json(),
+                    'data' => $data,
                 ];
             }
 
-            Log::error('WhatsApp API request failed', [
-                'endpoint' => $endpoint,
-                'payload' => $payload,
+            Log::error('Bot server request failed', [
                 'response' => $response->json(),
             ]);
 
@@ -202,8 +98,7 @@ class WhatsAppService
                 'error' => $response->json(),
             ];
         } catch (\Exception $e) {
-            Log::error('WhatsApp API request exception', [
-                'endpoint' => $endpoint,
+            Log::error('Bot server request exception', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -214,14 +109,261 @@ class WhatsAppService
         }
     }
 
-    public function verifyWebhook(string $mode, string $token, string $challenge): ?string
+    /**
+     * Process incoming message from bot webhook.
+     */
+    public function processIncomingMessage(array $data): void
     {
-        $verifyToken = config('services.whatsapp.verify_token');
+        try {
+            $botId = $data['bot_id'] ?? null;
+            $message = $data['message'] ?? null;
 
-        if ($mode === 'subscribe' && $token === $verifyToken) {
-            return $challenge;
+            if (!$botId || !$message) {
+                Log::warning('Invalid webhook payload: missing bot_id or message');
+
+                return;
+            }
+
+            // Find bot instance
+            $bot = BotInstance::where('bot_id', $botId)->first();
+            if (!$bot) {
+                Log::warning("Bot instance not found: {$botId}");
+
+                return;
+            }
+
+            // Extract phone number
+            $phoneNumber = $this->extractPhoneNumber($message['from']);
+
+            // Find or create WhatsApp user
+            $whatsappUser = WhatsAppUser::firstOrCreate(
+                ['phone_number' => $phoneNumber],
+                ['status' => 'active']
+            );
+
+            // Create conversation log
+            ConversationLog::create([
+                'bot_instance_id' => $bot->id,
+                'whatsapp_user_id' => $whatsappUser->id,
+                'message_id' => $message['id'],
+                'direction' => 'incoming',
+                'message_content' => $message['body'] ?? '',
+                'message_type' => $message['type'] ?? 'text',
+                'metadata' => $message,
+                'status' => 'delivered',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error processing incoming message from bot', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
         }
+    }
 
-        return null;
+    /**
+     * Handle bot events (connection, disconnection, etc.).
+     */
+    public function handleBotEvent(string $event, array $data): void
+    {
+        try {
+            $botId = $data['bot_id'] ?? null;
+            if (!$botId) {
+                return;
+            }
+
+            $bot = BotInstance::firstOrCreate(
+                ['bot_id' => $botId],
+                ['name' => $data['bot_name'] ?? "Bot {$botId}"]
+            );
+
+            switch ($event) {
+                case 'qr_generated':
+                    $bot->update([
+                        'status' => 'qr_generated',
+                        'qr_code' => $data['qr_code'] ?? null,
+                    ]);
+                    break;
+
+                case 'connected':
+                    $bot->update([
+                        'status' => 'connected',
+                        'phone_number' => $data['phone_number'] ?? null,
+                        'platform' => $data['platform'] ?? null,
+                        'qr_code' => null,
+                        'last_connected_at' => now(),
+                    ]);
+                    break;
+
+                case 'disconnected':
+                    $bot->update([
+                        'status' => 'disconnected',
+                        'qr_code' => null,
+                        'last_disconnected_at' => now(),
+                    ]);
+                    break;
+
+                case 'auth_failed':
+                    $bot->update([
+                        'status' => 'auth_failed',
+                        'qr_code' => null,
+                    ]);
+                    break;
+            }
+
+            Log::info("Bot event handled: {$event}", ['bot_id' => $botId]);
+        } catch (\Exception $e) {
+            Log::error('Error handling bot event', [
+                'event' => $event,
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
+        }
+    }
+
+    /**
+     * Initialize a new bot instance.
+     */
+    public function initializeBot(string $botId, string $botName): array
+    {
+        try {
+            $response = Http::withToken($this->botApiToken)
+                ->post("{$this->botServerUrl}/bot/initialize", [
+                    'bot_id' => $botId,
+                    'bot_name' => $botName,
+                ]);
+
+            if ($response->successful()) {
+                // Create or update bot instance in database
+                BotInstance::updateOrCreate(
+                    ['bot_id' => $botId],
+                    [
+                        'name' => $botName,
+                        'status' => 'initializing',
+                        'is_active' => true,
+                    ]
+                );
+
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Error initializing bot', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Get bot status from server.
+     */
+    public function getBotStatus(string $botId): array
+    {
+        try {
+            $response = Http::withToken($this->botApiToken)
+                ->get("{$this->botServerUrl}/bot/{$botId}/status");
+
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Disconnect a bot.
+     */
+    public function disconnectBot(string $botId): array
+    {
+        try {
+            $response = Http::withToken($this->botApiToken)
+                ->post("{$this->botServerUrl}/bot/{$botId}/disconnect");
+
+            if ($response->successful()) {
+                $bot = BotInstance::where('bot_id', $botId)->first();
+                if ($bot) {
+                    $bot->update([
+                        'status' => 'disconnected',
+                        'last_disconnected_at' => now(),
+                    ]);
+                }
+
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Logout a bot (removes session).
+     */
+    public function logoutBot(string $botId): array
+    {
+        try {
+            $response = Http::withToken($this->botApiToken)
+                ->post("{$this->botServerUrl}/bot/{$botId}/logout");
+
+            if ($response->successful()) {
+                $bot = BotInstance::where('bot_id', $botId)->first();
+                if ($bot) {
+                    $bot->update([
+                        'status' => 'not_initialized',
+                        'phone_number' => null,
+                        'platform' => null,
+                        'qr_code' => null,
+                    ]);
+                }
+
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+
+            return [
+                'success' => false,
+                'error' => $response->json(),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
     }
 }

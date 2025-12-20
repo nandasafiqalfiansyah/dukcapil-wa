@@ -11,6 +11,7 @@ class ConversationLog extends Model
     use HasFactory;
 
     protected $fillable = [
+        'bot_instance_id',
         'whatsapp_user_id',
         'message_id',
         'direction',
@@ -28,6 +29,11 @@ class ConversationLog extends Model
     public function whatsappUser(): BelongsTo
     {
         return $this->belongsTo(WhatsAppUser::class);
+    }
+
+    public function botInstance(): BelongsTo
+    {
+        return $this->belongsTo(BotInstance::class);
     }
 
     public function scopeIncoming($query)
