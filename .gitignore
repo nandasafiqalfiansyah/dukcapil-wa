@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Bot server specific
+/bot/node_modules
+/bot/.wwebjs_auth
+/bot/.wwebjs_cache
+/bot/.env

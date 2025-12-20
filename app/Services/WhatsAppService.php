@@ -29,6 +29,16 @@ class WhatsAppService
     }
 
     /**
+     * Extract phone number from WhatsApp ID.
+     * Handles @c.us (individual), @g.us (groups), @s.whatsapp.net formats.
+     */
+    protected function extractPhoneNumber(string $whatsappId): string
+    {
+        // Remove common WhatsApp suffixes
+        return preg_replace('/@(c\.us|g\.us|s\.whatsapp\.net)$/', '', $whatsappId);
+    }
+
+    /**
      * Send a message using a specific bot instance.
      */
     public function sendMessage(string $to, string $message, ?BotInstance $bot = null): array
@@ -56,7 +66,7 @@ class WhatsAppService
                 $data = $response->json();
 
                 // Find or create WhatsApp user
-                $phoneNumber = str_replace('@c.us', '', $to);
+                $phoneNumber = $this->extractPhoneNumber($to);
                 $whatsappUser = WhatsAppUser::firstOrCreate(
                     ['phone_number' => $phoneNumber],
                     ['status' => 'active']
@@ -123,7 +133,7 @@ class WhatsAppService
             }
 
             // Extract phone number
-            $phoneNumber = str_replace('@c.us', '', $message['from']);
+            $phoneNumber = $this->extractPhoneNumber($message['from']);
 
             // Find or create WhatsApp user
             $whatsappUser = WhatsAppUser::firstOrCreate(

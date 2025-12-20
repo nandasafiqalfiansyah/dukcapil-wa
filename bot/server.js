@@ -18,6 +18,7 @@ const app = express();
 const PORT = process.env.BOT_PORT || 3000;
 const LARAVEL_API_URL = process.env.APP_URL || 'http://localhost:8000';
 const BOT_API_TOKEN = process.env.BOT_API_TOKEN || 'default-token';
+const LARAVEL_TIMEOUT = parseInt(process.env.LARAVEL_TIMEOUT || '5000', 10);
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -192,7 +193,7 @@ async function notifyLaravel(event, data) {
                 'Authorization': `Bearer ${BOT_API_TOKEN}`,
                 'Content-Type': 'application/json'
             },
-            timeout: 5000
+            timeout: LARAVEL_TIMEOUT
         });
     } catch (error) {
         console.error('Error notifying Laravel:', error.message);
@@ -286,9 +287,13 @@ app.post('/bot/:botId/send', authenticateToken, async (req, res) => {
     }
 
     try {
-        // Ensure phone number format (e.g., 628123456789@c.us)
+        // Ensure phone number format
+        // Individual chats: 628123456789@c.us
+        // Group chats: 123456789@g.us (must include @g.us)
+        // Note: For group chats, the full ID with @g.us must be provided
         let chatId = to;
         if (!to.includes('@')) {
+            // Default to individual chat format
             chatId = `${to}@c.us`;
         }
 
