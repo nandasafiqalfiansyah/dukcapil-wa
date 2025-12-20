@@ -15,7 +15,7 @@ class AutoReplyConfigSeeder extends Seeder
         $autoReplies = [
             [
                 'trigger' => 'ping',
-                'response' => "🤖 *Pong!*\n\nBot DUKCAPIL Ponorogo aktif dan berfungsi dengan baik.\n\nWaktu: " . now()->format('d/m/Y H:i:s'),
+                'response' => "🤖 *Pong!*\n\nBot DUKCAPIL Ponorogo aktif dan berfungsi dengan baik.\n\nWaktu: {{timestamp}}",
                 'priority' => 100,
                 'is_active' => true,
                 'case_sensitive' => false,

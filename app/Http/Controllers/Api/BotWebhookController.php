@@ -65,7 +65,7 @@ class BotWebhookController extends Controller
             $event = $request->input('event');
             $data = $request->input('data', []);
 
-            if (!$event) {
+            if (! $event) {
                 return response()->json(['error' => 'Event type required'], 400);
             }
 
@@ -84,4 +84,3 @@ class BotWebhookController extends Controller
         }
     }
 }
-

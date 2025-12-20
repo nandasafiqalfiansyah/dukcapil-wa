@@ -67,7 +67,7 @@ class AutoReplyConfigController extends Controller
     public function update(Request $request, AutoReplyConfig $autoReply)
     {
         $validated = $request->validate([
-            'trigger' => 'required|string|max:255|unique:auto_reply_configs,trigger,' . $autoReply->id,
+            'trigger' => 'required|string|max:255|unique:auto_reply_configs,trigger,'.$autoReply->id,
             'response' => 'required|string',
             'priority' => 'required|integer|min:0|max:1000',
             'is_active' => 'boolean',
@@ -85,7 +85,7 @@ class AutoReplyConfigController extends Controller
      */
     public function toggleActive(AutoReplyConfig $autoReply)
     {
-        $autoReply->update(['is_active' => !$autoReply->is_active]);
+        $autoReply->update(['is_active' => ! $autoReply->is_active]);
 
         return back()->with('success', 'Auto-reply status toggled successfully.');
     }

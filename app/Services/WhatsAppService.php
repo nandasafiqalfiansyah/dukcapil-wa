@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AutoReplyConfig;
 use App\Models\BotInstance;
 use App\Models\ConversationLog;
 use App\Models\WhatsAppUser;
@@ -45,7 +46,7 @@ class WhatsAppService
     {
         $bot = $bot ?? $this->getAvailableBot();
 
-        if (!$bot) {
+        if (! $bot) {
             Log::error('No connected bot available for sending message');
 
             return [
@@ -118,7 +119,7 @@ class WhatsAppService
             $botId = $data['bot_id'] ?? null;
             $message = $data['message'] ?? null;
 
-            if (!$botId || !$message) {
+            if (! $botId || ! $message) {
                 Log::warning('Invalid webhook payload: missing bot_id or message');
 
                 return;
@@ -126,7 +127,7 @@ class WhatsAppService
 
             // Find bot instance
             $bot = BotInstance::where('bot_id', $botId)->first();
-            if (!$bot) {
+            if (! $bot) {
                 Log::warning("Bot instance not found: {$botId}");
 
                 return;
@@ -174,9 +175,9 @@ class WhatsAppService
         }
 
         $messageBody = trim($message['body'] ?? '');
-        
+
         // Get active auto-reply configurations ordered by priority
-        $autoReplies = \App\Models\AutoReplyConfig::active()
+        $autoReplies = AutoReplyConfig::active()
             ->byPriority()
             ->get();
 
@@ -205,13 +206,13 @@ class WhatsAppService
 
                 // Send auto-reply
                 $this->sendMessage($message['from'], $response, $bot);
-                
+
                 Log::info('Auto-reply sent', [
                     'bot_id' => $bot->bot_id,
                     'trigger' => $trigger,
                     'to' => $message['from'],
                 ]);
-                
+
                 break;
             }
         }
@@ -224,7 +225,7 @@ class WhatsAppService
     {
         try {
             $botId = $data['bot_id'] ?? null;
-            if (!$botId) {
+            if (! $botId) {
                 return;
             }
 

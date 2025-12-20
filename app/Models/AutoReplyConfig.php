@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AutoReplyConfig extends Model
 {
+    protected $table = 'auto_reply_configs';
+
     protected $fillable = [
         'trigger',
         'response',

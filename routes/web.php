@@ -53,14 +53,14 @@ Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name(
     Route::middleware('role:admin')->group(function () {
         Route::resource('users', UserManagementController::class);
         Route::post('users/{user}/toggle-active', [UserManagementController::class, 'toggleActive'])->name('users.toggle-active');
-        
+
         // Bot management routes
         Route::resource('bots', BotInstanceController::class);
         Route::post('bots/{bot}/disconnect', [BotInstanceController::class, 'disconnect'])->name('bots.disconnect');
         Route::post('bots/{bot}/logout', [BotInstanceController::class, 'logout'])->name('bots.logout');
         Route::post('bots/{bot}/reinitialize', [BotInstanceController::class, 'reinitialize'])->name('bots.reinitialize');
         Route::get('bots/{bot}/status', [BotInstanceController::class, 'status'])->name('bots.status');
-        
+
         // Auto-reply configuration routes
         Route::resource('auto-replies', AutoReplyConfigController::class);
         Route::post('auto-replies/{autoReply}/toggle-active', [AutoReplyConfigController::class, 'toggleActive'])->name('auto-replies.toggle-active');

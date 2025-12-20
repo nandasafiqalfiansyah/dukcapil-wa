@@ -68,7 +68,7 @@ class BotInstanceController extends Controller
 
         if ($statusResult['success']) {
             $serverStatus = $statusResult['data'];
-            
+
             // Update local status if different
             if (isset($serverStatus['status']) && $serverStatus['status'] !== $bot->status) {
                 $bot->update([
@@ -151,13 +151,13 @@ class BotInstanceController extends Controller
 
         if ($result['success']) {
             $serverStatus = $result['data'];
-            
+
             // Update local database
             $bot->update([
                 'status' => $serverStatus['status'] ?? $bot->status,
                 'qr_code' => $serverStatus['qr_code'] ?? null,
             ]);
-            
+
             $bot->refresh();
 
             return response()->json([
@@ -196,4 +196,3 @@ class BotInstanceController extends Controller
             ->with('success', 'Bot instance deleted successfully.');
     }
 }
-
