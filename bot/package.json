@@ -1,0 +1,23 @@
+{
+  "name": "dukcapil-whatsapp-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp Web Bot for DUKCAPIL Ponorogo",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["whatsapp", "bot", "dukcapil"],
+  "author": "DUKCAPIL Ponorogo",
+  "license": "MIT",
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.1",
+    "qrcode": "^1.5.3",
+    "express": "^4.18.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.2"
+  }
+}
