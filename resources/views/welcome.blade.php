@@ -83,11 +83,15 @@
                 <div class="flex justify-between items-center h-16">
                     <!-- Logo/Brand -->
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <h1 class="text-xl font-bold text-blue-600">
-                                🏛️ DUKCAPIL Ponorogo
-                            </h1>
-                        </div>
+                       <div class="flex items-center flex-shrink-0 gap-2">
+                        <img src="{{ asset('image.png') }}"
+                            alt="Logo DUKCAPIL Ponorogo"
+                            class="h-8 w-auto">
+
+                        <h1 class="text-xl font-bold text-blue-600">
+                            DUKCAPIL Ponorogo
+                        </h1>
+                    </div>
                     </div>
 
                     @if (Route::has('login'))
