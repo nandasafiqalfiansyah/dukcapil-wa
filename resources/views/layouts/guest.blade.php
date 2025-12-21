@@ -45,7 +45,7 @@
             <div class="relative z-10">
                 <a href="/" class="block text-center mb-8">
                     <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-                        <span class="text-4xl">🏛️</span>
+                        <span class="text-4xl" role="img" aria-label="Government Building">🏛️</span>
                     </div>
                     <h1 class="text-2xl font-bold text-white mt-4 drop-shadow-lg">
                         DUKCAPIL Ponorogo
