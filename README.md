@@ -1,59 +1,148 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DUKCAPIL WhatsApp Bot
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Modern WhatsApp chatbot system for DUKCAPIL Ponorogo with full-stack Laravel + Node.js architecture
 
-## About Laravel
+## 🎨 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **WhatsApp-Style UI** - Green and white theme matching WhatsApp's design
+- **QR Code Device Connection** - Easy setup via WhatsApp Web scanning
+- **Multiple Device Support** - Manage multiple WhatsApp accounts
+- **Real-time Monitoring** - Track device status and conversations
+- **Service Request Management** - Handle citizen service requests (KTP, KK, Birth Certificates)
+- **Auto-Reply System** - Automated responses for common queries
+- **User Management** - Role-based access control
+- **Conversation Logging** - Complete message history
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Quick Start
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- Chrome/Chromium
 
-## Learning Laravel
+### Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+```bash
+# 1. Install dependencies
+composer install
+npm install
+cd bot && npm install && cd ..
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 2. Setup environment
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
 
-## Laravel Sponsors
+# 3. Build assets
+npm run build
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 4. Run (3 terminals needed)
+# Terminal 1: php artisan serve
+# Terminal 2: php artisan queue:work  
+# Terminal 3: cd bot && npm start
+```
 
-### Premium Partners
+### Default Login
+- Email: `admin@dukcapil.ponorogo.go.id`
+- Password: `password`
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 📖 Documentation
 
-## Contributing
+- **[Complete Setup Guide](SETUP_GUIDE.md)** - Detailed installation and configuration
+- **[Bot Setup Guide](BOT_SETUP_GUIDE.md)** - WhatsApp device connection
+- **[DUKCAPIL Features](DUKCAPIL_README.md)** - Feature documentation
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 🎨 UI Preview
 
-## Code of Conduct
+The application features a modern WhatsApp-inspired design with:
+- Green gradient navigation (`#25D366` WhatsApp green)
+- Card-based device management interface
+- Real-time QR code scanning display
+- Responsive design for all screen sizes
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🏗️ Architecture
 
-## Security Vulnerabilities
+```
+Laravel App (Port 8000)     Node.js Bot Server (Port 3000)
+    ↓                              ↓
+Admin Dashboard             WhatsApp Web.js
+    ↓                              ↓
+API Routes        ←→        Express API
+    ↓                              ↓
+Database                    WhatsApp Sessions
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 📱 Connecting WhatsApp
 
-## License
+1. Login to admin dashboard
+2. Navigate to "Bots" → "Add New Device"
+3. Scan QR code with WhatsApp on your phone
+4. Bot is now connected and ready!
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🛡️ Security
+
+**Important:** Change default passwords and generate a secure API token:
+
+```bash
+php -r "echo bin2hex(random_bytes(32));"
+```
+
+Add to `.env` and `bot/.env`:
+```env
+BOT_API_TOKEN=your-generated-token
+```
+
+## 🔧 Configuration
+
+### Database
+Default: SQLite (no setup required)
+
+For MySQL:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_DATABASE=dukcapil_wa
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### Bot Server
+```env
+BOT_PORT=3000
+BOT_API_TOKEN=match-laravel-token
+APP_URL=http://localhost:8000
+```
+
+## 🐛 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| QR code not showing | Check bot server is running: `cd bot && npm start` |
+| Bot disconnects | Sessions expire after 15-20 days, rescan QR code |
+| Build errors | Run `npm run build && php artisan config:clear` |
+
+## 📚 Tech Stack
+
+- **Backend**: Laravel 12, PHP 8.2
+- **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
+- **Bot**: Node.js, Express, WhatsApp Web.js
+- **Database**: SQLite/MySQL/PostgreSQL
+- **Queue**: Laravel Queue
+- **Testing**: Pest
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📄 License
+
+MIT License - see LICENSE file for details
+
+---
+
+**Built with ❤️ for DUKCAPIL Ponorogo**
