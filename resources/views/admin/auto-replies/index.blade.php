@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Auto-Reply Configurations') }}
             </h2>
             <a href="{{ route('admin.auto-replies.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -18,41 +18,41 @@
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <p class="mb-4 text-sm text-gray-600">
                         Konfigurasi balasan otomatis untuk kata kunci tertentu. Bot akan otomatis membalas ketika menerima pesan yang sesuai dengan trigger yang telah dikonfigurasi.
                     </p>
 
                     @if($autoReplies->count() > 0)
                         <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Trigger
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Response Preview
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Priority
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Status
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Actions
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($autoReplies as $autoReply)
                                         <tr>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
-                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                        <code class="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">{{ $autoReply->trigger }}</code>
+                                                    <div class="text-sm font-medium text-gray-900">
+                                                        <code class="bg-gray-100 px-2 py-1 rounded">{{ $autoReply->trigger }}</code>
                                                     </div>
                                                     @if($autoReply->case_sensitive)
                                                         <span class="ml-2 text-xs text-gray-500" title="Case sensitive">
@@ -62,12 +62,12 @@
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <div class="text-sm text-gray-900 dark:text-gray-100 max-w-md truncate">
+                                                <div class="text-sm text-gray-900 max-w-md truncate">
                                                     {{ Str::limit($autoReply->response, 100) }}
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                                     {{ $autoReply->priority }}
                                                 </span>
                                             </td>
@@ -80,13 +80,13 @@
                                                 </form>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('admin.auto-replies.edit', $autoReply) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">
+                                                <a href="{{ route('admin.auto-replies.edit', $autoReply) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">
                                                     Edit
                                                 </a>
                                                 <form action="{{ route('admin.auto-replies.destroy', $autoReply) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this auto-reply?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                                    <button type="submit" class="text-red-600 hover:text-red-900">
                                                         Delete
                                                     </button>
                                                 </form>
@@ -105,7 +105,7 @@
                             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            <p class="text-gray-500 dark:text-gray-400 mt-2 mb-4">No auto-reply configurations found.</p>
+                            <p class="text-gray-500 mt-2 mb-4">No auto-reply configurations found.</p>
                             <a href="{{ route('admin.auto-replies.create') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                                 Add Your First Auto-Reply
                             </a>
@@ -114,12 +114,12 @@
                 </div>
             </div>
 
-            <div class="mt-6 bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <h3 class="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">ℹ️ Tips:</h3>
-                <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1 list-disc list-inside">
-                    <li>Gunakan <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">{{'{{'}}timestamp{{'}}'}}</code> untuk menampilkan waktu saat ini</li>
-                    <li>Gunakan <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">{{'{{'}}date{{'}}'}}</code> untuk tanggal saat ini</li>
-                    <li>Gunakan <code class="bg-blue-100 dark:bg-blue-800 px-1 rounded">{{'{{'}}time{{'}}'}}</code> untuk waktu saat ini</li>
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-blue-900 mb-2">ℹ️ Tips:</h3>
+                <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}timestamp{{'}}'}}</code> untuk menampilkan waktu saat ini</li>
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}date{{'}}'}}</code> untuk tanggal saat ini</li>
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}time{{'}}'}}</code> untuk waktu saat ini</li>
                     <li>Priority lebih tinggi akan dicocokkan terlebih dahulu</li>
                     <li>Bot hanya akan membalas satu auto-reply per pesan (yang pertama cocok)</li>
                 </ul>

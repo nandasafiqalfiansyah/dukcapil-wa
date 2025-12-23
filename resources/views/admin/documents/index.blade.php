@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Validasi Dokumen') }}
         </h2>
     </x-slot>
@@ -14,12 +14,12 @@
             @endif
 
             <!-- Filters -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6">
                     <form method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status Validasi</label>
-                            <select name="validation_status" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Validasi</label>
+                            <select name="validation_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                 <option value="">Semua Status</option>
                                 <option value="pending" {{ request('validation_status') === 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="valid" {{ request('validation_status') === 'valid' ? 'selected' : '' }}>Valid</option>
@@ -37,33 +37,33 @@
             </div>
 
             <!-- Documents Table -->
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead class="bg-gray-50 dark:bg-gray-900">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Permintaan</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tipe Dokumen</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">File</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Validator</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Tanggal</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Aksi</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Permintaan</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipe Dokumen</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">File</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Validator</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse($documents as $document)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                                            <a href="{{ route('admin.service-requests.show', $document->serviceRequest) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <a href="{{ route('admin.service-requests.show', $document->serviceRequest) }}" class="text-blue-600 hover:text-blue-800">
                                                 {{ $document->serviceRequest->request_number }}
                                             </a>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $document->document_type }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $document->original_filename ?? '-' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -75,26 +75,26 @@
                                                 {{ ucfirst($document->validation_status) }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $document->validator->name ?? '-' }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ $document->created_at->format('d M Y') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                                             @if($document->file_path)
-                                                <a href="{{ route('admin.documents.download', $document) }}" class="text-green-600 hover:text-green-900 dark:text-green-400">
+                                                <a href="{{ route('admin.documents.download', $document) }}" class="text-green-600 hover:text-green-900">
                                                     Download
                                                 </a>
                                             @endif
-                                            <a href="{{ route('admin.documents.show', $document) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400">
+                                            <a href="{{ route('admin.documents.show', $document) }}" class="text-blue-600 hover:text-blue-900">
                                                 Detail
                                             </a>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">
                                             Tidak ada dokumen
                                         </td>
                                     </tr>
