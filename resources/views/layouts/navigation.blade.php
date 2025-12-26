@@ -23,6 +23,9 @@
                         <x-nav-link :href="route('admin.chatbot.index')" :active="request()->routeIs('admin.chatbot.*')" class="text-white hover:text-whatsapp-100">
                             {{ __('Chat Bot') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('chat-demo.index')" :active="request()->routeIs('chat-demo.*')" class="text-white hover:text-whatsapp-100" target="_blank">
+                            {{ __('Chat Demo') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white hover:text-whatsapp-100">
                             {{ __('Conversations') }}
                         </x-nav-link>
@@ -32,6 +35,12 @@
                     @endcan
                     
                     @can('role', 'admin')
+                        <x-nav-link :href="route('admin.chat-config.index')" :active="request()->routeIs('admin.chat-config.*')" class="text-white hover:text-whatsapp-100">
+                            {{ __('Chat Config') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.nlp-logs.index')" :active="request()->routeIs('admin.nlp-logs.*')" class="text-white hover:text-whatsapp-100">
+                            {{ __('NLP Logs') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.bots.index')" :active="request()->routeIs('admin.bots.*')" class="text-white hover:text-whatsapp-100">
                             {{ __('Bots') }}
                         </x-nav-link>
@@ -102,6 +111,9 @@
                 <x-responsive-nav-link :href="route('admin.chatbot.index')" :active="request()->routeIs('admin.chatbot.*')" class="text-white">
                     {{ __('Chat Bot') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('chat-demo.index')" :active="request()->routeIs('chat-demo.*')" class="text-white" target="_blank">
+                    {{ __('Chat Demo') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white">
                     {{ __('Conversations') }}
                 </x-responsive-nav-link>
@@ -111,6 +123,12 @@
             @endcan
             
             @can('role', 'admin')
+                <x-responsive-nav-link :href="route('admin.chat-config.index')" :active="request()->routeIs('admin.chat-config.*')" class="text-white">
+                    {{ __('Chat Config') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.nlp-logs.index')" :active="request()->routeIs('admin.nlp-logs.*')" class="text-white">
+                    {{ __('NLP Logs') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.bots.index')" :active="request()->routeIs('admin.bots.*')" class="text-white">
                     {{ __('Bots') }}
                 </x-responsive-nav-link>

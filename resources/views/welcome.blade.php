@@ -425,6 +425,12 @@
                             </svg>
                             Hubungi via WhatsApp
                         </a>
+                        <a href="{{ route('chat-demo.index') }}" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-600 transition duration-150 ease-in-out">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            Try Chat Demo
+                        </a>
                         @if (Route::has('login'))
                             @guest
                                 <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-lg text-whatsapp-600 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl">
