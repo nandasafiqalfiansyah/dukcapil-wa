@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BotInstance;
 use App\Models\ConversationLog;
 use App\Models\DocumentValidation;
+use App\Models\NlpLog;
 use App\Models\ServiceRequest;
 use App\Models\WhatsAppUser;
 use Illuminate\View\View;
@@ -44,12 +45,19 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Get recent NLP logs
+        $recentNlpLogs = NlpLog::with('conversationLog')
+            ->latest()
+            ->take(10)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'recentRequests',
             'requestsByStatus',
             'requestsByType',
-            'botInstances'
+            'botInstances',
+            'recentNlpLogs'
         ));
     }
 }
