@@ -1,302 +1,540 @@
 # DUKCAPIL WhatsApp Bot - Complete Setup Guide
 
-## 📱 Overview
+## Table of Contents
+1. [System Requirements](#system-requirements)
+2. [Installation](#installation)
+3. [WhatsApp Business API Configuration](#whatsapp-business-api-configuration)
+4. [Database Configuration](#database-configuration)
+5. [Running the Application](#running-the-application)
+6. [Production Deployment](#production-deployment)
+7. [Troubleshooting](#troubleshooting)
 
-This is a full-stack WhatsApp chatbot system for DUKCAPIL Ponorogo built with:
-- **Laravel 12** - Backend API and Admin Dashboard
-- **Node.js Bot Server** - WhatsApp Web integration (runs alongside Laravel)
-- **Tailwind CSS** - Modern WhatsApp-style UI (green theme)
+## System Requirements
 
-## 🎨 Features
+### Minimum Requirements
+- **PHP**: 8.2 or higher
+- **Composer**: Latest version
+- **Node.js**: 18.x or higher
+- **NPM**: 9.x or higher
+- **Database**: SQLite (included) or MySQL 8.0+
+- **Web Server**: Apache 2.4+ or Nginx 1.18+
+- **SSL Certificate**: Required for production (webhook)
 
-### WhatsApp-Like Interface
-- Modern green and white design matching WhatsApp's aesthetic
-- QR code scanning interface for device connection
-- Real-time device status monitoring
-- Multiple device management
+### Recommended Server Specs
+- **CPU**: 2 cores
+- **RAM**: 2GB
+- **Storage**: 10GB SSD
+- **OS**: Ubuntu 20.04 LTS or newer
 
-### Core Features
-- **Device Management**: Connect multiple WhatsApp accounts via QR code
-- **Conversation Logging**: Track all incoming and outgoing messages
-- **Service Requests**: Manage citizen service requests (KTP, KK, Birth Certificates)
-- **User Management**: Role-based access control (Admin, Officer, Viewer)
-- **Auto-Reply System**: Automated responses for common queries
-- **Document Validation**: Review and validate uploaded documents
+## Installation
 
-## 🚀 Quick Start
-
-### Prerequisites
-- PHP 8.2+
-- Composer
-- Node.js 18+
-- NPM
-- Chrome/Chromium (for Puppeteer - WhatsApp Web automation)
-
-### Step 1: Install Dependencies
+### 1. Clone Repository
 
 ```bash
-# Install PHP dependencies
-composer install
-
-# Install Node.js dependencies (frontend)
-npm install
-
-# Install Node.js dependencies (bot server)
-cd bot
-npm install
-cd ..
+git clone https://github.com/yourusername/dukcapil-wa.git
+cd dukcapil-wa
 ```
 
-### Step 2: Configure Environment
+### 2. Install PHP Dependencies
 
 ```bash
-# Copy environment file
+composer install --optimize-autoloader --no-dev
+```
+
+For development:
+```bash
+composer install
+```
+
+### 3. Install JavaScript Dependencies
+
+```bash
+npm install
+```
+
+### 4. Environment Configuration
+
+```bash
 cp .env.example .env
-
-# Generate application key
 php artisan key:generate
+```
 
-# Configure database (default: SQLite)
-# Edit .env if needed
+### 5. Database Setup
 
-# Run migrations and seeders
+#### Using SQLite (Default)
+```bash
+touch database/database.sqlite
 php artisan migrate --seed
 ```
 
-### Step 3: Build Frontend Assets
-
-```bash
-npm run build
+#### Using MySQL
+1. Create database:
+```sql
+CREATE DATABASE dukcapil_wa CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### Step 4: Run the Application
-
-**Development Mode:**
-```bash
-npm run start
-```
-
-Or manually with **2 terminals**:
-
-**Terminal 1 - Laravel Server:**
-```bash
-php artisan serve
-```
-
-**Terminal 2 - Frontend Dev Server:**
-```bash
-npm run dev
-```
-
-**Terminal 2 - Frontend Dev Server:**
-```bash
-npm run dev
-```
-
-The application will be available at: **http://localhost:8000**
-
-## 📱 Connecting Your WhatsApp Device
-
-### Via Web Interface
-
-1. **Login to Admin Dashboard**
-   - Visit: http://localhost:8000/login
-   - Email: `admin@dukcapil.ponorogo.go.id`
-   - Password: `password`
-
-2. **Add New Device**
-   - Go to "Bots" menu
-   - Click "Add New Device"
-   - Enter Device Name and unique Device ID
-   - Click "Create Device"
-
-3. **Scan QR Code**
-   - QR code will appear automatically
-   - Open WhatsApp on your phone
-   - Tap Menu ⋮ → Settings → Linked Devices
-   - Tap "Link a Device"
-   - Scan the QR code displayed on screen
-
-4. **Start Using!**
-   - Once connected, the bot will automatically receive and respond to messages
-   - All conversations are logged in the admin dashboard
-
-### Via CLI
-
-```bash
-# List all bots
-php artisan whatsapp:bot list
-
-# Start a specific bot
-php artisan whatsapp:bot start --bot-id=bot-1
-
-# Check bot status
-php artisan whatsapp:bot status --bot-id=bot-1
-
-# Stop a bot
-php artisan whatsapp:bot stop --bot-id=bot-1
-```
-
-## 🏗️ Project Structure
-
-```
-dukcapil-wa/
-├── app/                    # Laravel application code
-│   ├── Console/Commands/  # CLI commands
-│   │   └── WhatsAppBotCommand.php
-│   ├── Http/Controllers/  # Controllers
-│   ├── Models/            # Database models
-│   └── Services/          # Business logic
-│       ├── WhatsAppBotManager.php  # Bot lifecycle manager
-│       └── WhatsAppService.php     # WhatsApp operations
-├── bot-runtime/           # Auto-generated bot scripts
-│   └── bot-{id}.js        # Individual bot instance script
-├── storage/
-│   ├── app/
-│   │   └── whatsapp-sessions/  # WhatsApp sessions per bot
-│   └── logs/
-│       └── bot-{id}.log        # Bot logs
-├── resources/
-│   ├── views/             # Blade templates
-│   │   └── admin/
-│   │       ├── bots/      # Device management UI
-│   │       └── dashboard.blade.php
-│   ├── css/               # Tailwind styles
-│   └── js/                # Frontend JavaScript
-├── routes/
-│   ├── web.php            # Web routes
-│   └── api.php            # API routes
-├── database/
-│   └── migrations/        # Database migrations
-└── .env                   # Laravel configuration
-```
-
-## 🎨 UI Theme
-
-The application uses a WhatsApp-inspired green and white color scheme:
-
-### Color Palette
-- **Primary Green**: `#25D366` (WhatsApp brand green)
-- **Dark Green**: `#128C7E` 
-- **Darker Green**: `#075E54`
-- **Light Green**: Various shades for backgrounds and accents
-
-### Key UI Components
-- **Navigation**: Green header with WhatsApp logo
-- **Cards**: Rounded corners with shadow and hover effects
-- **Status Badges**: Color-coded with borders (connected, pending, failed, etc.)
-- **QR Code Display**: Center-focused with step-by-step instructions
-- **Device Cards**: Grid layout with status indicators
-
-## 🔧 Configuration
-
-### Database
-Default: SQLite (no additional setup needed)
-
-To use MySQL/PostgreSQL:
+2. Update `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=dukcapil_wa
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
-### Bot Server
-Adjust timeout and port as needed:
-```env
-BOT_PORT=3000              # Bot server port
-LARAVEL_TIMEOUT=5000       # API call timeout (ms)
-```
-
-## 🛡️ Security
-
-**Important Security Steps:**
-
-1. **Change Default Passwords**
-   ```bash
-   # After first login, change the default admin password
-   ```
-
-2. **Use Strong API Token**
-   ```bash
-   # Generate a 64-character random token
-   php -r "echo bin2hex(random_bytes(32));"
-   ```
-
-3. **Enable HTTPS in Production**
-   - Use SSL certificate
-   - Update APP_URL to https://
-
-4. **Restrict Access**
-   - Configure firewall rules
-   - Use IP whitelisting for admin panel
-
-## 📊 Default Login Credentials
-
-**Admin Account:**
-- Email: `admin@dukcapil.ponorogo.go.id`
-- Password: `password`
-
-**Officer Account:**
-- Email: `officer@dukcapil.ponorogo.go.id`
-- Password: `password`
-
-⚠️ **Change these passwords immediately after first login!**
-
-## 🐛 Troubleshooting
-
-### QR Code Not Showing
+3. Run migrations:
 ```bash
-# Check bot server is running
-cd bot && npm start
-
-# Check logs
-pm2 logs dukcapil-whatsapp-bot  # if using PM2
+php artisan migrate --seed
 ```
 
-### Bot Disconnects Frequently
-- WhatsApp sessions expire after 15-20 days
-- Rescan QR code when this happens
-- Session data is stored in `storage/app/whatsapp-sessions/`
+### 6. Build Frontend Assets
 
-### Build Errors
+For production:
 ```bash
-# Clear cache and rebuild
 npm run build
-php artisan config:clear
-php artisan cache:clear
-php artisan view:clear
 ```
 
-## 📚 Additional Resources
-
-- [Laravel Documentation](https://laravel.com/docs)
-- [WhatsApp Web.js Documentation](https://wwebjs.dev/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
-
-## 🔄 Development
-
-### Running in Development Mode
+For development:
 ```bash
-# Automatic (recommended)
-npm run start
-```
-
-### Manual Development
-```bash
-# Terminal 1 - Laravel
-php artisan serve
-
-# Terminal 2 - Frontend
 npm run dev
 ```
 
-## 📝 License
+## WhatsApp Business API Configuration
 
-MIT License
+### Step 1: Create Meta App
+
+1. Visit [Meta for Developers](https://developers.facebook.com/)
+2. Click "My Apps" → "Create App"
+3. Select "Business" type
+4. Fill in app details
+5. Add WhatsApp product to your app
+
+### Step 2: Get API Credentials
+
+#### Access Token
+1. Go to WhatsApp → Getting Started
+2. Copy temporary access token (for testing)
+3. For production, create permanent token:
+   - Business Settings → System Users
+   - Create system user
+   - Generate token with `whatsapp_business_messaging` permission
+   - **Important**: Save this token securely!
+
+#### Phone Number ID
+1. In WhatsApp → Getting Started
+2. Find "Phone Number ID" section
+3. Copy the ID (numeric value)
+
+#### Verify Token
+Generate a secure random string:
+```bash
+php -r "echo bin2hex(random_bytes(32));"
+```
+
+### Step 3: Configure Environment
+
+Update `.env` file:
+
+```env
+# Application
+APP_NAME="DUKCAPIL WhatsApp Bot"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+# WhatsApp Business API
+WHATSAPP_API_URL=https://graph.facebook.com/v18.0
+WHATSAPP_ACCESS_TOKEN=your_permanent_access_token
+WHATSAPP_PHONE_NUMBER_ID=123456789012345
+WHATSAPP_VERIFY_TOKEN=your_secure_random_string
+```
+
+### Step 4: Setup Webhook
+
+1. In Meta Dashboard, go to WhatsApp → Configuration
+2. Click "Edit" in Webhook section
+3. Configure:
+   - **Callback URL**: `https://yourdomain.com/api/webhook/whatsapp`
+   - **Verify Token**: Same as `WHATSAPP_VERIFY_TOKEN` in .env
+4. Subscribe to fields:
+   - `messages` ✓
+   - `message_status` ✓ (optional)
+5. Click "Verify and Save"
+
+**Important**: Your domain must have valid SSL certificate!
+
+## Database Configuration
+
+### SQLite (Default - Recommended for Small Deployments)
+
+Advantages:
+- No separate database server
+- Zero configuration
+- Perfect for testing and small deployments
+
+Limitations:
+- Not suitable for high-traffic sites
+- Limited concurrent write operations
+
+Configuration:
+```env
+DB_CONNECTION=sqlite
+```
+
+### MySQL (Recommended for Production)
+
+Advantages:
+- Better performance under load
+- Concurrent operations
+- Advanced features
+
+Configuration:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=dukcapil_wa
+DB_USERNAME=dbuser
+DB_PASSWORD=secure_password
+```
+
+### PostgreSQL (Alternative)
+
+Configuration:
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=dukcapil_wa
+DB_USERNAME=dbuser
+DB_PASSWORD=secure_password
+```
+
+## Running the Application
+
+### Development Mode (Single Terminal)
+
+```bash
+composer run dev
+```
+
+This starts:
+- Laravel development server (port 8000)
+- Queue worker
+- Vite development server
+
+### Production Mode
+
+#### 1. Optimize Application
+
+```bash
+composer install --optimize-autoloader --no-dev
+npm run build
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+#### 2. Setup Web Server
+
+##### Nginx Configuration
+
+```nginx
+server {
+    listen 80;
+    listen [::]:80;
+    server_name yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name yourdomain.com;
+    root /var/www/dukcapil-wa/public;
+
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+```
+
+##### Apache Configuration
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    Redirect permanent / https://yourdomain.com/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName yourdomain.com
+    DocumentRoot /var/www/dukcapil-wa/public
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/yourdomain.com/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/yourdomain.com/privkey.pem
+
+    <Directory /var/www/dukcapil-wa/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/dukcapil_error.log
+    CustomLog ${APACHE_LOG_DIR}/dukcapil_access.log combined
+</VirtualHost>
+```
+
+#### 3. Setup Queue Worker
+
+Create supervisor configuration: `/etc/supervisor/conf.d/dukcapil-queue.conf`
+
+```ini
+[program:dukcapil-queue]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/dukcapil-wa/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/www/dukcapil-wa/storage/logs/queue.log
+stopwaitsecs=3600
+```
+
+Start supervisor:
+```bash
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start dukcapil-queue:*
+```
+
+#### 4. Setup Cron Jobs
+
+Add to crontab:
+```bash
+sudo crontab -e -u www-data
+```
+
+Add line:
+```
+* * * * * cd /var/www/dukcapil-wa && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Production Deployment
+
+### SSL Certificate (Required)
+
+Using Let's Encrypt:
+```bash
+sudo apt update
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d yourdomain.com
+```
+
+### File Permissions
+
+```bash
+sudo chown -R www-data:www-data /var/www/dukcapil-wa
+sudo chmod -R 755 /var/www/dukcapil-wa
+sudo chmod -R 775 /var/www/dukcapil-wa/storage
+sudo chmod -R 775 /var/www/dukcapil-wa/bootstrap/cache
+```
+
+### Security Checklist
+
+- [ ] Change default admin password
+- [ ] Set `APP_DEBUG=false` in production
+- [ ] Use strong `APP_KEY`
+- [ ] Secure database credentials
+- [ ] Keep `WHATSAPP_ACCESS_TOKEN` secret
+- [ ] Enable HTTPS only
+- [ ] Configure firewall (UFW/iptables)
+- [ ] Regular backups
+- [ ] Keep dependencies updated
+
+### Backup Strategy
+
+#### Database Backup
+
+For SQLite:
+```bash
+cp database/database.sqlite database/backup-$(date +%Y%m%d).sqlite
+```
+
+For MySQL:
+```bash
+mysqldump -u username -p dukcapil_wa > backup-$(date +%Y%m%d).sql
+```
+
+#### Full Application Backup
+
+```bash
+tar -czf dukcapil-backup-$(date +%Y%m%d).tar.gz \
+    /var/www/dukcapil-wa \
+    --exclude=node_modules \
+    --exclude=vendor \
+    --exclude=storage/logs
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Webhook Verification Failed
+
+**Symptoms**: Meta can't verify webhook
+**Solutions**:
+- Ensure SSL certificate is valid
+- Check `WHATSAPP_VERIFY_TOKEN` matches in .env and Meta
+- Verify URL is accessible from internet
+- Check firewall settings
+
+#### 2. Messages Not Received
+
+**Symptoms**: Incoming messages don't appear
+**Solutions**:
+- Check webhook subscription in Meta dashboard
+- Review `storage/logs/laravel.log`
+- Ensure queue worker is running
+- Test webhook manually
+
+#### 3. Cannot Send Messages
+
+**Symptoms**: 403 or 401 errors when sending
+**Solutions**:
+- Verify `WHATSAPP_ACCESS_TOKEN` is valid and not expired
+- Check `WHATSAPP_PHONE_NUMBER_ID` is correct
+- Ensure phone number format is correct (no spaces or special chars)
+- Verify Meta app permissions
+
+#### 4. Queue Worker Not Processing
+
+**Symptoms**: Jobs stuck in database
+**Solutions**:
+- Check supervisor status: `sudo supervisorctl status`
+- Restart queue worker: `sudo supervisorctl restart dukcapil-queue:*`
+- Check logs: `tail -f storage/logs/queue.log`
+- Verify database connection
+
+#### 5. Application Errors
+
+**Check logs**:
+```bash
+tail -f storage/logs/laravel.log
+```
+
+**Clear cache**:
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+### Performance Optimization
+
+#### Enable OPcache
+
+Edit `/etc/php/8.2/fpm/php.ini`:
+```ini
+opcache.enable=1
+opcache.memory_consumption=128
+opcache.max_accelerated_files=10000
+opcache.revalidate_freq=2
+```
+
+#### Enable Redis Cache (Optional)
+
+Install Redis:
+```bash
+sudo apt install redis-server php-redis
+```
+
+Update `.env`:
+```env
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+```
+
+### Monitoring
+
+#### Check Application Health
+
+```bash
+php artisan health:check
+```
+
+#### Monitor Queue
+
+```bash
+php artisan queue:monitor
+```
+
+#### Check Logs
+
+```bash
+tail -f storage/logs/laravel.log
+```
+
+## Getting Help
+
+### Documentation
+- [Laravel Documentation](https://laravel.com/docs)
+- [WhatsApp Business API Docs](https://developers.facebook.com/docs/whatsapp)
+- [Repository Issues](https://github.com/yourusername/dukcapil-wa/issues)
+
+### Support Channels
+1. Check existing documentation
+2. Review GitHub issues
+3. Create new issue with:
+   - Detailed description
+   - Steps to reproduce
+   - Error logs
+   - Environment details
 
 ---
 
-**Developed with ❤️ for DUKCAPIL Ponorogo**
+## Next Steps
+
+After setup:
+1. Login to admin dashboard
+2. Create your first bot device
+3. Configure auto-reply rules
+4. Test message sending/receiving
+5. Monitor system performance
+
+**Need help?** Check [WHATSAPP_BUSINESS_API_GUIDE.md](WHATSAPP_BUSINESS_API_GUIDE.md) for detailed API setup.
+
+---
+
+**Built with ❤️ for DUKCAPIL Ponorogo**
