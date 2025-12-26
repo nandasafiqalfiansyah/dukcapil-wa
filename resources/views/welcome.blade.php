@@ -3,6 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Sistem Informasi Dukcapil Ponorogo - WhatsApp Chatbot</title>
 
@@ -193,28 +194,37 @@
                             <p class="text-xl sm:text-2xl mb-8 text-whatsapp-100">
                                 Layanan Administrasi Kependudukan Melalui WhatsApp Chatbot - Cepat, Mudah, dan Terpercaya
                             </p>
-                            @if (Route::has('login'))
-                                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                                <a
+                                    href="#try-chatbot"
+                                    class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-whatsapp-700 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl"
+                                >
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    </svg>
+                                    Coba Chatbot Sekarang
+                                </a>
+                                @if (Route::has('login'))
                                     @auth
                                         <a
                                             href="{{ url('/dashboard') }}"
-                                            class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-whatsapp-700 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl"
+                                            class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
                                         >
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                                             </svg>
-                                            Buka Dashboard
+                                            Dashboard
                                         </a>
                                     @else
                                         <a
                                             href="{{ route('login') }}"
-                                            class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-whatsapp-700 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl"
+                                            class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
                                         >
-                                            Masuk ke Sistem
+                                            Login Admin
                                         </a>
                                     @endauth
-                                </div>
-                            @endif
+                                @endif
+                            </div>
                         </div>
 
                         <!-- Right Content - 3D WhatsApp Chat Illustration -->
@@ -408,14 +418,176 @@
                 </div>
             </div>
 
-            <!-- CTA Section -->
+            <!-- Try Chatbot Section -->
+            <div id="try-chatbot" class="bg-gradient-to-b from-gray-50 to-white py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                            Coba Chatbot Sekarang!
+                        </h2>
+                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Rasakan pengalaman berinteraksi dengan chatbot DUKCAPIL Ponorogo
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                        <!-- Tutorial Panel -->
+                        <div class="lg:col-span-1 space-y-6">
+                            <div class="bg-white rounded-2xl shadow-xl p-6">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                    Panduan Penggunaan
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                            1
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 mb-1">Mulai Percakapan</h4>
+                                            <p class="text-sm text-gray-600">Ketik pesan Anda di kotak chat di sebelah kanan</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                            2
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 mb-1">Bot Akan Merespon</h4>
+                                            <p class="text-sm text-gray-600">Chatbot akan memahami pertanyaan Anda dengan NLP</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                            3
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-900 mb-1">Ikuti Instruksi</h4>
+                                            <p class="text-sm text-gray-600">Bot akan memandu proses layanan yang Anda butuhkan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-6">
+                                <h4 class="font-bold text-blue-900 mb-2 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                    </svg>
+                                    Contoh Pertanyaan:
+                                </h4>
+                                <ul class="space-y-2 text-sm text-blue-800">
+                                    <li class="flex items-start">
+                                        <span class="mr-2">•</span>
+                                        <span>"Bagaimana cara mengurus KTP?"</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="mr-2">•</span>
+                                        <span>"Dokumen apa saja yang diperlukan untuk KK?"</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="mr-2">•</span>
+                                        <span>"Syarat membuat akta kelahiran?"</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <span class="mr-2">•</span>
+                                        <span>"Berapa lama proses pembuatan KTP?"</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6">
+                                <h4 class="font-bold text-yellow-900 mb-2 flex items-center">
+                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    Catatan
+                                </h4>
+                                <p class="text-sm text-yellow-800">
+                                    Ini adalah <strong>demo</strong> chatbot. Untuk layanan resmi, silakan hubungi WhatsApp DUKCAPIL Ponorogo di bawah ini.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Chat Demo Panel -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden" style="height: 700px; max-height: 80vh;">
+                                <!-- Chat Header -->
+                                <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 text-white p-4 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl mr-3">
+                                            🤖
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold">DUKCAPIL Assistant</h3>
+                                            <p class="text-xs text-whatsapp-100">
+                                                <span id="statusIndicator" class="inline-block w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                                Always Online
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button id="demoResetBtn" class="text-white hover:text-whatsapp-100 p-2" title="Reset Chat">
+                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Messages Area -->
+                                <div id="demoMessagesArea" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: calc(100% - 140px);">
+                                    <div class="flex items-center justify-center h-full">
+                                        <div class="text-center">
+                                            <div class="w-20 h-20 bg-whatsapp-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                                <svg class="h-10 w-10 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                                </svg>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-700 mb-2">Selamat Datang!</h3>
+                                            <p class="text-gray-500">Ketik pesan di bawah untuk memulai percakapan</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Input Area -->
+                                <div class="border-t border-gray-200 p-4 bg-white">
+                                    <form id="demoMessageForm" class="flex space-x-2">
+                                        @csrf
+                                        <input type="hidden" id="demoSessionId" value="">
+                                        <input 
+                                            type="text" 
+                                            id="demoMessageInput" 
+                                            placeholder="Ketik pesan Anda..." 
+                                            class="flex-1 rounded-full border-gray-300 focus:border-whatsapp-500 focus:ring focus:ring-whatsapp-200 px-4 py-3"
+                                            autocomplete="off"
+                                            required
+                                        >
+                                        <button 
+                                            type="submit" 
+                                            id="demoSendBtn"
+                                            class="bg-whatsapp-600 hover:bg-whatsapp-700 text-white font-bold p-3 rounded-full transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA WhatsApp Section -->
             <div class="gradient-whatsapp text-white py-16">
                 <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
                     <h2 class="text-3xl sm:text-4xl font-bold mb-6">
-                        Mulai Gunakan Layanan Kami Sekarang
+                        Siap Menggunakan Layanan Resmi?
                     </h2>
                     <p class="text-xl mb-8 text-whatsapp-100">
-                        Layanan administrasi kependudukan yang modern, cepat, dan mudah diakses
+                        Hubungi WhatsApp resmi DUKCAPIL Ponorogo untuk layanan sebenarnya
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
                         {{-- TODO: Replace with actual WhatsApp number: https://wa.me/62XXXXXXXXXXX --}}
@@ -423,21 +595,8 @@
                             <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                             </svg>
-                            Hubungi via WhatsApp
+                            Hubungi via WhatsApp Resmi
                         </a>
-                        <a href="{{ route('chat-demo.index') }}" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-600 transition duration-150 ease-in-out">
-                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                            </svg>
-                            Try Chat Demo
-                        </a>
-                        @if (Route::has('login'))
-                            @guest
-                                <a href="{{ route('login') }}" class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium rounded-lg text-whatsapp-600 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl">
-                                    Login Admin
-                                </a>
-                            @endguest
-                        @endif
                     </div>
                 </div>
             </div>
@@ -480,6 +639,204 @@
             document.getElementById('mobile-menu-button')?.addEventListener('click', function() {
                 const menu = document.getElementById('mobile-menu');
                 menu.classList.toggle('hidden');
+            });
+
+            // Chat Demo Functionality
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+            let demoSessionId = '';
+
+            // Create session on page load
+            async function createDemoSession() {
+                try {
+                    const response = await fetch('{{ route("chat-demo.sessions.create") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        demoSessionId = data.session.id;
+                        document.getElementById('demoSessionId').value = demoSessionId;
+                    }
+                } catch (error) {
+                    console.error('Error creating session:', error);
+                }
+            }
+
+            // Initialize session
+            createDemoSession();
+
+            // Send message
+            document.getElementById('demoMessageForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const messageInput = document.getElementById('demoMessageInput');
+                const message = messageInput.value.trim();
+                
+                if (!message) return;
+                
+                if (!demoSessionId) {
+                    await createDemoSession();
+                }
+                
+                // Add user message to UI immediately
+                appendDemoMessage('user', message);
+                messageInput.value = '';
+                
+                // Show typing indicator
+                const typingIndicator = appendDemoTypingIndicator();
+                
+                try {
+                    const response = await fetch('{{ route("chat-demo.messages.send") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            session_id: demoSessionId,
+                            message: message
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    // Remove typing indicator
+                    typingIndicator.remove();
+                    
+                    if (data.success) {
+                        appendDemoMessage('bot', data.bot_message.message, data.intent, data.confidence);
+                    }
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    typingIndicator.remove();
+                    alert('Gagal mengirim pesan. Silakan coba lagi.');
+                }
+            });
+
+            // Append message to chat
+            function appendDemoMessage(role, message, intent = null, confidence = null) {
+                const messagesArea = document.getElementById('demoMessagesArea');
+                
+                // Remove welcome message if exists
+                const welcomeMsg = messagesArea.querySelector('.text-center');
+                if (welcomeMsg) {
+                    messagesArea.innerHTML = '';
+                }
+                
+                const messageDiv = document.createElement('div');
+                messageDiv.className = role === 'user' ? 'flex justify-end' : 'flex justify-start';
+                
+                const now = new Date();
+                const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+                
+                if (role === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="max-w-[75%] sm:max-w-xs lg:max-w-md">
+                            <div class="bg-whatsapp-500 text-white rounded-2xl rounded-tr-none px-4 py-3 shadow-md">
+                                <p class="text-sm">${escapeHtml(message)}</p>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1 text-right">${time}</p>
+                        </div>
+                    `;
+                } else {
+                    let intentBadge = '';
+                    if (intent) {
+                        const confidencePercent = confidence ? Math.round(confidence * 100) : 0;
+                        intentBadge = `
+                            <div class="mt-2 flex items-center space-x-2">
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${escapeHtml(intent)}</span>
+                                ${confidence ? `<span class="text-xs text-gray-500">${confidencePercent}% confidence</span>` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    messageDiv.innerHTML = `
+                        <div class="max-w-[75%] sm:max-w-xs lg:max-w-md">
+                            <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-md">
+                                <p class="text-sm text-gray-800 whitespace-pre-line">${escapeHtml(message)}</p>
+                                ${intentBadge}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">${time}</p>
+                        </div>
+                    `;
+                }
+                
+                messagesArea.appendChild(messageDiv);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }
+
+            function appendDemoTypingIndicator() {
+                const messagesArea = document.getElementById('demoMessagesArea');
+                const indicatorDiv = document.createElement('div');
+                indicatorDiv.className = 'flex justify-start typing-indicator';
+                indicatorDiv.innerHTML = `
+                    <div class="max-w-xs lg:max-w-md">
+                        <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-md">
+                            <div class="flex space-x-2">
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                messagesArea.appendChild(indicatorDiv);
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                return indicatorDiv;
+            }
+
+            function escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return text.replace(/[&<>"']/g, m => map[m]);
+            }
+
+            // Reset chat
+            document.getElementById('demoResetBtn').addEventListener('click', async () => {
+                if (!confirm('Yakin ingin mereset chat? Semua pesan akan dihapus.')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('{{ route("chat-demo.reset") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                } catch (error) {
+                    console.error('Error resetting chat:', error);
+                    alert('Gagal mereset chat');
+                }
+            });
+
+            // Smooth scroll to chat demo
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
             });
         </script>
     </body>

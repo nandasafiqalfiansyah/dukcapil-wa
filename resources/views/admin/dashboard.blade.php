@@ -10,6 +10,75 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <!-- Quick Actions -->
+            <div class="bg-gradient-to-r from-whatsapp-600 to-whatsapp-700 rounded-xl shadow-lg p-6 mb-6">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    Quick Actions
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="{{ route('admin.chatbot.index') }}" class="bg-white hover:bg-whatsapp-50 rounded-lg p-4 transition duration-150 group">
+                        <div class="flex items-center">
+                            <div class="bg-whatsapp-100 group-hover:bg-whatsapp-200 rounded-lg p-3 transition">
+                                <svg class="h-6 w-6 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900">Test Chatbot</p>
+                                <p class="text-xs text-gray-500">Try the bot</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('admin.chat-config.index') }}" class="bg-white hover:bg-blue-50 rounded-lg p-4 transition duration-150 group">
+                        <div class="flex items-center">
+                            <div class="bg-blue-100 group-hover:bg-blue-200 rounded-lg p-3 transition">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900">Bot Settings</p>
+                                <p class="text-xs text-gray-500">Configure bot</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('welcome') }}#try-chatbot" target="_blank" class="bg-white hover:bg-purple-50 rounded-lg p-4 transition duration-150 group">
+                        <div class="flex items-center">
+                            <div class="bg-purple-100 group-hover:bg-purple-200 rounded-lg p-3 transition">
+                                <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900">Public Demo</p>
+                                <p class="text-xs text-gray-500">Preview page</p>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="{{ route('admin.auto-replies.index') }}" class="bg-white hover:bg-yellow-50 rounded-lg p-4 transition duration-150 group">
+                        <div class="flex items-center">
+                            <div class="bg-yellow-100 group-hover:bg-yellow-200 rounded-lg p-3 transition">
+                                <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900">Auto Replies</p>
+                                <p class="text-xs text-gray-500">Manage replies</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <!-- Statistics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-whatsapp-500 transform hover:scale-105 transition duration-200">

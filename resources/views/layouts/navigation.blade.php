@@ -20,12 +20,48 @@
                     </x-nav-link>
                     
                     @can('role', 'admin,officer,viewer')
-                        <x-nav-link :href="route('admin.chatbot.index')" :active="request()->routeIs('admin.chatbot.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('Chat Bot') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('chat-demo.index')" :active="request()->routeIs('chat-demo.*')" class="text-white hover:text-whatsapp-100" target="_blank">
-                            {{ __('Chat Demo') }}
-                        </x-nav-link>
+                        <!-- Chatbot Dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out text-white hover:text-whatsapp-100 border-transparent hover:border-whatsapp-300 focus:outline-none focus:text-whatsapp-100 focus:border-whatsapp-300">
+                                <span>Chatbot</span>
+                                <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="open" @click.away="open = false" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                <div class="py-1">
+                                    <a href="{{ route('admin.chatbot.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                        <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                        </svg>
+                                        Test Chat
+                                    </a>
+                                    <a href="{{ route('welcome') }}#try-chatbot" target="_blank" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                        <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                        </svg>
+                                        Public Demo
+                                    </a>
+                                    @can('role', 'admin')
+                                        <a href="{{ route('admin.chat-config.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                            <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Settings
+                                        </a>
+                                        <a href="{{ route('admin.auto-replies.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                            <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                            </svg>
+                                            Auto Replies
+                                        </a>
+                                    @endcan
+                                </div>
+                            </div>
+                        </div>
+
                         <x-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white hover:text-whatsapp-100">
                             {{ __('Conversations') }}
                         </x-nav-link>
@@ -35,21 +71,37 @@
                     @endcan
                     
                     @can('role', 'admin')
-                        <x-nav-link :href="route('admin.chat-config.index')" :active="request()->routeIs('admin.chat-config.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('Chat Config') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.nlp-logs.index')" :active="request()->routeIs('admin.nlp-logs.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('NLP Logs') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.bots.index')" :active="request()->routeIs('admin.bots.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('Bots') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.auto-replies.index')" :active="request()->routeIs('admin.auto-replies.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('Auto-Reply') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.*')" class="text-white hover:text-whatsapp-100">
-                            {{ __('Users') }}
-                        </x-nav-link>
+                        <!-- Admin Dropdown -->
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out text-white hover:text-whatsapp-100 border-transparent hover:border-whatsapp-300 focus:outline-none focus:text-whatsapp-100 focus:border-whatsapp-300">
+                                <span>Admin</span>
+                                <svg class="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            <div x-show="open" @click.away="open = false" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                <div class="py-1">
+                                    <a href="{{ route('admin.bots.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                        <svg class="inline-block w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                        </svg>
+                                        WA Devices
+                                    </a>
+                                    <a href="{{ route('admin.nlp-logs.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                        <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                        </svg>
+                                        NLP Logs
+                                    </a>
+                                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-whatsapp-50">
+                                        <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                        </svg>
+                                        Users
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     @endcan
                 </div>
             </div>

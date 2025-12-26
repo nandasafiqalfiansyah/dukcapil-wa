@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('welcome');
 
 // Public Chat Demo Routes (no authentication required)
 Route::prefix('chat-demo')->name('chat-demo.')->group(function () {
