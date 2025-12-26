@@ -20,6 +20,9 @@
                     </x-nav-link>
                     
                     @can('role', 'admin,officer,viewer')
+                        <x-nav-link :href="route('admin.chatbot.index')" :active="request()->routeIs('admin.chatbot.*')" class="text-white hover:text-whatsapp-100">
+                            {{ __('Chat Bot') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white hover:text-whatsapp-100">
                             {{ __('Conversations') }}
                         </x-nav-link>
@@ -96,6 +99,9 @@
             </x-responsive-nav-link>
             
             @can('role', 'admin,officer,viewer')
+                <x-responsive-nav-link :href="route('admin.chatbot.index')" :active="request()->routeIs('admin.chatbot.*')" class="text-white">
+                    {{ __('Chat Bot') }}
+                </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white">
                     {{ __('Conversations') }}
                 </x-responsive-nav-link>
