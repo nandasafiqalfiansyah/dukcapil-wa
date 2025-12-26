@@ -33,7 +33,7 @@
             @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- QR Code / Connection Status (Main) -->
+                <!-- Connection Status (Main) -->
                 <div class="lg:col-span-2">
                     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
                         <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 p-6 text-white">
@@ -41,49 +41,13 @@
                                 <svg class="h-8 w-8 mr-3" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                 </svg>
-                                Device Connection
+                                WhatsApp Business API
                             </h3>
-                            <p class="mt-2 text-whatsapp-100">Connect your WhatsApp to start managing messages</p>
+                            <p class="mt-2 text-whatsapp-100">Manage your WhatsApp messages using Meta's official API</p>
                         </div>
                         
-                        <div id="qr-code-container" class="p-8">
-                            @if($bot->status === 'qr_generated' && $bot->qr_code)
-                                <div class="text-center">
-                                    <div class="bg-white p-6 rounded-xl shadow-inner inline-block mb-4">
-                                        <img src="{{ $bot->qr_code }}" alt="QR Code" class="w-64 h-64 mx-auto">
-                                    </div>
-                                    <div class="bg-whatsapp-50 border-2 border-whatsapp-500 rounded-xl p-6 max-w-lg mx-auto">
-                                        <h4 class="text-lg font-bold text-whatsapp-700 mb-4 flex items-center justify-center">
-                                            <svg class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                            </svg>
-                                            How to Connect
-                                        </h4>
-                                        <ol class="text-left text-whatsapp-700 space-y-3">
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">1</span>
-                                                <span>Open <strong>WhatsApp</strong> on your phone</span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">2</span>
-                                                <span>Tap <strong>Menu</strong> (⋮) or <strong>Settings</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">3</span>
-                                                <span>Select <strong>Linked Devices</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">4</span>
-                                                <span>Tap <strong>Link a Device</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">5</span>
-                                                <span>Point your camera at this <strong>QR code</strong></span>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            @elseif($bot->isConnected())
+                        <div class="p-8">
+                            @if($bot->isConnected())
                                 <div class="text-center py-12">
                                     <div class="bg-whatsapp-100 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6">
                                         <svg class="h-20 w-20 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -92,39 +56,8 @@
                                     </div>
                                     <h3 class="text-3xl font-bold text-whatsapp-600 mb-2">Connected!</h3>
                                     <p class="text-gray-600 text-lg">
-                                        Your WhatsApp device is connected and ready to use.
+                                        Your WhatsApp Business API is configured and ready to use.
                                     </p>
-                                </div>
-                            @elseif($bot->status === 'initializing')
-                                <div class="text-center py-12">
-                                    <div class="bg-blue-100 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6">
-                                        <svg class="animate-spin h-20 w-20 text-blue-600" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-3xl font-bold text-blue-600 mb-2">Initializing...</h3>
-                                    <p class="text-gray-600 text-lg">
-                                        Starting up the connection. QR code will appear shortly.
-                                    </p>
-                                </div>
-                            @elseif($bot->status === 'auth_failed')
-                                <div class="text-center py-12">
-                                    <div class="bg-red-100 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6">
-                                        <svg class="h-20 w-20 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-3xl font-bold text-red-600 mb-2">Authentication Failed</h3>
-                                    <p class="text-gray-600 text-lg mb-6">
-                                        Unable to authenticate. Please try reinitializing the device.
-                                    </p>
-                                    <form action="{{ route('admin.bots.reinitialize', $bot) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="bg-whatsapp-500 hover:bg-whatsapp-600 text-white font-bold py-3 px-8 rounded-lg transition duration-150">
-                                            Reinitialize Device
-                                        </button>
-                                    </form>
                                 </div>
                             @else
                                 <div class="text-center py-12">
@@ -135,16 +68,67 @@
                                     </div>
                                     <h3 class="text-3xl font-bold text-gray-700 mb-2">Not Connected</h3>
                                     <p class="text-gray-600 text-lg mb-6">
-                                        Generate a QR code to connect your WhatsApp device.
+                                        Configure your WhatsApp Business API credentials in the .env file.
                                     </p>
-                                    <form action="{{ route('admin.bots.reinitialize', $bot) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" class="bg-whatsapp-500 hover:bg-whatsapp-600 text-white font-bold py-3 px-8 rounded-lg transition duration-150">
-                                            Generate QR Code
-                                        </button>
-                                    </form>
+                                    <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 max-w-lg mx-auto text-left">
+                                        <p class="font-bold mb-2">Required Configuration:</p>
+                                        <ul class="list-disc list-inside space-y-1 text-sm">
+                                            <li>WHATSAPP_ACCESS_TOKEN</li>
+                                            <li>WHATSAPP_PHONE_NUMBER_ID</li>
+                                            <li>WHATSAPP_VERIFY_TOKEN</li>
+                                        </ul>
+                                        <p class="mt-3 text-sm">
+                                            Get these credentials from <a href="https://developers.facebook.com/" target="_blank" class="underline font-semibold">Meta for Developers</a>
+                                        </p>
+                                    </div>
                                 </div>
                             @endif
+                        </div>
+                    </div>
+
+                    <!-- Configuration Guide -->
+                    <div class="mt-6 bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="bg-blue-600 p-4 text-white">
+                            <h3 class="text-lg font-bold">Setup Guide</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4 text-gray-700">
+                                <div class="flex items-start">
+                                    <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">1</span>
+                                    <div>
+                                        <p class="font-semibold">Create a Meta App</p>
+                                        <p class="text-sm text-gray-600">Visit <a href="https://developers.facebook.com/" target="_blank" class="text-blue-600 underline">Meta for Developers</a> and create a new app</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">2</span>
+                                    <div>
+                                        <p class="font-semibold">Add WhatsApp Product</p>
+                                        <p class="text-sm text-gray-600">Add the WhatsApp Business Platform product to your app</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">3</span>
+                                    <div>
+                                        <p class="font-semibold">Get Credentials</p>
+                                        <p class="text-sm text-gray-600">Copy the Access Token and Phone Number ID from the dashboard</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">4</span>
+                                    <div>
+                                        <p class="font-semibold">Configure Webhook</p>
+                                        <p class="text-sm text-gray-600">Set webhook URL to: <code class="bg-gray-100 px-2 py-1 rounded">{{ config('app.url') }}/api/webhook/whatsapp</code></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">5</span>
+                                    <div>
+                                        <p class="font-semibold">Update .env File</p>
+                                        <p class="text-sm text-gray-600">Add your credentials to the .env file and restart the application</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,14 +154,11 @@
 
                             <div>
                                 <label class="text-xs font-semibold text-gray-500 uppercase">Status</label>
-                                <div id="bot-status">
+                                <div>
                                     @php
                                         $statusColors = [
                                             'connected' => 'bg-whatsapp-100 text-whatsapp-800 border-whatsapp-500',
-                                            'qr_generated' => 'bg-yellow-100 text-yellow-800 border-yellow-500',
-                                            'initializing' => 'bg-blue-100 text-blue-800 border-blue-500',
                                             'disconnected' => 'bg-gray-100 text-gray-800 border-gray-500',
-                                            'auth_failed' => 'bg-red-100 text-red-800 border-red-500',
                                             'not_initialized' => 'bg-gray-100 text-gray-800 border-gray-500',
                                         ];
                                         $color = $statusColors[$bot->status] ?? 'bg-gray-100 text-gray-800 border-gray-500';
@@ -190,17 +171,15 @@
 
                             @if($bot->phone_number)
                                 <div>
-                                    <label class="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
-                                    <p class="text-gray-900 font-mono">{{ $bot->phone_number }}</p>
+                                    <label class="text-xs font-semibold text-gray-500 uppercase">Phone Number ID</label>
+                                    <p class="text-gray-900 font-mono text-sm">{{ $bot->phone_number }}</p>
                                 </div>
                             @endif
 
-                            @if($bot->platform)
-                                <div>
-                                    <label class="text-xs font-semibold text-gray-500 uppercase">Platform</label>
-                                    <p class="text-gray-900">{{ $bot->platform }}</p>
-                                </div>
-                            @endif
+                            <div>
+                                <label class="text-xs font-semibold text-gray-500 uppercase">Platform</label>
+                                <p class="text-gray-900">WhatsApp Business API</p>
+                            </div>
 
                             @if($bot->last_connected_at)
                                 <div>
@@ -222,25 +201,23 @@
                                 <form action="{{ route('admin.bots.disconnect', $bot) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
-                                        Disconnect
+                                        Deactivate
                                     </button>
                                 </form>
-                            @endif
-
-                            @if($bot->needsQrScan())
+                            @else
                                 <form action="{{ route('admin.bots.reinitialize', $bot) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
-                                        Reinitialize
+                                        Activate
                                     </button>
                                 </form>
                             @endif
 
                             <form action="{{ route('admin.bots.logout', $bot) }}" method="POST" 
-                                  onsubmit="return confirm('Are you sure? You will need to scan QR code again.')">
+                                  onsubmit="return confirm('Are you sure? This will remove the bot configuration.')">
                                 @csrf
                                 <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
-                                    Logout Device
+                                    Remove Configuration
                                 </button>
                             </form>
 
@@ -254,103 +231,30 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- Statistics Card -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div class="bg-whatsapp-600 p-4 text-white">
+                            <h3 class="text-lg font-bold">Statistics</h3>
+                        </div>
+                        
+                        <div class="p-4 space-y-3">
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-600">Messages Received</span>
+                                <span class="font-bold text-gray-900">{{ $bot->conversationLogs()->where('direction', 'incoming')->count() }}</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b">
+                                <span class="text-gray-600">Messages Sent</span>
+                                <span class="font-bold text-gray-900">{{ $bot->conversationLogs()->where('direction', 'outgoing')->count() }}</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-gray-600">Total Conversations</span>
+                                <span class="font-bold text-gray-900">{{ $bot->conversationLogs()->count() }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
-        // Auto-refresh bot status every 5 seconds
-        let refreshInterval;
-        
-        function refreshBotStatus() {
-            fetch('{{ route('admin.bots.status', $bot) }}')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.bot) {
-                        const bot = data.bot;
-                        
-                        // Update status badge
-                        const statusColors = {
-                            'connected': 'bg-whatsapp-100 text-whatsapp-800 border-whatsapp-500',
-                            'qr_generated': 'bg-yellow-100 text-yellow-800 border-yellow-500',
-                            'initializing': 'bg-blue-100 text-blue-800 border-blue-500',
-                            'disconnected': 'bg-gray-100 text-gray-800 border-gray-500',
-                            'auth_failed': 'bg-red-100 text-red-800 border-red-500',
-                            'not_initialized': 'bg-gray-100 text-gray-800 border-gray-500',
-                        };
-                        
-                        const statusElement = document.getElementById('bot-status');
-                        const color = statusColors[bot.status] || 'bg-gray-100 text-gray-800 border-gray-500';
-                        const statusText = bot.status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        statusElement.innerHTML = `<span class="inline-flex px-3 py-1 text-xs font-bold rounded-full border-2 ${color}">${statusText}</span>`;
-                        
-                        // Update QR code container
-                        const qrContainer = document.getElementById('qr-code-container');
-                        if (bot.status === 'qr_generated' && bot.qr_code) {
-                            qrContainer.innerHTML = `
-                                <div class="text-center">
-                                    <div class="bg-white p-6 rounded-xl shadow-inner inline-block mb-4">
-                                        <img src="${bot.qr_code}" alt="QR Code" class="w-64 h-64 mx-auto">
-                                    </div>
-                                    <div class="bg-whatsapp-50 border-2 border-whatsapp-500 rounded-xl p-6 max-w-lg mx-auto">
-                                        <h4 class="text-lg font-bold text-whatsapp-700 mb-4 flex items-center justify-center">
-                                            <svg class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                            </svg>
-                                            How to Connect
-                                        </h4>
-                                        <ol class="text-left text-whatsapp-700 space-y-3">
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">1</span>
-                                                <span>Open <strong>WhatsApp</strong> on your phone</span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">2</span>
-                                                <span>Tap <strong>Menu</strong> (⋮) or <strong>Settings</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">3</span>
-                                                <span>Select <strong>Linked Devices</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">4</span>
-                                                <span>Tap <strong>Link a Device</strong></span>
-                                            </li>
-                                            <li class="flex items-start">
-                                                <span class="bg-whatsapp-500 text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 font-bold">5</span>
-                                                <span>Point your camera at this <strong>QR code</strong></span>
-                                            </li>
-                                        </ol>
-                                    </div>
-                                </div>
-                            `;
-                        } else if (bot.connected) {
-                            qrContainer.innerHTML = `
-                                <div class="text-center py-12">
-                                    <div class="bg-whatsapp-100 rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6">
-                                        <svg class="h-20 w-20 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <h3 class="text-3xl font-bold text-whatsapp-600 mb-2">Connected!</h3>
-                                    <p class="text-gray-600 text-lg">Your WhatsApp device is connected and ready to use.</p>
-                                </div>
-                            `;
-                            // Stop refreshing when connected
-                            clearInterval(refreshInterval);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error refreshing bot status:', error));
-        }
-
-        // Start auto-refresh
-        refreshInterval = setInterval(refreshBotStatus, 5000);
-        
-        // Clean up on page unload
-        window.addEventListener('beforeunload', () => {
-            clearInterval(refreshInterval);
-        });
-    </script>
 </x-app-layout>
