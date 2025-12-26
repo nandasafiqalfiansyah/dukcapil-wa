@@ -36,19 +36,19 @@ class BotInstance extends Model
     }
 
     /**
-     * Check if bot is connected.
+     * Check if bot is connected (for Business API, this means it's active and configured).
      */
     public function isConnected(): bool
     {
-        return $this->status === 'connected';
+        return $this->status === 'connected' && $this->is_active;
     }
 
     /**
-     * Check if bot needs QR code scan.
+     * Check if bot needs configuration.
      */
-    public function needsQrScan(): bool
+    public function needsConfiguration(): bool
     {
-        return in_array($this->status, ['not_initialized', 'qr_generated', 'disconnected']);
+        return in_array($this->status, ['not_initialized', 'disconnected']);
     }
 
     /**
