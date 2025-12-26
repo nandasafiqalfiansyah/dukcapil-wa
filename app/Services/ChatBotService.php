@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Log;
 
 class ChatBotService
 {
+    protected WhatsAppService $whatsappService;
+
+    public function __construct(WhatsAppService $whatsappService)
+    {
+        $this->whatsappService = $whatsappService;
+    }
+
     /**
      * Process user message and generate bot response.
      */
@@ -189,8 +196,7 @@ class ChatBotService
     protected function sendToWhatsApp(ChatSession $session, string $message): void
     {
         try {
-            $whatsappService = app(WhatsAppService::class);
-            $result = $whatsappService->sendMessage(
+            $result = $this->whatsappService->sendMessage(
                 $session->whatsapp_number,
                 $message,
                 $session->botInstance
@@ -239,10 +245,7 @@ class ChatBotService
                 ->get();
         }
 
-        // For guest users, return empty collection
-        return ChatSession::whereNull('user_id')
-            ->where('created_at', '>=', now()->subDays(1))
-            ->orderBy('updated_at', 'desc')
-            ->get();
+        // For guest users, return empty collection for security
+        return new \Illuminate\Database\Eloquent\Collection();
     }
 }

@@ -305,7 +305,7 @@
                 messageDiv.innerHTML = `
                     <div class="max-w-xs lg:max-w-md xl:max-w-lg">
                         <div class="bg-white border border-gray-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-md">
-                            <p class="text-sm text-gray-800">${escapeHtml(message).replace(/\n/g, '<br>')}</p>
+                            <p class="text-sm text-gray-800 whitespace-pre-line">${escapeHtml(message)}</p>
                             ${intentBadge}
                         </div>
                         <p class="text-xs text-gray-500 mt-1">${time}</p>
