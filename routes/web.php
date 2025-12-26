@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AutoReplyConfigController;
 use App\Http\Controllers\Admin\BotInstanceController;
+use App\Http\Controllers\Admin\ChatBotController;
 use App\Http\Controllers\Admin\ConversationLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentValidationController;
@@ -27,6 +28,17 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Chat Bot Testing routes
+    Route::prefix('chatbot')->name('chatbot.')->group(function () {
+        Route::get('/', [ChatBotController::class, 'index'])->name('index');
+        Route::post('/sessions', [ChatBotController::class, 'createSession'])->name('sessions.create');
+        Route::get('/sessions', [ChatBotController::class, 'getSessions'])->name('sessions.list');
+        Route::post('/messages', [ChatBotController::class, 'sendMessage'])->name('messages.send');
+        Route::get('/sessions/{sessionId}/messages', [ChatBotController::class, 'getMessages'])->name('messages.get');
+        Route::put('/sessions/{sessionId}', [ChatBotController::class, 'updateSession'])->name('sessions.update');
+        Route::delete('/sessions/{sessionId}', [ChatBotController::class, 'deleteSession'])->name('sessions.delete');
+    });
 
     Route::resource('conversations', ConversationLogController::class)->only(['index', 'show']);
 
