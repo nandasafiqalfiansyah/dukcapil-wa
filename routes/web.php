@@ -3,17 +3,29 @@
 use App\Http\Controllers\Admin\AutoReplyConfigController;
 use App\Http\Controllers\Admin\BotInstanceController;
 use App\Http\Controllers\Admin\ChatBotController;
+use App\Http\Controllers\Admin\ChatConfigController;
 use App\Http\Controllers\Admin\ConversationLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentValidationController;
+use App\Http\Controllers\Admin\NlpLogController;
 use App\Http\Controllers\Admin\ServiceRequestController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WhatsAppUserController;
+use App\Http\Controllers\ChatDemoController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Public Chat Demo Routes (no authentication required)
+Route::prefix('chat-demo')->name('chat-demo.')->group(function () {
+    Route::get('/', [ChatDemoController::class, 'index'])->name('index');
+    Route::post('/sessions', [ChatDemoController::class, 'createSession'])->name('sessions.create');
+    Route::post('/messages', [ChatDemoController::class, 'sendMessage'])->name('messages.send');
+    Route::get('/sessions/{sessionId}/messages', [ChatDemoController::class, 'getMessages'])->name('messages.get');
+    Route::post('/reset', [ChatDemoController::class, 'resetSession'])->name('reset');
 });
 
 Route::get('/dashboard', function () {
@@ -76,6 +88,15 @@ Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name(
         // Auto-reply configuration routes
         Route::resource('auto-replies', AutoReplyConfigController::class);
         Route::post('auto-replies/{autoReply}/toggle-active', [AutoReplyConfigController::class, 'toggleActive'])->name('auto-replies.toggle-active');
+
+        // Chat configuration routes
+        Route::resource('chat-config', ChatConfigController::class);
+        Route::post('chat-config/{chatConfig}/toggle-active', [ChatConfigController::class, 'toggleActive'])->name('chat-config.toggle-active');
+
+        // NLP logs routes
+        Route::get('nlp-logs', [NlpLogController::class, 'index'])->name('nlp-logs.index');
+        Route::get('nlp-logs/live', [NlpLogController::class, 'live'])->name('nlp-logs.live');
+        Route::get('nlp-logs/statistics', [NlpLogController::class, 'statistics'])->name('nlp-logs.statistics');
     });
 });
 
