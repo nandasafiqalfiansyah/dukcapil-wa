@@ -23,9 +23,9 @@ cd dukcapil-wa
 composer install
 npm install
 
-# Install bot dependencies
-cd bot
-npm install
+# Install WhatsApp dependencies
+cd bot-runtime
+npm install whatsapp-web.js qrcode axios
 cd ..
 ```
 
@@ -36,20 +36,8 @@ cd ..
 cp .env.example .env
 php artisan key:generate
 
-# Generate secure token
-php -r "echo bin2hex(random_bytes(32)).PHP_EOL;" > token.txt
-# Copy token dari token.txt ke .env
-
-# Edit .env, tambahkan:
-BOT_API_TOKEN=<token-dari-file-token.txt>
-WHATSAPP_BOT_SERVER_URL=http://localhost:3000
-
-# Setup bot server
-cd bot
-cp .env.example .env
-# Edit bot/.env, gunakan token yang sama:
-BOT_API_TOKEN=<token-yang-sama>
-cd ..
+# Setup database
+php artisan migrate --seed
 ```
 
 ### 3. Setup Database

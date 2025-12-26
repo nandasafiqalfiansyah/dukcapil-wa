@@ -50,8 +50,29 @@ class BotInstanceController extends Controller
         );
 
         if ($result['success']) {
+            // Prime the local status so the QR page can render immediately
+            $bot = BotInstance::where('bot_id', $validated['bot_id'])->first();
+
+            if ($bot) {
+                $statusResult = $this->whatsappService->getBotStatus($bot->bot_id);
+
+                if ($statusResult['success']) {
+                    $serverStatus = $statusResult['data'];
+
+                    $bot->update([
+                        'status' => $serverStatus['status'] ?? 'initializing',
+                        'qr_code' => $serverStatus['qr_code'] ?? null,
+                    ]);
+
+                    $bot->refresh();
+                }
+
+                return redirect()->route('admin.bots.show', $bot)
+                    ->with('success', 'Bot instance created. Scan the QR code to connect WhatsApp.');
+            }
+
             return redirect()->route('admin.bots.index')
-                ->with('success', 'Bot instance created and initializing. Please scan the QR code.');
+                ->with('success', 'Bot instance created and initializing.');
         }
 
         return back()->withErrors(['error' => $result['error'] ?? 'Failed to initialize bot'])

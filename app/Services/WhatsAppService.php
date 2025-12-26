@@ -11,14 +11,11 @@ use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
-    protected string $botServerUrl;
+    protected WhatsAppBotManager $botManager;
 
-    protected string $botApiToken;
-
-    public function __construct()
+    public function __construct(WhatsAppBotManager $botManager)
     {
-        $this->botServerUrl = config('services.whatsapp_bot.server_url', 'http://localhost:3000');
-        $this->botApiToken = config('services.whatsapp_bot.api_token', 'default-token');
+        $this->botManager = $botManager;
     }
 
     /**
@@ -283,44 +280,7 @@ class WhatsAppService
      */
     public function initializeBot(string $botId, string $botName): array
     {
-        try {
-            $response = Http::withToken($this->botApiToken)
-                ->post("{$this->botServerUrl}/bot/initialize", [
-                    'bot_id' => $botId,
-                    'bot_name' => $botName,
-                ]);
-
-            if ($response->successful()) {
-                // Create or update bot instance in database
-                BotInstance::updateOrCreate(
-                    ['bot_id' => $botId],
-                    [
-                        'name' => $botName,
-                        'status' => 'initializing',
-                        'is_active' => true,
-                    ]
-                );
-
-                return [
-                    'success' => true,
-                    'data' => $response->json(),
-                ];
-            }
-
-            return [
-                'success' => false,
-                'error' => $response->json(),
-            ];
-        } catch (\Exception $e) {
-            Log::error('Error initializing bot', [
-                'error' => $e->getMessage(),
-            ]);
-
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
-        }
+        return $this->botManager->initializeBot($botId, $botName);
     }
 
     /**
@@ -328,27 +288,7 @@ class WhatsAppService
      */
     public function getBotStatus(string $botId): array
     {
-        try {
-            $response = Http::withToken($this->botApiToken)
-                ->get("{$this->botServerUrl}/bot/{$botId}/status");
-
-            if ($response->successful()) {
-                return [
-                    'success' => true,
-                    'data' => $response->json(),
-                ];
-            }
-
-            return [
-                'success' => false,
-                'error' => $response->json(),
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
-        }
+        return $this->botManager->getBotStatus($botId);
     }
 
     /**
@@ -356,35 +296,7 @@ class WhatsAppService
      */
     public function disconnectBot(string $botId): array
     {
-        try {
-            $response = Http::withToken($this->botApiToken)
-                ->post("{$this->botServerUrl}/bot/{$botId}/disconnect");
-
-            if ($response->successful()) {
-                $bot = BotInstance::where('bot_id', $botId)->first();
-                if ($bot) {
-                    $bot->update([
-                        'status' => 'disconnected',
-                        'last_disconnected_at' => now(),
-                    ]);
-                }
-
-                return [
-                    'success' => true,
-                    'data' => $response->json(),
-                ];
-            }
-
-            return [
-                'success' => false,
-                'error' => $response->json(),
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
-        }
+        return $this->botManager->disconnectBot($botId);
     }
 
     /**
@@ -392,36 +304,6 @@ class WhatsAppService
      */
     public function logoutBot(string $botId): array
     {
-        try {
-            $response = Http::withToken($this->botApiToken)
-                ->post("{$this->botServerUrl}/bot/{$botId}/logout");
-
-            if ($response->successful()) {
-                $bot = BotInstance::where('bot_id', $botId)->first();
-                if ($bot) {
-                    $bot->update([
-                        'status' => 'not_initialized',
-                        'phone_number' => null,
-                        'platform' => null,
-                        'qr_code' => null,
-                    ]);
-                }
-
-                return [
-                    'success' => true,
-                    'data' => $response->json(),
-                ];
-            }
-
-            return [
-                'success' => false,
-                'error' => $response->json(),
-            ];
-        } catch (\Exception $e) {
-            return [
-                'success' => false,
-                'error' => $e->getMessage(),
-            ];
-        }
+        return $this->botManager->logoutBot($botId);
     }
 }

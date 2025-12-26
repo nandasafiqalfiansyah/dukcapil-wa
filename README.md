@@ -37,10 +37,8 @@ php artisan migrate --seed
 # 3. Build assets
 npm run build
 
-# 4. Run (3 terminals needed)
-# Terminal 1: php artisan serve
-# Terminal 2: php artisan queue:work  
-# Terminal 3: cd bot && npm start
+# 4. Run
+npm run start
 ```
 
 ### Default Login
@@ -118,7 +116,7 @@ APP_URL=http://localhost:8000
 
 | Issue | Solution |
 |-------|----------|
-| QR code not showing | Check bot server is running: `cd bot && npm start` |
+| QR code not showing | Check bot log: `tail -f storage/logs/bot-*.log` |
 | Bot disconnects | Sessions expire after 15-20 days, rescan QR code |
 | Build errors | Run `npm run build && php artisan config:clear` |
 
@@ -126,7 +124,7 @@ APP_URL=http://localhost:8000
 
 - **Backend**: Laravel 12, PHP 8.2
 - **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
-- **Bot**: Node.js, Express, WhatsApp Web.js
+- **Bot**: WhatsApp Web.js (integrated in Laravel)
 - **Database**: SQLite/MySQL/PostgreSQL
 - **Queue**: Laravel Queue
 - **Testing**: Pest

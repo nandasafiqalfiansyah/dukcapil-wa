@@ -35,16 +35,4 @@ return [
         ],
     ],
 
-    'whatsapp' => [
-        'api_url' => env('WHATSAPP_API_URL', 'https://graph.facebook.com/v18.0'),
-        'access_token' => env('WHATSAPP_ACCESS_TOKEN'),
-        'phone_number_id' => env('WHATSAPP_PHONE_NUMBER_ID'),
-        'verify_token' => env('WHATSAPP_VERIFY_TOKEN'),
-    ],
-
-    'whatsapp_bot' => [
-        'server_url' => env('WHATSAPP_BOT_SERVER_URL', 'http://localhost:3000'),
-        'api_token' => env('BOT_API_TOKEN', 'default-token'),
-    ],
-
 ];

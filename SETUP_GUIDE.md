@@ -63,56 +63,41 @@ php artisan key:generate
 php artisan migrate --seed
 ```
 
-### Step 3: Configure Bot Server
-
-Generate a secure API token:
-```bash
-php -r "echo bin2hex(random_bytes(32));"
-```
-
-Add to `.env`:
-```env
-BOT_API_TOKEN=your-generated-token-here
-WHATSAPP_BOT_SERVER_URL=http://localhost:3000
-```
-
-Create `bot/.env`:
-```env
-BOT_PORT=3000
-BOT_API_TOKEN=same-token-as-above
-APP_URL=http://localhost:8000
-LARAVEL_TIMEOUT=5000
-```
-
-### Step 4: Build Frontend Assets
+### Step 3: Build Frontend Assets
 
 ```bash
 npm run build
 ```
 
-### Step 5: Run the Application
+### Step 4: Run the Application
 
-You need **3 terminal windows**:
+**Development Mode:**
+```bash
+npm run start
+```
+
+Or manually with **2 terminals**:
 
 **Terminal 1 - Laravel Server:**
 ```bash
 php artisan serve
 ```
 
-**Terminal 2 - Queue Worker:**
+**Terminal 2 - Frontend Dev Server:**
 ```bash
-php artisan queue:work
+npm run dev
 ```
 
-**Terminal 3 - Bot Server:**
+**Terminal 2 - Frontend Dev Server:**
 ```bash
-cd bot
-npm start
+npm run dev
 ```
 
 The application will be available at: **http://localhost:8000**
 
 ## 📱 Connecting Your WhatsApp Device
+
+### Via Web Interface
 
 1. **Login to Admin Dashboard**
    - Visit: http://localhost:8000/login
@@ -126,6 +111,7 @@ The application will be available at: **http://localhost:8000**
    - Click "Create Device"
 
 3. **Scan QR Code**
+   - QR code will appear automatically
    - Open WhatsApp on your phone
    - Tap Menu ⋮ → Settings → Linked Devices
    - Tap "Link a Device"
@@ -135,17 +121,41 @@ The application will be available at: **http://localhost:8000**
    - Once connected, the bot will automatically receive and respond to messages
    - All conversations are logged in the admin dashboard
 
+### Via CLI
+
+```bash
+# List all bots
+php artisan whatsapp:bot list
+
+# Start a specific bot
+php artisan whatsapp:bot start --bot-id=bot-1
+
+# Check bot status
+php artisan whatsapp:bot status --bot-id=bot-1
+
+# Stop a bot
+php artisan whatsapp:bot stop --bot-id=bot-1
+```
+
 ## 🏗️ Project Structure
 
 ```
 dukcapil-wa/
 ├── app/                    # Laravel application code
+│   ├── Console/Commands/  # CLI commands
+│   │   └── WhatsAppBotCommand.php
 │   ├── Http/Controllers/  # Controllers
 │   ├── Models/            # Database models
 │   └── Services/          # Business logic
-├── bot/                   # WhatsApp bot server (Node.js)
-│   ├── server.js          # Express server for WhatsApp
-│   └── package.json       # Bot dependencies
+│       ├── WhatsAppBotManager.php  # Bot lifecycle manager
+│       └── WhatsAppService.php     # WhatsApp operations
+├── bot-runtime/           # Auto-generated bot scripts
+│   └── bot-{id}.js        # Individual bot instance script
+├── storage/
+│   ├── app/
+│   │   └── whatsapp-sessions/  # WhatsApp sessions per bot
+│   └── logs/
+│       └── bot-{id}.log        # Bot logs
 ├── resources/
 │   ├── views/             # Blade templates
 │   │   └── admin/
@@ -158,8 +168,7 @@ dukcapil-wa/
 │   └── api.php            # API routes
 ├── database/
 │   └── migrations/        # Database migrations
-├── .env                   # Laravel configuration
-└── bot/.env              # Bot server configuration
+└── .env                   # Laravel configuration
 ```
 
 ## 🎨 UI Theme
@@ -250,7 +259,7 @@ pm2 logs dukcapil-whatsapp-bot  # if using PM2
 ### Bot Disconnects Frequently
 - WhatsApp sessions expire after 15-20 days
 - Rescan QR code when this happens
-- Session data is stored in `bot/.wwebjs_auth/`
+- Session data is stored in `storage/app/whatsapp-sessions/`
 
 ### Build Errors
 ```bash
@@ -271,24 +280,17 @@ php artisan view:clear
 
 ### Running in Development Mode
 ```bash
-# Terminal 1 - Laravel with hot reload
-composer run dev
+# Automatic (recommended)
+npm run start
 ```
-This starts Laravel server, queue worker, logs, and Vite dev server.
 
 ### Manual Development
 ```bash
-# Terminal 1
+# Terminal 1 - Laravel
 php artisan serve
 
-# Terminal 2  
-php artisan queue:work
-
-# Terminal 3
+# Terminal 2 - Frontend
 npm run dev
-
-# Terminal 4
-cd bot && npm start
 ```
 
 ## 📝 License
