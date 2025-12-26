@@ -450,7 +450,7 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
-                                            #{{ $log->session_id }}
+                                            #{{ $log->chat_session_id }}
                                         </td>
                                     </tr>
                                 @empty

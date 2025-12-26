@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BotInstance;
+use App\Models\ChatMessage;
 use App\Models\ConversationLog;
 use App\Models\DocumentValidation;
-use App\Models\NlpLog;
 use App\Models\ServiceRequest;
 use App\Models\WhatsAppUser;
 use Illuminate\View\View;
@@ -45,8 +45,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Get recent NLP logs
-        $recentNlpLogs = NlpLog::with('conversationLog')
+        // Get recent NLP logs (bot messages with intent classification)
+        $recentNlpLogs = ChatMessage::where('role', 'bot')
+            ->whereNotNull('intent')
+            ->with('chatSession')
             ->latest()
             ->take(10)
             ->get();
