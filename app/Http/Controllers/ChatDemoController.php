@@ -65,7 +65,7 @@ class ChatDemoController extends Controller
         
         // Verify this session belongs to current guest session
         $guestSessionId = $request->session()->get('demo_chat_session_id');
-        if ($session->id != $guestSessionId && $session->user_id !== null) {
+        if ($session->id !== $guestSessionId && $session->user_id !== null) {
             return response()->json([
                 'success' => false,
                 'error' => 'Unauthorized',
@@ -97,7 +97,7 @@ class ChatDemoController extends Controller
         $session = ChatSession::with('messages')->findOrFail($sessionId);
         
         // Verify access
-        if ($session->id != $guestSessionId && $session->user_id !== null) {
+        if ($session->id !== $guestSessionId && $session->user_id !== null) {
             return response()->json([
                 'success' => false,
                 'error' => 'Unauthorized',

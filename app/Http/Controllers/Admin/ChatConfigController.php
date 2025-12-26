@@ -42,13 +42,7 @@ class ChatConfigController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        // Convert keywords string to array
-        if (!empty($validated['keywords'])) {
-            $validated['keywords'] = array_map('trim', explode(',', $validated['keywords']));
-        } else {
-            $validated['keywords'] = [];
-        }
-
+        $validated['keywords'] = $this->processKeywords($validated['keywords'] ?? '');
         $validated['is_active'] = $request->has('is_active');
         $validated['priority'] = $validated['priority'] ?? 50;
 
@@ -80,13 +74,7 @@ class ChatConfigController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        // Convert keywords string to array
-        if (!empty($validated['keywords'])) {
-            $validated['keywords'] = array_map('trim', explode(',', $validated['keywords']));
-        } else {
-            $validated['keywords'] = [];
-        }
-
+        $validated['keywords'] = $this->processKeywords($validated['keywords'] ?? '');
         $validated['is_active'] = $request->has('is_active');
 
         $chatConfig->update($validated);
@@ -119,5 +107,17 @@ class ChatConfigController extends Controller
             'success' => true,
             'is_active' => $chatConfig->is_active,
         ]);
+    }
+
+    /**
+     * Process keywords string into array.
+     */
+    private function processKeywords(string $keywords): array
+    {
+        if (empty($keywords)) {
+            return [];
+        }
+
+        return array_map('trim', explode(',', $keywords));
     }
 }
