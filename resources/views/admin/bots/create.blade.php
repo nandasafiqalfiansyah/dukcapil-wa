@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Create New Bot Instance') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
-                <div class="p-6 text-gray-900">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form action="{{ route('admin.bots.store') }}" method="POST">
                         @csrf
 
@@ -20,13 +20,13 @@
                                    id="name" 
                                    name="name" 
                                    value="{{ old('name') }}"
-                                   class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., DUKCAPIL Bot 1"
                                    required>
                             @error('name')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-2 text-sm text-gray-600">
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                 A friendly name for this bot instance
                             </p>
                         </div>
@@ -39,22 +39,24 @@
                                    id="bot_id" 
                                    name="bot_id" 
                                    value="{{ old('bot_id') }}"
-                                   class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., bot-1"
                                    pattern="[a-z0-9-]+"
                                    required>
                             @error('bot_id')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                            <p class="mt-2 text-sm text-gray-600">
+                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                 A unique identifier (lowercase letters, numbers, and hyphens only)
                             </p>
                         </div>
 
-                        <div class="bg-white border border-blue-200 rounded-lg p-4 mb-6">
-                            <h3 class="text-sm font-semibold text-blue-800 mb-2">📱 What happens next?</h3>
-                            <p class="text-sm text-gray-700">
-                                After creating the bot, you'll be shown a QR code. Scan it with WhatsApp on your phone to connect this bot to your account.
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                            <h3 class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
+                                📱 What happens next?
+                            </h3>
+                            <p class="text-sm text-blue-700 dark:text-blue-400">
+                                After creating the bot, you'll be shown a QR code. Scan this QR code with WhatsApp on your phone to connect the bot to your WhatsApp account.
                             </p>
                         </div>
 
