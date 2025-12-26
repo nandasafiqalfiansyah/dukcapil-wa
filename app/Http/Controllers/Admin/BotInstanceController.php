@@ -50,29 +50,15 @@ class BotInstanceController extends Controller
         );
 
         if ($result['success']) {
-            // Prime the local status so the QR page can render immediately
             $bot = BotInstance::where('bot_id', $validated['bot_id'])->first();
 
             if ($bot) {
-                $statusResult = $this->whatsappService->getBotStatus($bot->bot_id);
-
-                if ($statusResult['success']) {
-                    $serverStatus = $statusResult['data'];
-
-                    $bot->update([
-                        'status' => $serverStatus['status'] ?? 'initializing',
-                        'qr_code' => $serverStatus['qr_code'] ?? null,
-                    ]);
-
-                    $bot->refresh();
-                }
-
                 return redirect()->route('admin.bots.show', $bot)
-                    ->with('success', 'Bot instance created. Scan the QR code to connect WhatsApp.');
+                    ->with('success', 'Bot instance created successfully. WhatsApp Business API is ready to use.');
             }
 
             return redirect()->route('admin.bots.index')
-                ->with('success', 'Bot instance created and initializing.');
+                ->with('success', 'Bot instance created successfully.');
         }
 
         return back()->withErrors(['error' => $result['error'] ?? 'Failed to initialize bot'])
@@ -80,11 +66,11 @@ class BotInstanceController extends Controller
     }
 
     /**
-     * Display the specified bot instance with QR code if available.
+     * Display the specified bot instance.
      */
     public function show(BotInstance $bot)
     {
-        // Get latest status from bot server
+        // Get latest status
         $statusResult = $this->whatsappService->getBotStatus($bot->bot_id);
 
         if ($statusResult['success']) {
@@ -94,7 +80,6 @@ class BotInstanceController extends Controller
             if (isset($serverStatus['status']) && $serverStatus['status'] !== $bot->status) {
                 $bot->update([
                     'status' => $serverStatus['status'],
-                    'qr_code' => $serverStatus['qr_code'] ?? null,
                 ]);
                 $bot->refresh();
             }
@@ -157,7 +142,7 @@ class BotInstanceController extends Controller
 
         if ($result['success']) {
             return redirect()->route('admin.bots.show', $bot)
-                ->with('success', 'Bot reinitialized. Please scan the QR code.');
+                ->with('success', 'Bot reinitialized successfully.');
         }
 
         return back()->withErrors(['error' => $result['error'] ?? 'Failed to reinitialize bot']);
@@ -176,7 +161,6 @@ class BotInstanceController extends Controller
             // Update local database
             $bot->update([
                 'status' => $serverStatus['status'] ?? $bot->status,
-                'qr_code' => $serverStatus['qr_code'] ?? null,
             ]);
 
             $bot->refresh();
@@ -188,7 +172,6 @@ class BotInstanceController extends Controller
                     'bot_id' => $bot->bot_id,
                     'name' => $bot->name,
                     'status' => $bot->status,
-                    'qr_code' => $bot->qr_code,
                     'phone_number' => $bot->phone_number,
                     'connected' => $bot->isConnected(),
                 ],

@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\BotInstance;
-use App\Services\WhatsAppBotManager;
+use App\Services\WhatsAppService;
 use Illuminate\Console\Command;
 
 class WhatsAppBotCommand extends Command
@@ -22,12 +22,12 @@ class WhatsAppBotCommand extends Command
      */
     protected $description = 'Manage WhatsApp bot instances';
 
-    protected WhatsAppBotManager $botManager;
+    protected WhatsAppService $whatsappService;
 
-    public function __construct(WhatsAppBotManager $botManager)
+    public function __construct(WhatsAppService $whatsappService)
     {
         parent::__construct();
-        $this->botManager = $botManager;
+        $this->whatsappService = $whatsappService;
     }
 
     /**
@@ -64,17 +64,17 @@ class WhatsAppBotCommand extends Command
             return 1;
         }
 
-        $this->info("Starting bot: {$bot->name} ({$botId})");
+        $this->info("Activating bot: {$bot->name} ({$botId})");
 
-        $result = $this->botManager->initializeBot($botId, $bot->name);
+        $result = $this->whatsappService->initializeBot($botId, $bot->name);
 
         if ($result['success']) {
-            $this->info("Bot started successfully!");
-            $this->info("Check status with: php artisan whatsapp:bot status --bot-id={$botId}");
+            $this->info("Bot activated successfully!");
+            $this->info("The bot is now using WhatsApp Business API.");
             return 0;
         }
 
-        $this->error("Failed to start bot: " . ($result['error'] ?? 'Unknown error'));
+        $this->error("Failed to activate bot: " . ($result['error'] ?? 'Unknown error'));
         return 1;
     }
 
@@ -87,20 +87,20 @@ class WhatsAppBotCommand extends Command
             return 0;
         }
 
-        $this->info("Starting {$bots->count()} bot(s)...");
+        $this->info("Activating {$bots->count()} bot(s)...");
 
         foreach ($bots as $bot) {
-            $this->info("  - Starting {$bot->name} ({$bot->bot_id})");
-            $result = $this->botManager->initializeBot($bot->bot_id, $bot->name);
+            $this->info("  - Activating {$bot->name} ({$bot->bot_id})");
+            $result = $this->whatsappService->initializeBot($bot->bot_id, $bot->name);
 
             if ($result['success']) {
-                $this->line("    ✓ Started");
+                $this->line("    ✓ Activated");
             } else {
                 $this->line("    ✗ Failed: " . ($result['error'] ?? 'Unknown'));
             }
         }
 
-        $this->info("All bots started!");
+        $this->info("All bots activated!");
         return 0;
     }
 
@@ -113,16 +113,16 @@ class WhatsAppBotCommand extends Command
             return 1;
         }
 
-        $this->info("Stopping bot: {$botId}");
+        $this->info("Deactivating bot: {$botId}");
 
-        $result = $this->botManager->disconnectBot($botId);
+        $result = $this->whatsappService->disconnectBot($botId);
 
         if ($result['success']) {
-            $this->info("Bot stopped successfully!");
+            $this->info("Bot deactivated successfully!");
             return 0;
         }
 
-        $this->error("Failed to stop bot: " . ($result['error'] ?? 'Unknown error'));
+        $this->error("Failed to deactivate bot: " . ($result['error'] ?? 'Unknown error'));
         return 1;
     }
 
@@ -135,20 +135,20 @@ class WhatsAppBotCommand extends Command
             return 0;
         }
 
-        $this->info("Stopping {$bots->count()} bot(s)...");
+        $this->info("Deactivating {$bots->count()} bot(s)...");
 
         foreach ($bots as $bot) {
-            $this->info("  - Stopping {$bot->name} ({$bot->bot_id})");
-            $result = $this->botManager->disconnectBot($bot->bot_id);
+            $this->info("  - Deactivating {$bot->name} ({$bot->bot_id})");
+            $result = $this->whatsappService->disconnectBot($bot->bot_id);
 
             if ($result['success']) {
-                $this->line("    ✓ Stopped");
+                $this->line("    ✓ Deactivated");
             } else {
                 $this->line("    ✗ Failed: " . ($result['error'] ?? 'Unknown'));
             }
         }
 
-        $this->info("All bots stopped!");
+        $this->info("All bots deactivated!");
         return 0;
     }
 
@@ -168,7 +168,7 @@ class WhatsAppBotCommand extends Command
             return 1;
         }
 
-        $result = $this->botManager->getBotStatus($botId);
+        $result = $this->whatsappService->getBotStatus($botId);
 
         $this->table(
             ['Property', 'Value'],
@@ -177,10 +177,10 @@ class WhatsAppBotCommand extends Command
                 ['Name', $bot->name],
                 ['Status', $bot->status],
                 ['Phone Number', $bot->phone_number ?? 'N/A'],
-                ['Platform', $bot->platform ?? 'N/A'],
+                ['Platform', 'WhatsApp Business API'],
                 ['Active', $bot->is_active ? 'Yes' : 'No'],
                 ['Last Connected', $bot->last_connected_at ? $bot->last_connected_at->diffForHumans() : 'Never'],
-                ['Runtime Status', $result['data']['status'] ?? 'Unknown'],
+                ['API Status', $result['data']['status'] ?? 'Unknown'],
             ]
         );
 
@@ -215,9 +215,9 @@ class WhatsAppBotCommand extends Command
 
         $this->newLine();
         $this->info("Commands:");
-        $this->line("  Start bot:  php artisan whatsapp:bot start --bot-id=<bot-id>");
-        $this->line("  Stop bot:   php artisan whatsapp:bot stop --bot-id=<bot-id>");
-        $this->line("  Status:     php artisan whatsapp:bot status --bot-id=<bot-id>");
+        $this->line("  Activate bot:   php artisan whatsapp:bot start --bot-id=<bot-id>");
+        $this->line("  Deactivate bot: php artisan whatsapp:bot stop --bot-id=<bot-id>");
+        $this->line("  Status:         php artisan whatsapp:bot status --bot-id=<bot-id>");
 
         return 0;
     }
