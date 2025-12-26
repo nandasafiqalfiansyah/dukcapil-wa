@@ -12,14 +12,14 @@ use Illuminate\Support\Facades\Log;
 class WhatsAppService
 {
     protected string $apiUrl;
-    protected string $accessToken;
-    protected string $phoneNumberId;
+    protected ?string $accessToken;
+    protected ?string $phoneNumberId;
 
     public function __construct()
     {
         $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
-        $this->accessToken = config('services.whatsapp.access_token', '');
-        $this->phoneNumberId = config('services.whatsapp.phone_number_id', '');
+        $this->accessToken = config('services.whatsapp.access_token');
+        $this->phoneNumberId = config('services.whatsapp.phone_number_id');
     }
 
     /**
