@@ -73,7 +73,7 @@
             
             .card-3d {
                 transform-style: preserve-3d;
-                transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             }
             
             .card-3d:hover {
@@ -81,7 +81,7 @@
             }
             
             .input-3d {
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
             }
             
             .input-3d:focus {
@@ -90,7 +90,7 @@
             }
             
             .button-3d {
-                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
                 position: relative;
                 overflow: hidden;
             }
@@ -109,8 +109,8 @@
             }
             
             .button-3d:hover::before {
-                width: 300px;
-                height: 300px;
+                width: 20rem;
+                height: 20rem;
             }
             
             .button-3d:hover {
