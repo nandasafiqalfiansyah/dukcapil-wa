@@ -18,19 +18,27 @@
         <div class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-whatsapp-600 shadow-lg">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+            <div class="flex">
+                <!-- Sidebar -->
+                @include('layouts.sidebar')
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+                <!-- Main Content Area -->
+                <div class="flex-1">
+                    <!-- Page Heading -->
+                    @isset($header)
+                        <header class="bg-whatsapp-600 shadow-lg">
+                            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
+
+                    <!-- Page Content -->
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
+            </div>
         </div>
         
         @stack('scripts')
