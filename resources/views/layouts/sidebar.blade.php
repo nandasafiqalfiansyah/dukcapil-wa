@@ -1,6 +1,15 @@
-<aside x-data="{ openSection: '{{ request()->segment(2) }}' }" class="hidden lg:flex lg:flex-shrink-0">
+<aside x-data="{ openSection: '{{ request()->segment(2) }}' }" 
+       x-show="sidebarOpen"
+       x-transition:enter="transition ease-out duration-300"
+       x-transition:enter-start="-translate-x-full"
+       x-transition:enter-end="translate-x-0"
+       x-transition:leave="transition ease-in duration-300"
+       x-transition:leave-start="translate-x-0"
+       x-transition:leave-end="-translate-x-full"
+       class="fixed lg:relative inset-y-0 left-0 z-40 flex flex-shrink-0 mt-16 lg:mt-0"
+       @click.away="if (isMobile) sidebarOpen = false">
     <div class="flex flex-col w-64">
-        <div class="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
+        <div class="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto shadow-lg lg:shadow-none">
             <div class="flex items-center flex-shrink-0 px-4">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-2">
                     <svg class="h-8 w-8 text-whatsapp-600" fill="currentColor" viewBox="0 0 24 24">

@@ -15,15 +15,37 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-whatsapp-50">
-        <div class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
+        <div x-data="{ 
+            sidebarOpen: false,
+            isMobile: true,
+            init() {
+                this.checkScreenSize();
+                window.addEventListener('resize', () => this.checkScreenSize());
+            },
+            checkScreenSize() {
+                this.isMobile = window.innerWidth < 1024;
+                this.sidebarOpen = !this.isMobile;
+            }
+        }" class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
             @include('layouts.navigation')
 
-            <div class="flex">
+            <div class="flex relative">
+                <!-- Mobile Overlay -->
+                <div x-show="sidebarOpen && isMobile" 
+                     x-transition:enter="transition-opacity ease-linear duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition-opacity ease-linear duration-300"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     @click="sidebarOpen = false"
+                     class="fixed inset-0 bg-gray-600 bg-opacity-75 z-30 lg:hidden"></div>
+                
                 <!-- Sidebar -->
                 @include('layouts.sidebar')
 
                 <!-- Main Content Area -->
-                <div class="flex-1">
+                <div class="flex-1 transition-all duration-300">
                     <!-- Page Heading -->
                     @isset($header)
                         <header class="bg-whatsapp-600 shadow-lg">
