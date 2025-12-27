@@ -6,6 +6,8 @@ use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Services\ChatBotService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ChatDemoController extends Controller
 {
@@ -40,15 +42,27 @@ class ChatDemoController extends Controller
      */
     public function createSession(Request $request)
     {
-        $session = $this->chatBotService->getOrCreateSession(null);
-        
-        // Store session ID in guest session
-        $request->session()->put('demo_chat_session_id', $session->id);
+        try {
+            $session = $this->chatBotService->getOrCreateSession(null);
+            
+            // Store session ID in guest session
+            $request->session()->put('demo_chat_session_id', $session->id);
 
-        return response()->json([
-            'success' => true,
-            'session' => $session,
-        ]);
+            return response()->json([
+                'success' => true,
+                'session' => $session,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Chat demo create session error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Gagal membuat sesi chat. Silakan refresh halaman.',
+            ], 500);
+        }
     }
 
     /**
@@ -56,35 +70,71 @@ class ChatDemoController extends Controller
      */
     public function sendMessage(Request $request)
     {
-        $request->validate([
-            'session_id' => 'required|exists:chat_sessions,id',
-            'message' => 'required|string|max:5000',
-        ]);
+        try {
+            $request->validate([
+                'session_id' => 'required|exists:chat_sessions,id',
+                'message' => 'required|string|max:5000',
+            ]);
 
-        $session = ChatSession::findOrFail($request->session_id);
-        
-        // Verify this session belongs to current guest session
-        $guestSessionId = $request->session()->get('demo_chat_session_id');
-        if ($session->id !== $guestSessionId && $session->user_id !== null) {
+            $session = ChatSession::findOrFail($request->session_id);
+            
+            // Verify this session belongs to current guest session
+            $guestSessionId = $request->session()->get('demo_chat_session_id');
+            if ($session->id !== $guestSessionId && $session->user_id !== null) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Sesi tidak valid. Silakan refresh halaman.',
+                ], 403);
+            }
+            
+            $result = $this->chatBotService->processMessage($session, $request->message);
+
+            // Calculate processing time safely
+            $processingTime = null;
+            $matchedPattern = null;
+            
+            if (isset($result['bot_message'], $result['user_message'])) {
+                $botMessage = $result['bot_message'];
+                $userMessage = $result['user_message'];
+                
+                // Calculate time from user message to bot response
+                if ($botMessage && $userMessage && $botMessage->created_at && $userMessage->created_at) {
+                    $processingTime = $userMessage->created_at->diffInMilliseconds($botMessage->created_at);
+                }
+                
+                // Safely extract matched pattern
+                if ($botMessage && isset($botMessage->metadata)) {
+                    $matchedPattern = $botMessage->metadata['matched_pattern'] ?? null;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'user_message' => $result['user_message'],
+                'bot_message' => $result['bot_message'],
+                'intent' => $result['intent'],
+                'confidence' => $result['confidence'],
+                'nlp_details' => [
+                    'matched_pattern' => $matchedPattern,
+                    'processing_time' => $processingTime,
+                ],
+            ]);
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized',
-            ], 403);
+                'error' => 'Data tidak valid. Silakan coba lagi.',
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Chat demo send message error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Terjadi kesalahan. Silakan coba lagi atau refresh halaman.',
+            ], 500);
         }
-        
-        $result = $this->chatBotService->processMessage($session, $request->message);
-
-        return response()->json([
-            'success' => true,
-            'user_message' => $result['user_message'],
-            'bot_message' => $result['bot_message'],
-            'intent' => $result['intent'],
-            'confidence' => $result['confidence'],
-            'nlp_details' => [
-                'matched_pattern' => $result['bot_message']->metadata['matched_pattern'] ?? null,
-                'processing_time' => $result['bot_message']->created_at->diffInMilliseconds($result['user_message']->created_at),
-            ],
-        ]);
     }
 
     /**
@@ -100,7 +150,7 @@ class ChatDemoController extends Controller
         if ($session->id !== $guestSessionId && $session->user_id !== null) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized',
+                'error' => 'Sesi tidak valid. Silakan refresh halaman.',
             ], 403);
         }
         
