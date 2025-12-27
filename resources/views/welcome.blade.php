@@ -664,10 +664,17 @@
                         }
                     });
                     
+                    if (!response.ok) {
+                        console.error('Failed to create session. HTTP error:', response.status, response.statusText);
+                        return;
+                    }
+                    
                     const data = await response.json();
                     if (data.success) {
                         demoSessionId = data.session.id;
                         document.getElementById('demoSessionId').value = demoSessionId;
+                    } else {
+                        console.error('Failed to create session:', data);
                     }
                 } catch (error) {
                     console.error('Error creating session:', error);
@@ -710,6 +717,28 @@
                         })
                     });
                     
+                    // Check if response is OK (status 200-299)
+                    if (!response.ok) {
+                        console.error('HTTP error:', response.status, response.statusText);
+                        typingIndicator.remove();
+                        
+                        // Try to get error message from response
+                        let errorMessage = 'Gagal mengirim pesan. Silakan coba lagi.';
+                        try {
+                            const errorData = await response.json();
+                            if (errorData.error) {
+                                errorMessage = errorData.error;
+                            } else if (errorData.message) {
+                                errorMessage = errorData.message;
+                            }
+                        } catch (e) {
+                            // If response is not JSON, use default message
+                        }
+                        
+                        alert(errorMessage);
+                        return;
+                    }
+                    
                     const data = await response.json();
                     
                     // Remove typing indicator
@@ -717,6 +746,11 @@
                     
                     if (data.success) {
                         appendDemoMessage('bot', data.bot_message.message, data.intent, data.confidence);
+                    } else {
+                        // Handle case where success is false
+                        console.error('Request failed:', data);
+                        const errorMessage = data.error || data.message || 'Gagal mengirim pesan. Silakan coba lagi.';
+                        alert(errorMessage);
                     }
                 } catch (error) {
                     console.error('Error sending message:', error);
