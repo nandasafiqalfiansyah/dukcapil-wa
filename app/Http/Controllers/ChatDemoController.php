@@ -94,7 +94,7 @@ class ChatDemoController extends Controller
                 $botMessage = $result['bot_message'];
                 $userMessage = $result['user_message'];
                 if ($botMessage && $userMessage && $botMessage->created_at && $userMessage->created_at) {
-                    $processingTime = $botMessage->created_at->diffInMilliseconds($userMessage->created_at);
+                    $processingTime = $userMessage->created_at->diffInMilliseconds($botMessage->created_at);
                 }
             }
 
@@ -105,7 +105,7 @@ class ChatDemoController extends Controller
                 'intent' => $result['intent'],
                 'confidence' => $result['confidence'],
                 'nlp_details' => [
-                    'matched_pattern' => $result['bot_message']->metadata['matched_pattern'] ?? null,
+                    'matched_pattern' => ($result['bot_message']->metadata ?? [])['matched_pattern'] ?? null,
                     'processing_time' => $processingTime,
                 ],
             ]);
