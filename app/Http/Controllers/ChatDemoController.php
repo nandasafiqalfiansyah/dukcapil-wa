@@ -6,6 +6,7 @@ use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Services\ChatBotService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ChatDemoController extends Controller
 {
@@ -51,7 +52,7 @@ class ChatDemoController extends Controller
                 'session' => $session,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Chat demo create session error', [
+            Log::error('Chat demo create session error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -95,7 +96,9 @@ class ChatDemoController extends Controller
                 'confidence' => $result['confidence'],
                 'nlp_details' => [
                     'matched_pattern' => $result['bot_message']->metadata['matched_pattern'] ?? null,
-                    'processing_time' => $result['bot_message']->created_at->diffInMilliseconds($result['user_message']->created_at),
+                    'processing_time' => isset($result['bot_message'], $result['user_message']) 
+                        ? $result['bot_message']->created_at->diffInMilliseconds($result['user_message']->created_at) 
+                        : null,
                 ],
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -104,7 +107,7 @@ class ChatDemoController extends Controller
                 'error' => 'Data tidak valid. Silakan coba lagi.',
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Chat demo send message error', [
+            Log::error('Chat demo send message error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
