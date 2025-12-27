@@ -7,6 +7,7 @@ use App\Models\ChatSession;
 use App\Services\ChatBotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ChatDemoController extends Controller
 {
@@ -118,7 +119,7 @@ class ChatDemoController extends Controller
                     'processing_time' => $processingTime,
                 ],
             ]);
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'error' => 'Data tidak valid. Silakan coba lagi.',
