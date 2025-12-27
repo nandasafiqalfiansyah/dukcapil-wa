@@ -96,7 +96,7 @@ class ChatDemoController extends Controller
                 'confidence' => $result['confidence'],
                 'nlp_details' => [
                     'matched_pattern' => $result['bot_message']->metadata['matched_pattern'] ?? null,
-                    'processing_time' => isset($result['bot_message'], $result['user_message']) 
+                    'processing_time' => !empty($result['bot_message']) && !empty($result['user_message']) 
                         ? $result['bot_message']->created_at->diffInMilliseconds($result['user_message']->created_at) 
                         : null,
                 ],
