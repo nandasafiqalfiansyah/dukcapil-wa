@@ -16,23 +16,22 @@
     </head>
     <body class="font-sans antialiased bg-whatsapp-50">
         <div x-data="{ 
-            sidebarOpen: window.innerWidth >= 1024,
+            sidebarOpen: false,
+            isMobile: true,
             init() {
-                this.sidebarOpen = window.innerWidth >= 1024;
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth >= 1024) {
-                        this.sidebarOpen = true;
-                    } else {
-                        this.sidebarOpen = false;
-                    }
-                });
+                this.checkScreenSize();
+                window.addEventListener('resize', () => this.checkScreenSize());
+            },
+            checkScreenSize() {
+                this.isMobile = window.innerWidth < 1024;
+                this.sidebarOpen = !this.isMobile;
             }
         }" class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
             @include('layouts.navigation')
 
             <div class="flex relative">
                 <!-- Mobile Overlay -->
-                <div x-show="sidebarOpen && window.innerWidth < 1024" 
+                <div x-show="sidebarOpen && isMobile" 
                      x-transition:enter="transition-opacity ease-linear duration-300"
                      x-transition:enter-start="opacity-0"
                      x-transition:enter-end="opacity-100"
