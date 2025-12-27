@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BotInstance;
+use App\Models\ChatMessage;
 use App\Models\ConversationLog;
 use App\Models\DocumentValidation;
 use App\Models\ServiceRequest;
@@ -44,12 +45,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Get recent NLP logs (bot messages with intent classification)
+        $recentNlpLogs = ChatMessage::where('role', 'bot')
+            ->whereNotNull('intent')
+            ->with('chatSession')
+            ->latest()
+            ->take(10)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'recentRequests',
             'requestsByStatus',
             'requestsByType',
-            'botInstances'
+            'botInstances',
+            'recentNlpLogs'
         ));
     }
 }
