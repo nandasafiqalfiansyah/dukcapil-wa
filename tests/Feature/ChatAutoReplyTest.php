@@ -87,11 +87,8 @@ test('chat auto-reply with case insensitive matching', function () {
     $sessionId = $sessionResponse->json('session.id');
     
     // Test with uppercase (should match due to case insensitivity)
-    $response = $this->postJson(route('chat-demo.sessions.create'));
-    $sessionId2 = $response->json('session.id');
-    
     $response = $this->postJson(route('chat-demo.messages.send'), [
-        'session_id' => $sessionId2,
+        'session_id' => $sessionId,
         'message' => 'BANTUAN',
     ]);
     
