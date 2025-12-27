@@ -90,11 +90,20 @@ class ChatDemoController extends Controller
 
             // Calculate processing time safely
             $processingTime = null;
+            $matchedPattern = null;
+            
             if (isset($result['bot_message'], $result['user_message'])) {
                 $botMessage = $result['bot_message'];
                 $userMessage = $result['user_message'];
+                
+                // Calculate time from user message to bot response
                 if ($botMessage && $userMessage && $botMessage->created_at && $userMessage->created_at) {
                     $processingTime = $userMessage->created_at->diffInMilliseconds($botMessage->created_at);
+                }
+                
+                // Safely extract matched pattern
+                if ($botMessage && isset($botMessage->metadata)) {
+                    $matchedPattern = $botMessage->metadata['matched_pattern'] ?? null;
                 }
             }
 
@@ -105,7 +114,7 @@ class ChatDemoController extends Controller
                 'intent' => $result['intent'],
                 'confidence' => $result['confidence'],
                 'nlp_details' => [
-                    'matched_pattern' => ($result['bot_message']->metadata ?? [])['matched_pattern'] ?? null,
+                    'matched_pattern' => $matchedPattern,
                     'processing_time' => $processingTime,
                 ],
             ]);
