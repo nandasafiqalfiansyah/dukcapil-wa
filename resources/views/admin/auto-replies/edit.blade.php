@@ -36,9 +36,9 @@
                             @enderror
                             <p class="mt-1 text-sm text-gray-500">
                                 Pesan yang akan dikirim sebagai balasan. Gunakan placeholder: 
-                                <code class="bg-gray-100 px-1 rounded">{{'{{'}}timestamp{{'}}'}}</code>, 
-                                <code class="bg-gray-100 px-1 rounded">{{'{{'}}date{{'}}'}}</code>, 
-                                <code class="bg-gray-100 px-1 rounded">{{'{{'}}time{{'}}'}}</code>
+                                <code class="bg-gray-100 px-1 rounded">@{{ timestamp }}</code>, 
+                                <code class="bg-gray-100 px-1 rounded">@{{ date }}</code>, 
+                                <code class="bg-gray-100 px-1 rounded">@{{ time }}</code>
                             </p>
                         </div>
 

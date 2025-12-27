@@ -117,9 +117,9 @@
             <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h3 class="text-sm font-medium text-blue-900 mb-2">ℹ️ Tips:</h3>
                 <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
-                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}timestamp{{'}}'}}</code> untuk menampilkan waktu saat ini</li>
-                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}date{{'}}'}}</code> untuk tanggal saat ini</li>
-                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">{{'{{'}}time{{'}}'}}</code> untuk waktu saat ini</li>
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">@{{ timestamp }}</code> untuk menampilkan waktu saat ini</li>
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">@{{ date }}</code> untuk tanggal saat ini</li>
+                    <li>Gunakan <code class="bg-blue-100 px-1 rounded">@{{ time }}</code> untuk waktu saat ini</li>
                     <li>Priority lebih tinggi akan dicocokkan terlebih dahulu</li>
                     <li>Bot hanya akan membalas satu auto-reply per pesan (yang pertama cocok)</li>
                 </ul>
