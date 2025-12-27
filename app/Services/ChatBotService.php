@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AutoReplyConfig;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\CsTrainingData;
@@ -35,11 +36,26 @@ class ChatBotService
             'message' => $userMessage,
         ]);
 
-        // Detect intent using simple NLP
-        $intentResult = $this->detectIntent($userMessage);
-
-        // Generate response
-        $response = $this->generateResponse($intentResult, $userMessage);
+        // Check for auto-reply match first (takes priority over NLP)
+        $autoReplyResult = $this->checkAutoReply($userMessage);
+        
+        if ($autoReplyResult) {
+            // Use auto-reply response
+            $response = [
+                'message' => $autoReplyResult['response'],
+                'intent' => 'auto_reply',
+            ];
+            $intentResult = [
+                'intent' => 'auto_reply',
+                'confidence' => 1.0,
+                'matched_pattern' => $autoReplyResult['trigger'],
+                'source' => 'auto_reply_config',
+            ];
+        } else {
+            // Fallback to NLP detection
+            $intentResult = $this->detectIntent($userMessage);
+            $response = $this->generateResponse($intentResult, $userMessage);
+        }
 
         // Save bot message
         $botChatMessage = ChatMessage::create([
@@ -50,6 +66,7 @@ class ChatBotService
             'confidence' => $intentResult['confidence'],
             'metadata' => [
                 'matched_pattern' => $intentResult['matched_pattern'] ?? null,
+                'source' => $intentResult['source'] ?? 'nlp',
             ],
         ]);
 
@@ -64,6 +81,62 @@ class ChatBotService
             'intent' => $intentResult['intent'],
             'confidence' => $intentResult['confidence'],
         ];
+    }
+
+    /**
+     * Check if message matches any auto-reply configuration.
+     * Returns the matched auto-reply or null if no match.
+     */
+    protected function checkAutoReply(string $message): ?array
+    {
+        $messageBody = trim($message);
+
+        // Get active auto-reply configurations ordered by priority
+        $autoReplies = AutoReplyConfig::active()
+            ->byPriority()
+            ->get();
+
+        // Check if message matches any auto-reply trigger
+        foreach ($autoReplies as $autoReply) {
+            $trigger = $autoReply->trigger;
+            $matches = false;
+
+            if ($autoReply->case_sensitive) {
+                $matches = $messageBody === $trigger;
+            } else {
+                $matches = strtolower($messageBody) === strtolower($trigger);
+            }
+
+            if ($matches) {
+                // Replace dynamic placeholders in response
+                $response = str_replace(
+                    ['{{timestamp}}', '{{date}}', '{{time}}', '{{day}}', '{{user_message}}'],
+                    [
+                        now()->format('d/m/Y H:i:s'),
+                        now()->format('d/m/Y'),
+                        now()->format('H:i:s'),
+                        now()->isoFormat('dddd'),
+                        $messageBody,
+                    ],
+                    $autoReply->response
+                );
+
+                Log::info('[ChatBot] Auto-reply matched', [
+                    'trigger' => $trigger,
+                    'priority' => $autoReply->priority,
+                    'case_sensitive' => $autoReply->case_sensitive,
+                ]);
+
+                return [
+                    'trigger' => $trigger,
+                    'response' => $response,
+                    'config_id' => $autoReply->id,
+                    'priority' => $autoReply->priority,
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**
