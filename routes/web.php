@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ChatConfigController;
 use App\Http\Controllers\Admin\ConversationLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentValidationController;
+use App\Http\Controllers\Admin\NlpConfigController;
 use App\Http\Controllers\Admin\NlpLogController;
 use App\Http\Controllers\Admin\ServiceRequestController;
 use App\Http\Controllers\Admin\UserManagementController;
@@ -97,6 +98,13 @@ Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name(
         Route::get('nlp-logs', [NlpLogController::class, 'index'])->name('nlp-logs.index');
         Route::get('nlp-logs/live', [NlpLogController::class, 'live'])->name('nlp-logs.live');
         Route::get('nlp-logs/statistics', [NlpLogController::class, 'statistics'])->name('nlp-logs.statistics');
+
+        // NLP configuration routes
+        Route::get('nlp-config', [NlpConfigController::class, 'index'])->name('nlp-config.index');
+        Route::put('nlp-config', [NlpConfigController::class, 'update'])->name('nlp-config.update');
+        Route::post('nlp-config/reset', [NlpConfigController::class, 'reset'])->name('nlp-config.reset');
+        Route::get('nlp-config/diagnostics', [NlpConfigController::class, 'diagnostics'])->name('nlp-config.diagnostics');
+        Route::post('nlp-config/clear-cache', [NlpConfigController::class, 'clearCache'])->name('nlp-config.clear-cache');
     });
 });
 
