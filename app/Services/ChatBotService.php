@@ -13,6 +13,11 @@ class ChatBotService
 {
     protected WhatsAppService $whatsappService;
 
+    /**
+     * Log level priorities for filtering
+     */
+    protected const LOG_LEVELS = ['debug' => 0, 'info' => 1, 'warning' => 2, 'error' => 3];
+
     public function __construct(WhatsAppService $whatsappService)
     {
         $this->whatsappService = $whatsappService;
@@ -340,8 +345,9 @@ class ChatBotService
             $message = strtolower($message);
         }
 
-        // Remove punctuation
+        // Remove punctuation - using simple approach for better performance
         if ($this->getNlpConfig('nlp_remove_punctuation', true)) {
+            // Remove common punctuation while preserving Indonesian characters
             $message = preg_replace('/[^\p{L}\p{N}\s]/u', ' ', $message);
         }
 
@@ -410,8 +416,7 @@ class ChatBotService
         $logLevel = $this->getNlpConfig('nlp_log_level', 'debug');
         
         // Only log if current level is appropriate
-        $levels = ['debug' => 0, 'info' => 1, 'warning' => 2, 'error' => 3];
-        if (($levels[$level] ?? 0) >= ($levels[$logLevel] ?? 0)) {
+        if ((self::LOG_LEVELS[$level] ?? 0) >= (self::LOG_LEVELS[$logLevel] ?? 0)) {
             Log::channel('daily')->{$level}("[NLP] {$message}", $context);
         }
     }

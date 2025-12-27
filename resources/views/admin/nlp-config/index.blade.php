@@ -63,10 +63,10 @@
                                                 </div>
 
                                                 <div class="ml-4 w-48">
-                                                    <input type="hidden" name="configs[{{ $loop->parent->index * 100 + $loop->index }}][key]" value="{{ $config->key }}">
+                                                    <input type="hidden" name="configs[{{ $config->id }}][key]" value="{{ $config->key }}">
                                                     
                                                     @if ($config->type === 'boolean')
-                                                        <select name="configs[{{ $loop->parent->index * 100 + $loop->index }}][value]" 
+                                                        <select name="configs[{{ $config->id }}][value]" 
                                                                 id="config_{{ $config->id }}"
                                                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                             <option value="1" {{ $config->value ? 'selected' : '' }}>Enabled</option>
@@ -74,7 +74,7 @@
                                                         </select>
                                                     @elseif ($config->type === 'integer' || $config->type === 'float')
                                                         <input type="number" 
-                                                               name="configs[{{ $loop->parent->index * 100 + $loop->index }}][value]" 
+                                                               name="configs[{{ $config->id }}][value]" 
                                                                id="config_{{ $config->id }}"
                                                                value="{{ $config->value }}"
                                                                step="{{ $config->type === 'float' ? '0.01' : '1' }}"
@@ -83,7 +83,7 @@
                                                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                                                     @else
                                                         <input type="text" 
-                                                               name="configs[{{ $loop->parent->index * 100 + $loop->index }}][value]" 
+                                                               name="configs[{{ $config->id }}][value]" 
                                                                id="config_{{ $config->id }}"
                                                                value="{{ $config->value }}"
                                                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
