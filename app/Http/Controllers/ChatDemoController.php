@@ -102,7 +102,6 @@ class ChatDemoController extends Controller
             return response()->json([
                 'success' => false,
                 'error' => 'Data tidak valid. Silakan coba lagi.',
-                'details' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             \Log::error('Chat demo send message error', [
@@ -130,7 +129,7 @@ class ChatDemoController extends Controller
         if ($session->id !== $guestSessionId && $session->user_id !== null) {
             return response()->json([
                 'success' => false,
-                'error' => 'Unauthorized',
+                'error' => 'Sesi tidak valid. Silakan refresh halaman.',
             ], 403);
         }
         
