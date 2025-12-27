@@ -41,8 +41,10 @@
                 transition: transform 0.6s;
             }
             
-            .card-3d:hover {
-                transform: rotateY(5deg) rotateX(5deg) scale(1.05);
+            @media (min-width: 768px) {
+                .card-3d:hover {
+                    transform: rotateY(5deg) rotateX(5deg) scale(1.05);
+                }
             }
             
             .gradient-bg {
@@ -61,8 +63,14 @@
                 position: relative;
                 background: white;
                 border-radius: 20px;
-                padding: 20px;
+                padding: 15px;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            
+            @media (min-width: 640px) {
+                .chat-bubble {
+                    padding: 20px;
+                }
             }
             
             .chat-bubble::before {
@@ -184,20 +192,20 @@
                     <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-whatsapp-700 rounded-full mix-blend-multiply filter blur-xl opacity-30 float-animation" style="animation-delay: 2s;"></div>
                 </div>
                 
-                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 xl:py-32">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         <!-- Left Content -->
                         <div class="text-center lg:text-left">
-                            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-shadow">
+                            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-shadow">
                                 Sistem Informasi<br>Dukcapil Ponorogo
                             </h1>
-                            <p class="text-xl sm:text-2xl mb-8 text-whatsapp-100">
+                            <p class="text-lg sm:text-xl lg:text-2xl mb-6 sm:mb-8 text-whatsapp-100">
                                 Layanan Administrasi Kependudukan Melalui WhatsApp Chatbot - Cepat, Mudah, dan Terpercaya
                             </p>
-                            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                                 <a
                                     href="#try-chatbot"
-                                    class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-whatsapp-700 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl"
+                                    class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border border-transparent text-base sm:text-lg font-medium rounded-lg text-whatsapp-700 bg-white hover:bg-whatsapp-50 transition duration-150 ease-in-out shadow-xl"
                                 >
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -208,7 +216,7 @@
                                     @auth
                                         <a
                                             href="{{ url('/dashboard') }}"
-                                            class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
+                                            class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-base sm:text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
                                         >
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -218,7 +226,7 @@
                                     @else
                                         <a
                                             href="{{ route('login') }}"
-                                            class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
+                                            class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-base sm:text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-700 transition duration-150 ease-in-out"
                                         >
                                             Login Admin
                                         </a>
@@ -228,33 +236,33 @@
                         </div>
 
                         <!-- Right Content - 3D WhatsApp Chat Illustration -->
-                        <div class="hidden lg:block">
-                            <div class="relative">
+                        <div class="hidden md:block">
+                            <div class="relative mx-auto max-w-md lg:max-w-none">
                                 <div class="absolute inset-0 bg-gradient-to-r from-whatsapp-400 to-whatsapp-600 rounded-3xl blur-2xl opacity-30"></div>
-                                <div class="relative bg-white rounded-3xl p-8 shadow-2xl">
-                                    <div class="flex items-center mb-6">
-                                        <div class="w-12 h-12 bg-whatsapp-500 rounded-full flex items-center justify-center text-white text-2xl">
+                                <div class="relative bg-white rounded-2xl lg:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl">
+                                    <div class="flex items-center mb-4 sm:mb-6">
+                                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-whatsapp-500 rounded-full flex items-center justify-center text-xl sm:text-2xl">
                                             💬
                                         </div>
                                         <div class="ml-3">
-                                            <div class="font-bold text-gray-900">CS DUKCAPIL</div>
-                                            <div class="text-sm text-whatsapp-500">● Online</div>
+                                            <div class="font-bold text-gray-900 text-sm sm:text-base">CS DUKCAPIL</div>
+                                            <div class="text-xs sm:text-sm text-whatsapp-500">● Online</div>
                                         </div>
                                     </div>
                                     
-                                    <div class="space-y-4">
+                                    <div class="space-y-3 sm:space-y-4">
                                         <div class="chat-bubble bg-gray-100 ml-0">
-                                            <p class="text-gray-800">Halo! Selamat datang di layanan DUKCAPIL Ponorogo 👋</p>
+                                            <p class="text-gray-800 text-sm sm:text-base">Halo! Selamat datang di layanan DUKCAPIL Ponorogo 👋</p>
                                         </div>
                                         
                                         <div class="flex justify-end">
-                                            <div class="bg-whatsapp-500 text-white rounded-2xl px-6 py-3 max-w-xs shadow-lg">
-                                                Saya ingin mengurus KTP
+                                            <div class="bg-whatsapp-500 text-white rounded-2xl px-4 sm:px-6 py-2 sm:py-3 max-w-xs shadow-lg">
+                                                <p class="text-sm sm:text-base">Saya ingin mengurus KTP</p>
                                             </div>
                                         </div>
                                         
                                         <div class="chat-bubble bg-gray-100 ml-0">
-                                            <p class="text-gray-800">Baik, saya akan membantu proses pengurusan KTP Anda. Silakan kirim foto KK dan foto selfie untuk verifikasi 📄</p>
+                                            <p class="text-gray-800 text-sm sm:text-base">Baik, saya akan membantu proses pengurusan KTP Anda. Silakan kirim foto KK dan foto selfie untuk verifikasi 📄</p>
                                         </div>
                                     </div>
                                 </div>
@@ -265,104 +273,104 @@
             </div>
 
             <!-- Features Section with 3D Cards -->
-            <div class="bg-gray-50 py-20">
+            <div class="bg-gray-50 py-12 sm:py-16 lg:py-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    <div class="text-center mb-12 sm:mb-16">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                             Layanan WhatsApp Chatbot
                         </h2>
-                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                             Akses layanan administrasi kependudukan 24/7 melalui WhatsApp dengan mudah dan cepat
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                         <!-- Feature 1 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Pelayanan KTP
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Pengurusan Kartu Tanda Penduduk elektronik dengan proses yang cepat dan mudah melalui WhatsApp
                             </p>
                         </div>
 
                         <!-- Feature 2 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Kartu Keluarga
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Layanan pembuatan dan perubahan data Kartu Keluarga secara online dengan mudah
                             </p>
                         </div>
 
                         <!-- Feature 3 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Akta Kelahiran
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Pengurusan akta kelahiran untuk bayi baru lahir dengan proses yang praktis
                             </p>
                         </div>
 
                         <!-- Feature 4 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Konsultasi Online
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Tanya jawab seputar persyaratan dan prosedur administrasi kependudukan
                             </p>
                         </div>
 
                         <!-- Feature 5 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Tracking Status
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Cek status permohonan dokumen Anda secara real-time melalui chatbot
                             </p>
                         </div>
 
                         <!-- Feature 6 -->
-                        <div class="card-3d bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition duration-300">
-                            <div class="w-16 h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-6">
-                                <svg class="w-8 h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="card-3d bg-white rounded-2xl shadow-xl p-6 sm:p-8 hover:shadow-2xl transition duration-300">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 bg-whatsapp-100 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">
+                            <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                                 Layanan 24/7
                             </h3>
-                            <p class="text-gray-600 leading-relaxed">
+                            <p class="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Akses layanan kapan saja, dimana saja tanpa harus datang ke kantor
                             </p>
                         </div>
@@ -371,114 +379,114 @@
             </div>
 
             <!-- How It Works Section -->
-            <div class="bg-white py-20">
+            <div class="bg-white py-12 sm:py-16 lg:py-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-16">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    <div class="text-center mb-12 sm:mb-16">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                             Cara Menggunakan Layanan
                         </h2>
-                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                             Mudah dan sederhana, hanya dengan WhatsApp Anda
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold mx-auto mb-3 sm:mb-4 shadow-lg">
                                 1
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Hubungi WhatsApp</h3>
-                            <p class="text-gray-600">Kirim pesan ke nomor WhatsApp resmi DUKCAPIL Ponorogo</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Hubungi WhatsApp</h3>
+                            <p class="text-sm sm:text-base text-gray-600 px-2">Kirim pesan ke nomor WhatsApp resmi DUKCAPIL Ponorogo</p>
                         </div>
 
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold mx-auto mb-3 sm:mb-4 shadow-lg">
                                 2
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Pilih Layanan</h3>
-                            <p class="text-gray-600">Chatbot akan memandu Anda memilih layanan yang dibutuhkan</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Pilih Layanan</h3>
+                            <p class="text-sm sm:text-base text-gray-600 px-2">Chatbot akan memandu Anda memilih layanan yang dibutuhkan</p>
                         </div>
 
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold mx-auto mb-3 sm:mb-4 shadow-lg">
                                 3
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Upload Dokumen</h3>
-                            <p class="text-gray-600">Kirim dokumen persyaratan sesuai petunjuk chatbot</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Upload Dokumen</h3>
+                            <p class="text-sm sm:text-base text-gray-600 px-2">Kirim dokumen persyaratan sesuai petunjuk chatbot</p>
                         </div>
 
                         <div class="text-center">
-                            <div class="w-20 h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 shadow-lg">
+                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-whatsapp-600 text-white rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold mx-auto mb-3 sm:mb-4 shadow-lg">
                                 4
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900 mb-2">Selesai</h3>
-                            <p class="text-gray-600">Dokumen Anda akan diproses dan Anda bisa tracking statusnya</p>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-2">Selesai</h3>
+                            <p class="text-sm sm:text-base text-gray-600 px-2">Dokumen Anda akan diproses dan Anda bisa tracking statusnya</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Try Chatbot Section -->
-            <div id="try-chatbot" class="bg-gradient-to-b from-gray-50 to-white py-20">
+            <div id="try-chatbot" class="bg-gradient-to-b from-gray-50 to-white py-12 sm:py-16 lg:py-20">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="text-center mb-12">
-                        <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    <div class="text-center mb-8 sm:mb-12">
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
                             Coba Chatbot Sekarang!
                         </h2>
-                        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
                             Rasakan pengalaman berinteraksi dengan chatbot DUKCAPIL Ponorogo
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
                         <!-- Tutorial Panel -->
-                        <div class="lg:col-span-1 space-y-6">
-                            <div class="bg-white rounded-2xl shadow-xl p-6">
-                                <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                                    <svg class="w-6 h-6 mr-2 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="lg:col-span-1 space-y-4 sm:space-y-6">
+                            <div class="bg-white rounded-2xl shadow-xl p-4 sm:p-6">
+                                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 flex items-center">
+                                    <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                     </svg>
                                     Panduan Penggunaan
                                 </h3>
-                                <div class="space-y-4">
+                                <div class="space-y-3 sm:space-y-4">
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                        <div class="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-2 sm:mr-3 text-sm sm:text-base">
                                             1
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-gray-900 mb-1">Mulai Percakapan</h4>
-                                            <p class="text-sm text-gray-600">Ketik pesan Anda di kotak chat di sebelah kanan</p>
+                                            <h4 class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Mulai Percakapan</h4>
+                                            <p class="text-xs sm:text-sm text-gray-600">Ketik pesan Anda di kotak chat di sebelah kanan</p>
                                         </div>
                                     </div>
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                        <div class="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-2 sm:mr-3 text-sm sm:text-base">
                                             2
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-gray-900 mb-1">Bot Akan Merespon</h4>
-                                            <p class="text-sm text-gray-600">Chatbot akan memahami pertanyaan Anda dengan NLP</p>
+                                            <h4 class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Bot Akan Merespon</h4>
+                                            <p class="text-xs sm:text-sm text-gray-600">Chatbot akan memahami pertanyaan Anda dengan NLP</p>
                                         </div>
                                     </div>
                                     <div class="flex items-start">
-                                        <div class="flex-shrink-0 w-8 h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-3">
+                                        <div class="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-whatsapp-100 text-whatsapp-600 rounded-full flex items-center justify-center font-bold mr-2 sm:mr-3 text-sm sm:text-base">
                                             3
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-gray-900 mb-1">Ikuti Instruksi</h4>
-                                            <p class="text-sm text-gray-600">Bot akan memandu proses layanan yang Anda butuhkan</p>
+                                            <h4 class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">Ikuti Instruksi</h4>
+                                            <p class="text-xs sm:text-sm text-gray-600">Bot akan memandu proses layanan yang Anda butuhkan</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-6">
-                                <h4 class="font-bold text-blue-900 mb-2 flex items-center">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 sm:p-6">
+                                <h4 class="font-bold text-blue-900 mb-2 flex items-center text-sm sm:text-base">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
                                     </svg>
                                     Contoh Pertanyaan:
                                 </h4>
-                                <ul class="space-y-2 text-sm text-blue-800">
+                                <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm text-blue-800">
                                     <li class="flex items-start">
                                         <span class="mr-2">•</span>
                                         <span>"Bagaimana cara mengurus KTP?"</span>
@@ -498,14 +506,14 @@
                                 </ul>
                             </div>
 
-                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-6">
-                                <h4 class="font-bold text-yellow-900 mb-2 flex items-center">
-                                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 sm:p-6">
+                                <h4 class="font-bold text-yellow-900 mb-2 flex items-center text-sm sm:text-base">
+                                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                                     </svg>
                                     Catatan
                                 </h4>
-                                <p class="text-sm text-yellow-800">
+                                <p class="text-xs sm:text-sm text-yellow-800">
                                     Ini adalah <strong>demo</strong> chatbot. Untuk layanan resmi, silakan hubungi WhatsApp DUKCAPIL Ponorogo di bawah ini.
                                 </p>
                             </div>
@@ -513,15 +521,15 @@
 
                         <!-- Chat Demo Panel -->
                         <div class="lg:col-span-2">
-                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden" style="height: 700px; max-height: 80vh;">
+                            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden h-[600px] sm:h-[700px] max-h-[80vh]">
                                 <!-- Chat Header -->
-                                <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 text-white p-4 flex items-center justify-between">
+                                <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 text-white p-3 sm:p-4 flex items-center justify-between">
                                     <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-2xl mr-3">
+                                        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center text-xl sm:text-2xl mr-2 sm:mr-3">
                                             🤖
                                         </div>
                                         <div>
-                                            <h3 class="font-bold">DUKCAPIL Assistant</h3>
+                                            <h3 class="font-bold text-sm sm:text-base">DUKCAPIL Assistant</h3>
                                             <p class="text-xs text-whatsapp-100">
                                                 <span id="statusIndicator" class="inline-block w-2 h-2 bg-green-400 rounded-full mr-1"></span>
                                                 Always Online
@@ -529,29 +537,29 @@
                                         </div>
                                     </div>
                                     <button id="demoResetBtn" class="text-white hover:text-whatsapp-100 p-2" title="Reset Chat">
-                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                         </svg>
                                     </button>
                                 </div>
 
                                 <!-- Messages Area -->
-                                <div id="demoMessagesArea" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50" style="height: calc(100% - 140px);">
+                                <div id="demoMessagesArea" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50" style="height: calc(100% - 140px);">
                                     <div class="flex items-center justify-center h-full">
                                         <div class="text-center">
-                                            <div class="w-20 h-20 bg-whatsapp-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                                <svg class="h-10 w-10 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div class="w-16 h-16 sm:w-20 sm:h-20 bg-whatsapp-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                                <svg class="h-8 w-8 sm:h-10 sm:w-10 text-whatsapp-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                                                 </svg>
                                             </div>
-                                            <h3 class="text-lg font-medium text-gray-700 mb-2">Selamat Datang!</h3>
-                                            <p class="text-gray-500">Ketik pesan di bawah untuk memulai percakapan</p>
+                                            <h3 class="text-base sm:text-lg font-medium text-gray-700 mb-2">Selamat Datang!</h3>
+                                            <p class="text-sm sm:text-base text-gray-500">Ketik pesan di bawah untuk memulai percakapan</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Input Area -->
-                                <div class="border-t border-gray-200 p-4 bg-white">
+                                <div class="border-t border-gray-200 p-3 sm:p-4 bg-white">
                                     <form id="demoMessageForm" class="flex space-x-2">
                                         @csrf
                                         <input type="hidden" id="demoSessionId" value="">
@@ -559,16 +567,16 @@
                                             type="text" 
                                             id="demoMessageInput" 
                                             placeholder="Ketik pesan Anda..." 
-                                            class="flex-1 rounded-full border-gray-300 focus:border-whatsapp-500 focus:ring focus:ring-whatsapp-200 px-4 py-3"
+                                            class="flex-1 rounded-full border-gray-300 focus:border-whatsapp-500 focus:ring focus:ring-whatsapp-200 px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base"
                                             autocomplete="off"
                                             required
                                         >
                                         <button 
                                             type="submit" 
                                             id="demoSendBtn"
-                                            class="bg-whatsapp-600 hover:bg-whatsapp-700 text-white font-bold p-3 rounded-full transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            class="bg-whatsapp-600 hover:bg-whatsapp-700 text-white font-bold p-2 sm:p-3 rounded-full transition duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                                             </svg>
                                         </button>
@@ -581,21 +589,21 @@
             </div>
 
             <!-- CTA WhatsApp Section -->
-            <div class="gradient-whatsapp text-white py-16">
+            <div class="gradient-whatsapp text-white py-12 sm:py-16">
                 <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-                    <h2 class="text-3xl sm:text-4xl font-bold mb-6">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                         Siap Menggunakan Layanan Resmi?
                     </h2>
-                    <p class="text-xl mb-8 text-whatsapp-100">
+                    <p class="text-lg sm:text-xl mb-6 sm:mb-8 text-whatsapp-100">
                         Hubungi WhatsApp resmi DUKCAPIL Ponorogo untuk layanan sebenarnya
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         {{-- TODO: Replace with actual WhatsApp number: https://wa.me/62XXXXXXXXXXX --}}
-                        <a href="https://wa.me/6281234567890?text=Halo%20DUKCAPIL%20Ponorogo" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-600 transition duration-150 ease-in-out">
-                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <a href="https://wa.me/6281234567890?text=Halo%20DUKCAPIL%20Ponorogo" class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-base sm:text-lg font-medium rounded-lg text-white hover:bg-white hover:text-whatsapp-600 transition duration-150 ease-in-out">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                             </svg>
-                            Hubungi via WhatsApp Resmi
+                            <span class="whitespace-nowrap">Hubungi via WhatsApp Resmi</span>
                         </a>
                     </div>
                 </div>
@@ -603,32 +611,32 @@
         </main>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-12">
+        <footer class="bg-gray-900 text-white py-8 sm:py-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
                     <div>
-                        <h3 class="text-xl font-bold mb-4">DUKCAPIL Ponorogo</h3>
-                        <p class="text-gray-400">
+                        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">DUKCAPIL Ponorogo</h3>
+                        <p class="text-sm sm:text-base text-gray-400">
                             Dinas Kependudukan dan Pencatatan Sipil Kabupaten Ponorogo
                         </p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Kontak</h3>
-                        <p class="text-gray-400">
+                        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Kontak</h3>
+                        <p class="text-sm sm:text-base text-gray-400">
                             Email: dukcapil@ponorogo.go.id<br>
                             Telepon: (0352) 123456<br>
                             WhatsApp: 0812-3456-7890 {{-- TODO: Replace with actual number --}}
                         </p>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold mb-4">Jam Layanan</h3>
-                        <p class="text-gray-400">
+                        <h3 class="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Jam Layanan</h3>
+                        <p class="text-sm sm:text-base text-gray-400">
                             Senin - Jumat: 08:00 - 16:00<br>
                             WhatsApp Chatbot: 24/7
                         </p>
                     </div>
                 </div>
-                <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <div class="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-sm sm:text-base text-gray-400">
                     <p>&copy; {{ date('Y') }} DUKCAPIL Ponorogo. All rights reserved.</p>
                 </div>
             </div>
