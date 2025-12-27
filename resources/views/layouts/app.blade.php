@@ -15,7 +15,19 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased bg-whatsapp-50">
-        <div x-data="{ sidebarOpen: window.innerWidth >= 1024 }" class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
+        <div x-data="{ 
+            sidebarOpen: window.innerWidth >= 1024,
+            init() {
+                this.sidebarOpen = window.innerWidth >= 1024;
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 1024) {
+                        this.sidebarOpen = true;
+                    } else {
+                        this.sidebarOpen = false;
+                    }
+                });
+            }
+        }" class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
             @include('layouts.navigation')
 
             <div class="flex relative">

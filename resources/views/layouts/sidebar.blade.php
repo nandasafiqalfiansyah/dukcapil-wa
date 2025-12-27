@@ -7,7 +7,7 @@
        x-transition:leave-start="translate-x-0"
        x-transition:leave-end="-translate-x-full"
        class="fixed lg:relative inset-y-0 left-0 z-40 flex flex-shrink-0 mt-16 lg:mt-0"
-       @click.away="if (window.innerWidth < 1024) sidebarOpen = false">
+       @click.away="if ($el.closest('body').clientWidth < 1024) sidebarOpen = false">
     <div class="flex flex-col w-64">
         <div class="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto shadow-lg lg:shadow-none">
             <div class="flex items-center flex-shrink-0 px-4">
