@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminUserSeeder::class,
+            AutoReplyConfigSeeder::class,
+            CsTrainingDataSeeder::class,
         ]);
     }
 }
