@@ -42,11 +42,13 @@ class BotInstanceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'bot_id' => 'required|string|unique:bot_instances,bot_id|max:255',
+            'fonnte_token' => 'nullable|string',
         ]);
 
         $result = $this->whatsappService->initializeBot(
             $validated['bot_id'],
-            $validated['name']
+            $validated['name'],
+            $validated['fonnte_token'] ?? null
         );
 
         if ($result['success']) {
@@ -54,7 +56,7 @@ class BotInstanceController extends Controller
 
             if ($bot) {
                 return redirect()->route('admin.bots.show', $bot)
-                    ->with('success', 'Bot instance created successfully. WhatsApp Business API is ready to use.');
+                    ->with('success', 'Bot instance created successfully. Your WhatsApp connection is ready to use.');
             }
 
             return redirect()->route('admin.bots.index')

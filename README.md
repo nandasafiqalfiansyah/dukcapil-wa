@@ -1,19 +1,19 @@
 # DUKCAPIL WhatsApp Bot
 
-> Modern WhatsApp chatbot system for DUKCAPIL Ponorogo with full-stack Laravel architecture using WhatsApp Business API
+> Modern WhatsApp chatbot system for DUKCAPIL Ponorogo with full-stack Laravel architecture using Fonnte WhatsApp API
 
 ## 🎨 Features
 
 - **WhatsApp-Style UI** - Green and white theme matching WhatsApp's design
-- **WhatsApp Business API** - Official Meta API integration (no QR code scanning needed)
+- **Fonnte WhatsApp API** - Easy integration with QR code scanning (no Facebook Business account needed)
 - **Single Terminal Operation** - Full-stack Laravel application, no separate bot server required
 - **Multiple Device Support** - Manage multiple WhatsApp Business accounts
-- **Real-time Messaging** - Send and receive messages via official API
+- **Real-time Messaging** - Send and receive messages via Fonnte API
 - **Service Request Management** - Handle citizen service requests (KTP, KK, Birth Certificates)
 - **Auto-Reply System** - Automated responses for common queries
 - **User Management** - Role-based access control
 - **Conversation Logging** - Complete message history
-- **Webhook Integration** - Receive real-time message updates from Meta
+- **Webhook Integration** - Receive real-time message updates from Fonnte
 
 ## 🚀 Quick Start
 
@@ -21,7 +21,7 @@
 - PHP 8.2+
 - Composer
 - Node.js 18+ (for asset building only)
-- WhatsApp Business API credentials from Meta
+- Fonnte account and API token (get it from [fonnte.com](https://fonnte.com))
 
 ### Installation
 
@@ -35,12 +35,10 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 
-# 3. Configure WhatsApp Business API
+# 3. Configure Fonnte WhatsApp API
 # Add these to your .env file:
-# WHATSAPP_API_URL=https://graph.facebook.com/v18.0
-# WHATSAPP_ACCESS_TOKEN=your_access_token
-# WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
-# WHATSAPP_VERIFY_TOKEN=your_verify_token
+# FONNTE_API_URL=https://md.fonnte.com
+# FONNTE_TOKEN=your_fonnte_token_here
 
 # 4. Build assets
 npm run build
@@ -55,8 +53,9 @@ composer run dev
 
 ## 📖 Documentation
 
+- **[Fonnte Setup Guide](FONNTE_SETUP_GUIDE.md)** - Complete guide for connecting WhatsApp via Fonnte (Indonesian)
 - **[Complete Setup Guide](SETUP_GUIDE.md)** - Detailed installation and configuration
-- **[WhatsApp Business API Guide](WHATSAPP_BUSINESS_API_GUIDE.md)** - How to get API credentials
+- **[WhatsApp Business API Guide](WHATSAPP_BUSINESS_API_GUIDE.md)** - Legacy Meta API guide (deprecated)
 - **[DUKCAPIL Features](DUKCAPIL_README.md)** - Feature documentation
 
 ## 🎨 UI Preview
@@ -74,30 +73,34 @@ Laravel Full-Stack Application
     ↓
 Admin Dashboard
     ↓
-WhatsApp Business API Integration
+Fonnte WhatsApp API Integration
     ↓
 API Routes (Webhook)
     ↓
 Database
 ```
 
-## 📱 Setting Up WhatsApp Business API
+## 📱 Setting Up WhatsApp Connection
 
 1. Login to admin dashboard
 2. Navigate to "Bots" → "Add New Device"
 3. Enter bot name and ID
-4. Configure WhatsApp Business API credentials in .env
-5. Set up webhook in Meta for Developers dashboard
-6. Bot is ready to send and receive messages!
+4. Enter your Fonnte API token (or configure in .env)
+5. Bot is ready to send and receive messages!
+
+**Get Fonnte Token:**
+- Visit [fonnte.com](https://fonnte.com)
+- Register and verify your account
+- Scan QR code to connect WhatsApp
+- Copy your API token from dashboard
+- See [FONNTE_SETUP_GUIDE.md](FONNTE_SETUP_GUIDE.md) for detailed steps
 
 ## 🛡️ Security
 
 **Important:** Change default passwords and secure your API credentials:
 
 ```env
-WHATSAPP_ACCESS_TOKEN=your-permanent-access-token
-WHATSAPP_PHONE_NUMBER_ID=your-phone-number-id
-WHATSAPP_VERIFY_TOKEN=your-secure-verify-token
+FONNTE_TOKEN=your-fonnte-api-token
 ```
 
 ## 🔧 Configuration
@@ -114,37 +117,40 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-### WhatsApp Business API
-Get credentials from Meta for Developers:
-1. Create a Meta App
-2. Add WhatsApp product
-3. Get access token and phone number ID
-4. Configure webhook URL: `https://yourdomain.com/api/webhook/whatsapp`
+### WhatsApp Connection
+Get credentials from Fonnte:
+1. Register at [fonnte.com](https://fonnte.com)
+2. Scan QR code to connect WhatsApp
+3. Copy API token from dashboard
+4. Configure in .env: `FONNTE_TOKEN=your_token`
+
+Or enter token directly when creating a new bot in admin dashboard.
 
 ## 🐛 Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Messages not received | Check webhook configuration in Meta dashboard |
-| Cannot send messages | Verify WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID |
+| Messages not received | Check webhook configuration in Fonnte dashboard |
+| Cannot send messages | Verify FONNTE_TOKEN is valid and WhatsApp is connected |
 | Build errors | Run `npm run build && php artisan config:clear` |
 
 ## 📚 Tech Stack
 
 - **Backend**: Laravel 12, PHP 8.2
 - **Frontend**: Blade Templates, Tailwind CSS, Alpine.js
-- **WhatsApp**: WhatsApp Business API (Meta)
+- **WhatsApp**: Fonnte WhatsApp API
 - **Database**: SQLite/MySQL/PostgreSQL
 - **Queue**: Laravel Queue
 - **Testing**: Pest
 
 ## 🆕 What's New
 
-- ✅ Converted from WhatsApp Web.js (QR code based) to WhatsApp Business API
+- ✅ Integrated with Fonnte API for easy WhatsApp connection
+- ✅ No Facebook Business account required
+- ✅ Easy setup with QR code scanning
 - ✅ Single terminal operation - no separate Node.js bot server needed
-- ✅ Official Meta API integration for better reliability
-- ✅ No more QR code scanning required
-- ✅ Production-ready webhook integration
+- ✅ Per-bot token support for multi-device management
+- ✅ Comprehensive Indonesian setup guide
 
 ## 🤝 Contributing
 
