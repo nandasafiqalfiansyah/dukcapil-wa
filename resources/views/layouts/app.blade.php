@@ -24,7 +24,7 @@
             },
             checkScreenSize() {
                 this.isMobile = window.innerWidth < 1024;
-                this.sidebarOpen = !this.isMobile;
+                // Sidebar is closed by default on all screen sizes
             }
         }" class="min-h-screen bg-gradient-to-br from-whatsapp-50 via-white to-whatsapp-100">
             @include('layouts.navigation')
