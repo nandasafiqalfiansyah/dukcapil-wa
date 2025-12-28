@@ -34,7 +34,7 @@
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-500">Total Processed</div>
-                            <div class="text-2xl font-bold text-gray-900" id="statTotal">-</div>
+                            <div class="text-2xl font-bold text-gray-900" id="statTotal">0</div>
                         </div>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-500">Avg Confidence</div>
-                            <div class="text-2xl font-bold text-gray-900" id="statConfidence">-</div>
+                            <div class="text-2xl font-bold text-gray-900" id="statConfidence">0%</div>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                         </div>
                         <div class="ml-4">
                             <div class="text-sm font-medium text-gray-500">Low Confidence</div>
-                            <div class="text-2xl font-bold text-gray-900" id="statLowConf">-</div>
+                            <div class="text-2xl font-bold text-gray-900" id="statLowConf">0</div>
                         </div>
                     </div>
                 </div>

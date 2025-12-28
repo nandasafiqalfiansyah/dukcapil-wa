@@ -40,14 +40,13 @@
                                    name="bot_id" 
                                    value="{{ old('bot_id') }}"
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-900" 
-                                   placeholder="e.g., bot-1"
-                                   pattern="[a-z0-9\-]+"
+                                   placeholder="e.g., 62881011983167 or bot-1"
                                    required>
                             @error('bot_id')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                A unique identifier (lowercase letters, numbers, and hyphens only)
+                                A unique identifier for this bot instance
                             </p>
                         </div>
 
