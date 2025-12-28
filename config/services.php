@@ -35,6 +35,12 @@ return [
         ],
     ],
 
+    'fonnte' => [
+        'api_url' => env('FONNTE_API_URL', 'https://md.fonnte.com'),
+        'token' => env('FONNTE_TOKEN'),
+    ],
+
+    // Legacy WhatsApp Business API (deprecated)
     'whatsapp' => [
         'api_url' => env('WHATSAPP_API_URL', 'https://graph.facebook.com/v18.0'),
         'access_token' => env('WHATSAPP_ACCESS_TOKEN'),

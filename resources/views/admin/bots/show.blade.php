@@ -56,7 +56,11 @@
                                     </div>
                                     <h3 class="text-3xl font-bold text-whatsapp-600 mb-2">Connected!</h3>
                                     <p class="text-gray-600 text-lg">
-                                        Your WhatsApp Business API is configured and ready to use.
+                                        @if(isset($bot->metadata['api_type']) && $bot->metadata['api_type'] === 'fonnte')
+                                            Your WhatsApp is connected via Fonnte API and ready to use.
+                                        @else
+                                            Your WhatsApp Business API is configured and ready to use.
+                                        @endif
                                     </p>
                                 </div>
                             @else
@@ -68,17 +72,15 @@
                                     </div>
                                     <h3 class="text-3xl font-bold text-gray-700 mb-2">Not Connected</h3>
                                     <p class="text-gray-600 text-lg mb-6">
-                                        Configure your WhatsApp Business API credentials in the .env file.
+                                        Configure your WhatsApp connection using Fonnte API.
                                     </p>
                                     <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 max-w-lg mx-auto text-left">
                                         <p class="font-bold mb-2">Required Configuration:</p>
                                         <ul class="list-disc list-inside space-y-1 text-sm">
-                                            <li>WHATSAPP_ACCESS_TOKEN</li>
-                                            <li>WHATSAPP_PHONE_NUMBER_ID</li>
-                                            <li>WHATSAPP_VERIFY_TOKEN</li>
+                                            <li>Fonnte Token (from your Fonnte dashboard)</li>
                                         </ul>
                                         <p class="mt-3 text-sm">
-                                            Get these credentials from <a href="https://developers.facebook.com/" target="_blank" class="underline font-semibold">Meta for Developers</a>
+                                            Get your token from <a href="https://fonnte.com" target="_blank" class="underline font-semibold">Fonnte.com</a>
                                         </p>
                                     </div>
                                 </div>
@@ -89,45 +91,56 @@
                     <!-- Configuration Guide -->
                     <div class="mt-6 bg-white rounded-xl shadow-lg overflow-hidden">
                         <div class="bg-blue-600 p-4 text-white">
-                            <h3 class="text-lg font-bold">Setup Guide</h3>
+                            <h3 class="text-lg font-bold">Setup Guide - Fonnte API</h3>
                         </div>
                         <div class="p-6">
                             <div class="space-y-4 text-gray-700">
                                 <div class="flex items-start">
                                     <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">1</span>
                                     <div>
-                                        <p class="font-semibold">Create a Meta App</p>
-                                        <p class="text-sm text-gray-600">Visit <a href="https://developers.facebook.com/" target="_blank" class="text-blue-600 underline">Meta for Developers</a> and create a new app</p>
+                                        <p class="font-semibold">Register at Fonnte</p>
+                                        <p class="text-sm text-gray-600">Visit <a href="https://fonnte.com" target="_blank" class="text-blue-600 underline">Fonnte.com</a> and create a free account</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">2</span>
                                     <div>
-                                        <p class="font-semibold">Add WhatsApp Product</p>
-                                        <p class="text-sm text-gray-600">Add the WhatsApp Business Platform product to your app</p>
+                                        <p class="font-semibold">Connect Your WhatsApp</p>
+                                        <p class="text-sm text-gray-600">Scan the QR code in Fonnte dashboard with your WhatsApp to connect your number</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">3</span>
                                     <div>
-                                        <p class="font-semibold">Get Credentials</p>
-                                        <p class="text-sm text-gray-600">Copy the Access Token and Phone Number ID from the dashboard</p>
+                                        <p class="font-semibold">Get Your Token</p>
+                                        <p class="text-sm text-gray-600">Copy your API token from the Fonnte dashboard</p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">4</span>
                                     <div>
-                                        <p class="font-semibold">Configure Webhook</p>
-                                        <p class="text-sm text-gray-600">Set webhook URL to: <code class="bg-gray-100 px-2 py-1 rounded">{{ config('app.url') }}/api/webhook/whatsapp</code></p>
+                                        <p class="font-semibold">Configure Bot</p>
+                                        <p class="text-sm text-gray-600">Create a new bot and enter your Fonnte token, or add it to your .env file: <code class="bg-gray-100 px-2 py-1 rounded">FONNTE_TOKEN=your_token</code></p>
                                     </div>
                                 </div>
                                 <div class="flex items-start">
                                     <span class="bg-whatsapp-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-3 flex-shrink-0 font-bold">5</span>
                                     <div>
-                                        <p class="font-semibold">Update .env File</p>
-                                        <p class="text-sm text-gray-600">Add your credentials to the .env file and restart the application</p>
+                                        <p class="font-semibold">Start Messaging</p>
+                                        <p class="text-sm text-gray-600">Your bot is now ready to send and receive WhatsApp messages!</p>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            <div class="mt-6 bg-green-50 border-l-4 border-green-500 text-green-700 p-4">
+                                <p class="font-bold mb-2">✨ Benefits of Fonnte API:</p>
+                                <ul class="list-disc list-inside space-y-1 text-sm">
+                                    <li>No Facebook Business account required</li>
+                                    <li>Easy setup with QR code scanning</li>
+                                    <li>Affordable pricing for small businesses</li>
+                                    <li>Webhook support for incoming messages</li>
+                                    <li>Multi-device support</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -178,7 +191,13 @@
 
                             <div>
                                 <label class="text-xs font-semibold text-gray-500 uppercase">Platform</label>
-                                <p class="text-gray-900">WhatsApp Business API</p>
+                                <p class="text-gray-900">
+                                    @if(isset($bot->metadata['api_type']) && $bot->metadata['api_type'] === 'fonnte')
+                                        Fonnte WhatsApp API
+                                    @else
+                                        WhatsApp Business API
+                                    @endif
+                                </p>
                             </div>
 
                             @if($bot->last_connected_at)
