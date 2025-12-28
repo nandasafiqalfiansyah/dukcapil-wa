@@ -119,11 +119,28 @@ Aplikasi ini otomatis menerima pesan masuk melalui webhook. Untuk mengaktifkan w
    ```
 4. Pilih event yang ingin diterima:
    - ✅ Message received
-   - ✅ Message sent
-   - ✅ Message status
+   - ✅ Message sent (optional)
+   - ✅ Message status (optional)
 5. Simpan konfigurasi
 
-**Catatan:** URL webhook harus menggunakan HTTPS (SSL)
+**Catatan Penting:**
+- URL webhook harus menggunakan HTTPS (SSL)
+- Untuk development lokal, gunakan ngrok atau serveo untuk expose local server
+- Fonnte akan mengirim POST request ke URL webhook saat ada pesan masuk
+- Format webhook Fonnte otomatis terdeteksi oleh aplikasi
+
+**Contoh menggunakan ngrok:**
+```bash
+# Install ngrok dari https://ngrok.com
+# Jalankan Laravel
+php artisan serve
+
+# Di terminal lain, expose dengan ngrok
+ngrok http 8000
+
+# Copy URL https dari ngrok (contoh: https://abc123.ngrok.io)
+# Masukkan ke Fonnte webhook: https://abc123.ngrok.io/api/webhook/whatsapp
+```
 
 ## 💰 Harga dan Paket
 

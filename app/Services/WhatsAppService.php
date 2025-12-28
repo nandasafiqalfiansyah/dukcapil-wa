@@ -260,9 +260,151 @@ class WhatsAppService
     }
 
     /**
-     * Process incoming message from WhatsApp Business API webhook.
+     * Process incoming message from Fonnte or WhatsApp Business API webhook.
      */
     public function processIncomingMessage(array $data): void
+    {
+        // Detect webhook format
+        if ($this->isFonnteWebhook($data)) {
+            $this->processFonnteWebhook($data);
+        } else {
+            $this->processMetaWebhook($data);
+        }
+    }
+    
+    /**
+     * Check if webhook data is from Fonnte.
+     */
+    protected function isFonnteWebhook(array $data): bool
+    {
+        // Fonnte webhooks have 'device' and 'message' or 'messages' field
+        return isset($data['device']) || isset($data['message']);
+    }
+    
+    /**
+     * Process Fonnte webhook.
+     */
+    protected function processFonnteWebhook(array $data): void
+    {
+        try {
+            // Fonnte can send single message or multiple messages
+            if (isset($data['message'])) {
+                // Single message format
+                $this->handleFonnteMessage($data);
+            } elseif (isset($data['messages']) && is_array($data['messages'])) {
+                // Multiple messages format
+                foreach ($data['messages'] as $message) {
+                    $this->handleFonnteMessage($message);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error processing Fonnte webhook', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
+        }
+    }
+    
+    /**
+     * Handle individual Fonnte message.
+     */
+    protected function handleFonnteMessage(array $data): void
+    {
+        // Extract phone number (remove @ suffix if present)
+        $phoneNumber = preg_replace('/@.*$/', '', $data['from'] ?? $data['sender'] ?? '');
+        
+        if (empty($phoneNumber)) {
+            Log::warning('Fonnte webhook: missing phone number', ['data' => $data]);
+            return;
+        }
+        
+        // Get message content
+        $messageContent = $data['message'] ?? $data['text'] ?? '';
+        $messageType = $data['type'] ?? 'text';
+        $messageId = $data['id'] ?? uniqid('fonnte_');
+        
+        // Create or find WhatsApp user
+        $whatsappUser = WhatsAppUser::firstOrCreate(
+            ['phone_number' => $phoneNumber],
+            [
+                'name' => $data['name'] ?? $data['pushname'] ?? null,
+                'status' => 'active',
+            ]
+        );
+        
+        // Get the default bot instance
+        $bot = $this->getAvailableBot();
+        
+        // Log incoming message
+        ConversationLog::create([
+            'bot_instance_id' => $bot?->id,
+            'whatsapp_user_id' => $whatsappUser->id,
+            'message_id' => $messageId,
+            'direction' => 'incoming',
+            'message_content' => $messageContent,
+            'message_type' => $messageType,
+            'metadata' => $data,
+            'status' => 'delivered',
+        ]);
+        
+        // Handle auto-reply for text messages
+        if ($messageType === 'text' && !empty($messageContent)) {
+            $this->handleFonnteAutoReply($phoneNumber, $messageContent, $bot);
+        }
+    }
+    
+    /**
+     * Handle auto-reply for Fonnte messages.
+     */
+    protected function handleFonnteAutoReply(string $phoneNumber, string $message, ?BotInstance $bot): void
+    {
+        $messageBody = trim($message);
+        
+        // Get active auto-reply configurations ordered by priority
+        $autoReplies = AutoReplyConfig::active()
+            ->byPriority()
+            ->get();
+        
+        // Check if message matches any auto-reply trigger
+        foreach ($autoReplies as $autoReply) {
+            $trigger = $autoReply->trigger;
+            $matches = false;
+            
+            if ($autoReply->case_sensitive) {
+                $matches = $messageBody === $trigger;
+            } else {
+                $matches = strtolower($messageBody) === strtolower($trigger);
+            }
+            
+            if ($matches) {
+                // Replace dynamic placeholders in response
+                $response = str_replace(
+                    ['{{timestamp}}', '{{date}}', '{{time}}'],
+                    [
+                        now()->format('d/m/Y H:i:s'),
+                        now()->format('d/m/Y'),
+                        now()->format('H:i:s'),
+                    ],
+                    $autoReply->response
+                );
+                
+                // Send auto-reply
+                $this->sendMessage($phoneNumber, $response, $bot);
+                
+                Log::info('Fonnte auto-reply sent', [
+                    'trigger' => $trigger,
+                    'to' => $phoneNumber,
+                ]);
+                
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Process Meta WhatsApp Business API webhook (Legacy).
+     */
+    protected function processMetaWebhook(array $data): void
     {
         try {
             // Validate webhook payload structure
@@ -297,20 +439,20 @@ class WhatsAppService
                     continue;
                 }
 
-                $this->handleMessage($message, $contacts[0] ?? []);
+                $this->handleMetaMessage($message, $contacts[0] ?? []);
             }
         } catch (\Exception $e) {
-            Log::error('Error processing incoming WhatsApp message', [
+            Log::error('Error processing Meta WhatsApp webhook', [
                 'error' => $e->getMessage(),
                 'data' => $data,
             ]);
         }
     }
-
+    
     /**
-     * Handle individual message from webhook.
+     * Handle individual message from Meta webhook (Legacy).
      */
-    protected function handleMessage(array $message, array $contact): void
+    protected function handleMetaMessage(array $message, array $contact): void
     {
         $phoneNumber = $message['from'];
         $messageId = $message['id'];
@@ -662,10 +804,17 @@ class WhatsAppService
     }
 
     /**
-     * Verify webhook for WhatsApp Business API.
+     * Verify webhook for WhatsApp Business API (Meta only).
+     * Fonnte doesn't require webhook verification.
      */
     public function verifyWebhook(string $mode, string $token, string $challenge): ?string
     {
+        if ($this->isFonnte()) {
+            // Fonnte doesn't need webhook verification
+            return $challenge;
+        }
+        
+        // Meta webhook verification
         $verifyToken = config('services.whatsapp.verify_token');
 
         if ($mode === 'subscribe' && $token === $verifyToken) {
