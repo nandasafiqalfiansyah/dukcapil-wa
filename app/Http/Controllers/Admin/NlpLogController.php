@@ -118,7 +118,7 @@ class NlpLogController extends Controller
             'success' => true,
             'statistics' => [
                 'total_processed' => $totalProcessed,
-                'average_confidence' => round($avgConfidence * 100, 2),
+                'average_confidence' => $avgConfidence !== null ? round($avgConfidence * 100, 2) : 0,
                 'low_confidence_count' => $lowConfidenceCount,
                 'intent_distribution' => $intentDistribution,
             ],
