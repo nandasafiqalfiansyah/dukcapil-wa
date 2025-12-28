@@ -52,6 +52,14 @@ class BotInstance extends Model
     }
 
     /**
+     * Check if bot needs QR code scanning.
+     */
+    public function needsQrScan(): bool
+    {
+        return $this->status === 'qr_generated';
+    }
+
+    /**
      * Scope to get only active bots.
      */
     public function scopeActive($query)
