@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             AutoReplyConfigSeeder::class,
             CsTrainingDataSeeder::class,
+            ExtendedNlpTrainingDataSeeder::class,
+            NlpConfigSeeder::class,
         ]);
     }
 }
