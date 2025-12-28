@@ -209,7 +209,7 @@
         // Create new chat session
         document.getElementById('newChatBtn').addEventListener('click', async () => {
             try {
-                const response = await fetch('{{ route("admin.chatbot.sessions.create") }}', {
+                const response = await fetch('/admin/chatbot/sessions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -219,7 +219,7 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    window.location.href = '{{ route("admin.chatbot.index") }}?session=' + data.session.id;
+                    window.location.href = '/admin/chatbot?session=' + data.session.id;
                 }
             } catch (error) {
                 console.error('Error creating session:', error);
@@ -245,7 +245,7 @@
             const typingIndicator = appendTypingIndicator();
             
             try {
-                const response = await fetch('{{ route("admin.chatbot.messages.send") }}', {
+                const response = await fetch('/admin/chatbot/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -350,7 +350,7 @@
 
         // Load session
         function loadSession(sessionId) {
-            window.location.href = '{{ route("admin.chatbot.index") }}?session=' + sessionId;
+            window.location.href = '/admin/chatbot?session=' + sessionId;
         }
 
         // Delete session
@@ -369,7 +369,7 @@
                 
                 const data = await response.json();
                 if (data.success) {
-                    window.location.href = '{{ route("admin.chatbot.index") }}';
+                    window.location.href = '/admin/chatbot';
                 }
             } catch (error) {
                 console.error('Error deleting session:', error);
