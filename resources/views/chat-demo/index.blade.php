@@ -258,7 +258,7 @@
 
         async function createSession() {
             try {
-                const response = await fetch('{{ route("chat-demo.sessions.create") }}', {
+                const response = await fetch('/chat-demo/sessions', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -304,7 +304,7 @@
             const typingIndicator = appendTypingIndicator();
             
             try {
-                const response = await fetch('{{ route("chat-demo.messages.send") }}', {
+                const response = await fetch('/chat-demo/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -441,7 +441,7 @@
             }
             
             try {
-                const response = await fetch('{{ route("chat-demo.reset") }}', {
+                const response = await fetch('/chat-demo/reset', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -484,7 +484,7 @@
                 }
                 
                 try {
-                    const response = await fetch('{{ route("chat-demo.reset") }}', {
+                    const response = await fetch('/chat-demo/reset', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
