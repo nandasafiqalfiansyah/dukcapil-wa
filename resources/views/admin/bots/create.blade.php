@@ -7,20 +7,20 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white dark:bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form action="{{ route('admin.bots.store') }}" method="POST">
                         @csrf
 
                         <div class="mb-6">
-                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900">
+                            <label for="name" class="dark:bg-white block mb-2 text-sm font-medium text-gray-900">
                                 Bot Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="name" 
                                    name="name" 
                                    value="{{ old('name') }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., DUKCAPIL Bot 1"
                                    required>
                             @error('name')
@@ -39,7 +39,7 @@
                                    id="bot_id" 
                                    name="bot_id" 
                                    value="{{ old('bot_id') }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., bot-1"
                                    pattern="[a-z0-9-]+"
                                    required>
