@@ -53,6 +53,7 @@ composer run dev
 
 ## 📖 Documentation
 
+- **[Fonnte Quick Start](FONNTE_QUICK_START.md)** - 5-minute setup guide (English)
 - **[Fonnte Setup Guide](FONNTE_SETUP_GUIDE.md)** - Complete guide for connecting WhatsApp via Fonnte (Indonesian)
 - **[Complete Setup Guide](SETUP_GUIDE.md)** - Detailed installation and configuration
 - **[WhatsApp Business API Guide](WHATSAPP_BUSINESS_API_GUIDE.md)** - Legacy Meta API guide (deprecated)
