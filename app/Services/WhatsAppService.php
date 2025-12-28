@@ -12,14 +12,27 @@ use Illuminate\Support\Facades\Log;
 class WhatsAppService
 {
     protected string $apiUrl;
+    protected ?string $token;
     protected ?string $accessToken;
     protected ?string $phoneNumberId;
 
     public function __construct()
     {
-        $this->apiUrl = config('services.whatsapp.api_url', 'https://graph.facebook.com/v18.0');
+        // Fonnte API Configuration (Primary)
+        $this->apiUrl = config('services.fonnte.api_url', 'https://md.fonnte.com');
+        $this->token = config('services.fonnte.token');
+        
+        // Legacy WhatsApp Business API Configuration (Fallback)
         $this->accessToken = config('services.whatsapp.access_token');
         $this->phoneNumberId = config('services.whatsapp.phone_number_id');
+    }
+    
+    /**
+     * Check if using Fonnte API or legacy WhatsApp Business API
+     */
+    protected function isFonnte(): bool
+    {
+        return !empty($this->token);
     }
 
     /**
@@ -41,9 +54,107 @@ class WhatsAppService
     }
 
     /**
-     * Send a message using WhatsApp Business API.
+     * Send a message using Fonnte or WhatsApp Business API.
      */
     public function sendMessage(string $to, string $message, ?BotInstance $bot = null, array $options = []): array
+    {
+        if ($this->isFonnte()) {
+            return $this->sendMessageViaFonnte($to, $message, $bot, $options);
+        }
+        
+        return $this->sendMessageViaBusinessAPI($to, $message, $bot, $options);
+    }
+    
+    /**
+     * Send a message using Fonnte API.
+     */
+    protected function sendMessageViaFonnte(string $to, string $message, ?BotInstance $bot = null, array $options = []): array
+    {
+        if (empty($this->token)) {
+            Log::error('Fonnte API not configured');
+            return [
+                'success' => false,
+                'error' => 'Fonnte API not configured. Please set FONNTE_TOKEN in .env',
+            ];
+        }
+
+        $bot = $bot ?? $this->getAvailableBot();
+
+        // Clean phone number (ensure it has only digits)
+        $phoneNumber = preg_replace('/[^0-9]/', '', $to);
+        
+        // Fonnte expects international format with + prefix
+        $to = '+' . $phoneNumber;
+
+        try {
+            $payload = [
+                'target' => $to,
+                'message' => $message,
+            ];
+            
+            // Add additional options if provided
+            if (!empty($options['url'])) {
+                $payload['url'] = $options['url'];
+            }
+            if (!empty($options['filename'])) {
+                $payload['filename'] = $options['filename'];
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => $this->token,
+            ])->post("{$this->apiUrl}/send", $payload);
+
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Find or create WhatsApp user (use cleaned number without +)
+                $whatsappUser = WhatsAppUser::firstOrCreate(
+                    ['phone_number' => $phoneNumber],
+                    ['status' => 'active']
+                );
+
+                // Log the outgoing message
+                ConversationLog::create([
+                    'bot_instance_id' => $bot?->id,
+                    'whatsapp_user_id' => $whatsappUser->id,
+                    'message_id' => $data['id'] ?? uniqid('msg_'),
+                    'direction' => 'outgoing',
+                    'message_content' => $message,
+                    'message_type' => 'text',
+                    'status' => 'sent',
+                    'metadata' => $data,
+                ]);
+
+                return [
+                    'success' => true,
+                    'data' => $data,
+                ];
+            }
+
+            Log::error('Fonnte API request failed', [
+                'response' => $response->json(),
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $response->json()['reason'] ?? $response->json(),
+            ];
+        } catch (\Exception $e) {
+            Log::error('Fonnte API request exception', [
+                'error' => $e->getMessage(),
+            ]);
+
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+    
+    /**
+     * Send a message using WhatsApp Business API (Legacy).
+     */
+    protected function sendMessageViaBusinessAPI(string $to, string $message, ?BotInstance $bot = null, array $options = []): array
     {
         if (empty($this->accessToken) || empty($this->phoneNumberId)) {
             Log::error('WhatsApp Business API not configured');
@@ -69,7 +180,7 @@ class WhatsAppService
             ];
 
             $response = Http::withToken($this->accessToken)
-                ->post("{$this->apiUrl}/{$this->phoneNumberId}/messages", $payload);
+                ->post("https://graph.facebook.com/v18.0/{$this->phoneNumberId}/messages", $payload);
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -146,9 +257,151 @@ class WhatsAppService
     }
 
     /**
-     * Process incoming message from WhatsApp Business API webhook.
+     * Process incoming message from Fonnte or WhatsApp Business API webhook.
      */
     public function processIncomingMessage(array $data): void
+    {
+        // Detect webhook format
+        if ($this->isFonnteWebhook($data)) {
+            $this->processFonnteWebhook($data);
+        } else {
+            $this->processMetaWebhook($data);
+        }
+    }
+    
+    /**
+     * Check if webhook data is from Fonnte.
+     */
+    protected function isFonnteWebhook(array $data): bool
+    {
+        // Fonnte webhooks have 'device' and 'message' or 'messages' field
+        return isset($data['device']) || isset($data['message']);
+    }
+    
+    /**
+     * Process Fonnte webhook.
+     */
+    protected function processFonnteWebhook(array $data): void
+    {
+        try {
+            // Fonnte can send single message or multiple messages
+            if (isset($data['message'])) {
+                // Single message format
+                $this->handleFonnteMessage($data);
+            } elseif (isset($data['messages']) && is_array($data['messages'])) {
+                // Multiple messages format
+                foreach ($data['messages'] as $message) {
+                    $this->handleFonnteMessage($message);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Error processing Fonnte webhook', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+            ]);
+        }
+    }
+    
+    /**
+     * Handle individual Fonnte message.
+     */
+    protected function handleFonnteMessage(array $data): void
+    {
+        // Extract phone number (remove @ suffix if present)
+        $phoneNumber = preg_replace('/@.*$/', '', $data['from'] ?? $data['sender'] ?? '');
+        
+        if (empty($phoneNumber)) {
+            Log::warning('Fonnte webhook: missing phone number', ['data' => $data]);
+            return;
+        }
+        
+        // Get message content
+        $messageContent = $data['message'] ?? $data['text'] ?? '';
+        $messageType = $data['type'] ?? 'text';
+        $messageId = $data['id'] ?? uniqid('fonnte_');
+        
+        // Create or find WhatsApp user
+        $whatsappUser = WhatsAppUser::firstOrCreate(
+            ['phone_number' => $phoneNumber],
+            [
+                'name' => $data['name'] ?? $data['pushname'] ?? null,
+                'status' => 'active',
+            ]
+        );
+        
+        // Get the default bot instance
+        $bot = $this->getAvailableBot();
+        
+        // Log incoming message
+        ConversationLog::create([
+            'bot_instance_id' => $bot?->id,
+            'whatsapp_user_id' => $whatsappUser->id,
+            'message_id' => $messageId,
+            'direction' => 'incoming',
+            'message_content' => $messageContent,
+            'message_type' => $messageType,
+            'metadata' => $data,
+            'status' => 'delivered',
+        ]);
+        
+        // Handle auto-reply for text messages
+        if ($messageType === 'text' && !empty($messageContent)) {
+            $this->handleFonnteAutoReply($phoneNumber, $messageContent, $bot);
+        }
+    }
+    
+    /**
+     * Handle auto-reply for Fonnte messages.
+     */
+    protected function handleFonnteAutoReply(string $phoneNumber, string $message, ?BotInstance $bot): void
+    {
+        $messageBody = trim($message);
+        
+        // Get active auto-reply configurations ordered by priority
+        $autoReplies = AutoReplyConfig::active()
+            ->byPriority()
+            ->get();
+        
+        // Check if message matches any auto-reply trigger
+        foreach ($autoReplies as $autoReply) {
+            $trigger = $autoReply->trigger;
+            $matches = false;
+            
+            if ($autoReply->case_sensitive) {
+                $matches = $messageBody === $trigger;
+            } else {
+                $matches = strtolower($messageBody) === strtolower($trigger);
+            }
+            
+            if ($matches) {
+                // Replace dynamic placeholders in response
+                $response = str_replace(
+                    ['{{timestamp}}', '{{date}}', '{{time}}'],
+                    [
+                        now()->format('d/m/Y H:i:s'),
+                        now()->format('d/m/Y'),
+                        now()->format('H:i:s'),
+                    ],
+                    $autoReply->response
+                );
+                
+                // Send auto-reply
+                $this->sendMessage($phoneNumber, $response, $bot);
+                
+                Log::info('Fonnte auto-reply sent', [
+                    'trigger' => $trigger,
+                    'to' => $phoneNumber,
+                ]);
+                
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Process Meta WhatsApp Business API webhook (Legacy).
+     */
+    protected function processMetaWebhook(array $data): void
     {
         try {
             // Validate webhook payload structure
@@ -183,20 +436,20 @@ class WhatsAppService
                     continue;
                 }
 
-                $this->handleMessage($message, $contacts[0] ?? []);
+                $this->handleMetaMessage($message, $contacts[0] ?? []);
             }
         } catch (\Exception $e) {
-            Log::error('Error processing incoming WhatsApp message', [
+            Log::error('Error processing Meta WhatsApp webhook', [
                 'error' => $e->getMessage(),
                 'data' => $data,
             ]);
         }
     }
-
+    
     /**
-     * Handle individual message from webhook.
+     * Handle individual message from Meta webhook (Legacy).
      */
-    protected function handleMessage(array $message, array $contact): void
+    protected function handleMetaMessage(array $message, array $contact): void
     {
         $phoneNumber = $message['from'];
         $messageId = $message['id'];
@@ -305,12 +558,50 @@ class WhatsAppService
     }
 
     /**
-     * Initialize a bot instance (for Business API, this means setting up credentials).
+     * Initialize a bot instance (for Fonnte API, this means setting up token).
      */
-    public function initializeBot(string $botId, string $botName): array
+    public function initializeBot(string $botId, string $botName, ?string $customToken = null): array
     {
         try {
-            // For Business API, we just need to create/update the bot record
+            $token = $customToken ?? $this->token;
+            
+            if ($this->isFonnte() || $customToken) {
+                // Validate Fonnte token by checking device info
+                $deviceInfo = $this->getFonnteDeviceInfo($token);
+                
+                if (!$deviceInfo['success']) {
+                    return [
+                        'success' => false,
+                        'error' => $deviceInfo['error'] ?? 'Failed to validate Fonnte token',
+                    ];
+                }
+                
+                $phoneNumber = $deviceInfo['data']['device'] ?? null;
+                
+                // Create/update bot instance
+                $bot = BotInstance::updateOrCreate(
+                    ['bot_id' => $botId],
+                    [
+                        'name' => $botName,
+                        'status' => 'connected',
+                        'is_active' => true,
+                        'phone_number' => $phoneNumber,
+                        'last_connected_at' => now(),
+                        'metadata' => [
+                            'api_type' => 'fonnte',
+                            'token' => $customToken ? substr($customToken, 0, 10) . '...' : null,
+                        ],
+                    ]
+                );
+                
+                return [
+                    'success' => true,
+                    'message' => 'Bot instance configured successfully with Fonnte API',
+                    'bot' => $bot,
+                ];
+            }
+            
+            // Legacy WhatsApp Business API
             $bot = BotInstance::updateOrCreate(
                 ['bot_id' => $botId],
                 [
@@ -333,6 +624,52 @@ class WhatsAppService
                 'error' => $e->getMessage(),
             ]);
 
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+    
+    /**
+     * Get Fonnte device information to validate token.
+     */
+    protected function getFonnteDeviceInfo(?string $token = null): array
+    {
+        $token = $token ?? $this->token;
+        
+        if (empty($token)) {
+            return [
+                'success' => false,
+                'error' => 'Fonnte token not provided',
+            ];
+        }
+        
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+            ])->post("{$this->apiUrl}/device");
+            
+            if ($response->successful()) {
+                return [
+                    'success' => true,
+                    'data' => $response->json(),
+                ];
+            }
+            
+            Log::error('Fonnte device info request failed', [
+                'response' => $response->json(),
+            ]);
+            
+            return [
+                'success' => false,
+                'error' => $response->json()['reason'] ?? 'Failed to get device info',
+            ];
+        } catch (\Exception $e) {
+            Log::error('Fonnte device info request exception', [
+                'error' => $e->getMessage(),
+            ]);
+            
             return [
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -464,10 +801,17 @@ class WhatsAppService
     }
 
     /**
-     * Verify webhook for WhatsApp Business API.
+     * Verify webhook for WhatsApp Business API (Meta only).
+     * Fonnte doesn't require webhook verification.
      */
     public function verifyWebhook(string $mode, string $token, string $challenge): ?string
     {
+        if ($this->isFonnte()) {
+            // Fonnte doesn't need webhook verification
+            return $challenge;
+        }
+        
+        // Meta webhook verification
         $verifyToken = config('services.whatsapp.verify_token');
 
         if ($mode === 'subscribe' && $token === $verifyToken) {
