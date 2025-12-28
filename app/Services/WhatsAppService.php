@@ -80,13 +80,11 @@ class WhatsAppService
 
         $bot = $bot ?? $this->getAvailableBot();
 
-        // Clean phone number (ensure it starts with country code, no + sign)
-        $to = preg_replace('/[^0-9]/', '', $to);
+        // Clean phone number (ensure it has only digits)
+        $phoneNumber = preg_replace('/[^0-9]/', '', $to);
         
-        // Add + prefix if not present (Fonnte expects international format)
-        if (!str_starts_with($to, '+')) {
-            $to = '+' . $to;
-        }
+        // Fonnte expects international format with + prefix
+        $to = '+' . $phoneNumber;
 
         try {
             $payload = [
@@ -109,8 +107,7 @@ class WhatsAppService
             if ($response->successful()) {
                 $data = $response->json();
 
-                // Find or create WhatsApp user
-                $phoneNumber = preg_replace('/[^0-9]/', '', $to);
+                // Find or create WhatsApp user (use cleaned number without +)
                 $whatsappUser = WhatsAppUser::firstOrCreate(
                     ['phone_number' => $phoneNumber],
                     ['status' => 'active']
