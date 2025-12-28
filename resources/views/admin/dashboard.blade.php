@@ -414,9 +414,9 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto overflow-y-auto max-h-96">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-purple-50">
+                            <thead class="bg-purple-50 sticky top-0 z-10">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Time</th>
                                     <th class="px-6 py-3 text-left text-xs font-bold text-purple-700 uppercase tracking-wider">Message</th>
