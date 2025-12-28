@@ -648,7 +648,7 @@ class WhatsAppService
         try {
             $response = Http::withHeaders([
                 'Authorization' => $token,
-            ])->post("{$this->apiUrl}/device");
+            ])->get("{$this->apiUrl}/device");
             
             if ($response->successful()) {
                 return [
