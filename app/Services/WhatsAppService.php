@@ -19,7 +19,7 @@ class WhatsAppService
     public function __construct()
     {
         // Fonnte API Configuration (Primary)
-        $this->apiUrl = config('services.fonnte.api_url', 'https://md.fonnte.com');
+        $this->apiUrl = config('services.fonnte.api_url', 'https://api.fonnte.com');
         $this->token = config('services.fonnte.token');
         
         // Legacy WhatsApp Business API Configuration (Fallback)
@@ -641,38 +641,94 @@ class WhatsAppService
         if (empty($token)) {
             return [
                 'success' => false,
-                'error' => 'Fonnte token not provided',
+                'error' => 'Fonnte token not provided. Please enter your Fonnte token or set FONNTE_TOKEN in .env file. Get your token at fonnte.com',
             ];
         }
         
         try {
-            $response = Http::withHeaders([
+            // Fonnte uses POST method for get-devices endpoint
+            $response = Http::timeout(10)->withHeaders([
                 'Authorization' => $token,
-            ])->get("{$this->apiUrl}/device");
+            ])->post("{$this->apiUrl}/get-devices");
             
-            if ($response->successful()) {
+            $responseData = $response->json();
+            $statusCode = $response->status();
+            
+            if ($response->successful() && isset($responseData['status']) && $responseData['status'] === true) {
+                // Success response from Fonnte
+                if (isset($responseData['data']) && is_array($responseData['data']) && count($responseData['data']) > 0) {
+                    $firstDevice = $responseData['data'][0];
+                    
+                    return [
+                        'success' => true,
+                        'data' => [
+                            'device' => $firstDevice['device'] ?? null,
+                            'status' => $firstDevice['status'] ?? 'unknown',
+                        ],
+                    ];
+                }
+                
+                // No devices connected
+                Log::warning('Fonnte token valid but no devices connected', [
+                    'response' => $responseData,
+                ]);
+                
                 return [
-                    'success' => true,
-                    'data' => $response->json(),
+                    'success' => false,
+                    'error' => 'No WhatsApp device connected to your Fonnte account. Please connect a device at fonnte.com first.',
                 ];
             }
             
+            // Handle error responses
+            $reason = $responseData['reason'] ?? 'Unknown error';
+            
             Log::error('Fonnte device info request failed', [
-                'response' => $response->json(),
+                'status_code' => $statusCode,
+                'response' => $responseData,
+                'api_url' => $this->apiUrl,
+            ]);
+            
+            // Provide specific error messages
+            if ($reason === 'unknown user' || $statusCode === 401) {
+                return [
+                    'success' => false,
+                    'error' => 'Invalid or expired Fonnte token. Please get a new token from fonnte.com dashboard and try again.',
+                ];
+            } elseif ($statusCode === 403) {
+                return [
+                    'success' => false,
+                    'error' => 'Access forbidden. Your Fonnte account may not have permission. Please check your account status at fonnte.com',
+                ];
+            } elseif ($statusCode >= 500) {
+                return [
+                    'success' => false,
+                    'error' => 'Fonnte API server error. Please try again in a few minutes.',
+                ];
+            }
+            
+            return [
+                'success' => false,
+                'error' => "Failed to validate Fonnte token: {$reason}. Please check your token at fonnte.com",
+            ];
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('Fonnte device info connection failed', [
+                'error' => $e->getMessage(),
+                'api_url' => $this->apiUrl,
             ]);
             
             return [
                 'success' => false,
-                'error' => $response->json()['reason'] ?? 'Failed to get device info',
+                'error' => 'Cannot connect to Fonnte API. Please check your internet connection and try again.',
             ];
         } catch (\Exception $e) {
             Log::error('Fonnte device info request exception', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
             ]);
             
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Error connecting to Fonnte: ' . $e->getMessage(),
             ];
         }
     }

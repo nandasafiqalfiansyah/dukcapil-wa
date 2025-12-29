@@ -80,20 +80,40 @@
                             </p>
                         </div>
 
+                        <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-4">
+                            <h3 class="text-sm font-semibold text-yellow-800 dark:text-yellow-300 mb-2">
+                                ⚠️ Token Validation Required
+                            </h3>
+                            <p class="text-sm text-yellow-700 dark:text-yellow-400 mb-2">
+                                Your Fonnte token will be validated when you create this bot instance. Make sure:
+                            </p>
+                            <ul class="text-sm text-yellow-700 dark:text-yellow-400 list-disc list-inside space-y-1">
+                                <li>Token is valid and not expired</li>
+                                <li>Your Fonnte account is active</li>
+                                <li>You have connected a WhatsApp device at fonnte.com</li>
+                            </ul>
+                        </div>
+
                         <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
                             <h3 class="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">
-                                📱 How to get Fonnte Token?
+                                📱 How to get a Valid Fonnte Token?
                             </h3>
                             <ol class="text-sm text-blue-700 dark:text-blue-400 list-decimal list-inside space-y-2">
-                                <li>Visit <a href="https://fonnte.com" target="_blank" class="underline font-semibold">fonnte.com</a></li>
-                                <li>Create an account or login</li>
-                                <li>Connect your WhatsApp number</li>
-                                <li>Copy your API token from the dashboard</li>
-                                <li>Paste the token above</li>
+                                <li>Visit <a href="https://fonnte.com" target="_blank" class="underline font-semibold hover:text-blue-900">fonnte.com</a> and login/register</li>
+                                <li><strong>Connect your WhatsApp</strong> by scanning the QR code</li>
+                                <li>Wait until status shows <span class="font-semibold">"Connected"</span></li>
+                                <li>Go to your dashboard and <strong>copy your API token</strong></li>
+                                <li>Paste the token in the field above</li>
                             </ol>
-                            <p class="mt-3 text-sm text-blue-700 dark:text-blue-400">
-                                💡 Your token will be validated automatically when creating the bot.
-                            </p>
+                            <div class="mt-3 p-3 bg-blue-100 dark:bg-blue-800/30 rounded border border-blue-300 dark:border-blue-700">
+                                <p class="text-sm text-blue-800 dark:text-blue-300 font-semibold mb-1">
+                                    ⚠️ Common Issue:
+                                </p>
+                                <p class="text-sm text-blue-700 dark:text-blue-400">
+                                    If you get "Failed to get device info" error, it means your token is <strong>invalid or expired</strong>. 
+                                    Please get a new token from fonnte.com and make sure your WhatsApp is connected.
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Server Error Alert -->
