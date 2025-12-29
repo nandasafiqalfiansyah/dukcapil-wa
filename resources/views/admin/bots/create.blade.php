@@ -7,24 +7,36 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <!-- Error Summary -->
+            @if ($errors->any())
+                <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <h3 class="font-semibold text-red-700 mb-2">⚠️ Validation Error(s)</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-red-600">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <form action="{{ route('admin.bots.store') }}" method="POST">
                         @csrf
 
                         <div class="mb-6">
-                            <label for="name" class="dark:bg-white block mb-2 text-sm font-medium text-gray-900">
+                            <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Bot Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="name" 
                                    name="name" 
                                    value="{{ old('name') }}"
-                                   class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-900" 
+                                   class="bg-white border {{ $errors->has('name') ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500' }} text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., DUKCAPIL Bot 1"
                                    required>
                             @error('name')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
                             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                 A friendly name for this bot instance
@@ -32,36 +44,36 @@
                         </div>
 
                         <div class="mb-6">
-                            <label for="bot_id" class="block mb-2 text-sm font-medium text-gray-900">
+                            <label for="bot_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Bot ID <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="bot_id" 
                                    name="bot_id" 
                                    value="{{ old('bot_id') }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-900" 
+                                   class="bg-gray-50 border {{ $errors->has('bot_id') ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500' }} text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="e.g., 62881011983167 or bot-1"
                                    required>
                             @error('bot_id')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
                             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                A unique identifier for this bot instance
+                                A unique identifier for this bot instance. Must be unique.
                             </p>
                         </div>
 
                         <div class="mb-6">
-                            <label for="fonnte_token" class="block mb-2 text-sm font-medium text-gray-900">
+                            <label for="fonnte_token" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
                                 Fonnte Token <span class="text-blue-500">(Optional)</span>
                             </label>
                             <input type="text" 
                                    id="fonnte_token" 
                                    name="fonnte_token" 
                                    value="{{ old('fonnte_token') }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-white  dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-900 font-mono" 
+                                   class="bg-gray-50 border {{ $errors->has('fonnte_token') ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500' }} text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" 
                                    placeholder="Your Fonnte API token">
                             @error('fonnte_token')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                <p class="mt-2 text-sm text-red-600 font-medium">{{ $message }}</p>
                             @enderror
                             <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                                 Enter your Fonnte token to connect this bot. If empty, the system will use the token from .env file.
@@ -84,14 +96,22 @@
                             </p>
                         </div>
 
-                        <div class="flex items-center justify-between">
+                        <!-- Server Error Alert -->
+                        @if ($errors->has('error'))
+                            <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                                <h3 class="font-semibold text-red-700 mb-2">⚠️ Error</h3>
+                                <p class="text-sm text-red-600">{{ $errors->first('error') }}</p>
+                            </div>
+                        @endif
+
+                        <div class="flex items-center justify-between gap-4">
                             <a href="{{ route('admin.bots.index') }}" 
-                               class="text-gray-600 hover:text-gray-900">
+                               class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 font-medium">
                                 ← Back to Bots
                             </a>
                             <button type="submit" 
-                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-                                Create Bot
+                                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition duration-150">
+                                Create Bot Instance
                             </button>
                         </div>
                     </form>

@@ -39,32 +39,52 @@ class BotInstanceController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'bot_id' => 'required|string|unique:bot_instances,bot_id|max:255',
-            'fonnte_token' => 'nullable|string',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'bot_id' => 'required|string|unique:bot_instances,bot_id|max:255',
+                'fonnte_token' => 'nullable|string',
+            ]);
 
-        $result = $this->whatsappService->initializeBot(
-            $validated['bot_id'],
-            $validated['name'],
-            $validated['fonnte_token'] ?? null
-        );
+            $result = $this->whatsappService->initializeBot(
+                $validated['bot_id'],
+                $validated['name'],
+                $validated['fonnte_token'] ?? null
+            );
 
-        if ($result['success']) {
-            $bot = BotInstance::where('bot_id', $validated['bot_id'])->first();
+            if ($result['success']) {
+                $bot = BotInstance::where('bot_id', $validated['bot_id'])->first();
 
-            if ($bot) {
-                return redirect()->route('admin.bots.show', $bot)
-                    ->with('success', 'Bot instance created successfully. Your WhatsApp connection is ready to use.');
+                if ($bot) {
+                    return redirect()->route('admin.bots.show', $bot)
+                        ->with('success', 'Bot instance created successfully. Your WhatsApp connection is ready to use.');
+                }
+
+                return redirect()->route('admin.bots.index')
+                    ->with('success', 'Bot instance created successfully.');
             }
 
-            return redirect()->route('admin.bots.index')
-                ->with('success', 'Bot instance created successfully.');
-        }
+            // Handle API errors
+            $errorMessage = $result['error'] ?? 'Failed to initialize bot';
+            
+            return back()
+                ->withErrors(['error' => $errorMessage])
+                ->withInput()
+                ->with('alert_type', 'error');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Re-throw validation exceptions (handled by Laravel)
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error creating bot instance', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-        return back()->withErrors(['error' => $result['error'] ?? 'Failed to initialize bot'])
-            ->withInput();
+            return back()
+                ->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()])
+                ->withInput()
+                ->with('alert_type', 'error');
+        }
     }
 
     /**
