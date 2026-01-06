@@ -29,58 +29,90 @@ class ChatBotService
      */
     public function processMessage(ChatSession $session, string $userMessage): array
     {
-        // Save user message
-        $userChatMessage = ChatMessage::create([
-            'chat_session_id' => $session->id,
-            'role' => 'user',
-            'message' => $userMessage,
-        ]);
+        try {
+            // Save user message
+            $userChatMessage = ChatMessage::create([
+                'chat_session_id' => $session->id,
+                'role' => 'user',
+                'message' => $userMessage,
+            ]);
 
-        // Check for auto-reply match first (takes priority over NLP)
-        $autoReplyResult = $this->checkAutoReply($userMessage);
-        
-        if ($autoReplyResult) {
-            // Use auto-reply response
-            $response = [
-                'message' => $autoReplyResult['response'],
-                'intent' => 'auto_reply',
+            // Check for auto-reply match first (takes priority over NLP)
+            $autoReplyResult = $this->checkAutoReply($userMessage);
+            
+            if ($autoReplyResult) {
+                // Use auto-reply response
+                $response = [
+                    'message' => $autoReplyResult['response'],
+                    'intent' => 'auto_reply',
+                ];
+                $intentResult = [
+                    'intent' => 'auto_reply',
+                    'confidence' => 1.0,
+                    'matched_pattern' => $autoReplyResult['trigger'],
+                    'source' => 'auto_reply_config',
+                ];
+            } else {
+                // Fallback to NLP detection
+                $intentResult = $this->detectIntent($userMessage);
+                $response = $this->generateResponse($intentResult, $userMessage);
+            }
+
+            // Save bot message
+            $botChatMessage = ChatMessage::create([
+                'chat_session_id' => $session->id,
+                'role' => 'bot',
+                'message' => $response['message'],
+                'intent' => $intentResult['intent'],
+                'confidence' => $intentResult['confidence'],
+                'metadata' => [
+                    'matched_pattern' => $intentResult['matched_pattern'] ?? null,
+                    'source' => $intentResult['source'] ?? 'nlp',
+                ],
+            ]);
+
+            // If connected to WhatsApp, send message there too
+            if ($session->is_connected_to_whatsapp && $session->whatsapp_number) {
+                $this->sendToWhatsApp($session, $response['message']);
+            }
+
+            return [
+                'user_message' => $userChatMessage,
+                'bot_message' => $botChatMessage,
+                'intent' => $intentResult['intent'],
+                'confidence' => $intentResult['confidence'],
             ];
-            $intentResult = [
-                'intent' => 'auto_reply',
-                'confidence' => 1.0,
-                'matched_pattern' => $autoReplyResult['trigger'],
-                'source' => 'auto_reply_config',
+        } catch (\Exception $e) {
+            Log::error('[ChatBot] Error processing message', [
+                'session_id' => $session->id,
+                'message' => $userMessage,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // Create fallback error response
+            $errorResponse = "Maaf, terjadi kesalahan dalam memproses pesan Anda. Silakan coba lagi atau hubungi petugas kami untuk bantuan.";
+            
+            $botChatMessage = ChatMessage::create([
+                'chat_session_id' => $session->id,
+                'role' => 'bot',
+                'message' => $errorResponse,
+                'intent' => 'error',
+                'confidence' => 0,
+                'metadata' => [
+                    'error' => true,
+                    'error_message' => $e->getMessage(),
+                    'source' => 'error_handler',
+                ],
+            ]);
+
+            return [
+                'user_message' => $userChatMessage ?? null,
+                'bot_message' => $botChatMessage,
+                'intent' => 'error',
+                'confidence' => 0,
             ];
-        } else {
-            // Fallback to NLP detection
-            $intentResult = $this->detectIntent($userMessage);
-            $response = $this->generateResponse($intentResult, $userMessage);
         }
-
-        // Save bot message
-        $botChatMessage = ChatMessage::create([
-            'chat_session_id' => $session->id,
-            'role' => 'bot',
-            'message' => $response['message'],
-            'intent' => $intentResult['intent'],
-            'confidence' => $intentResult['confidence'],
-            'metadata' => [
-                'matched_pattern' => $intentResult['matched_pattern'] ?? null,
-                'source' => $intentResult['source'] ?? 'nlp',
-            ],
-        ]);
-
-        // If connected to WhatsApp, send message there too
-        if ($session->is_connected_to_whatsapp && $session->whatsapp_number) {
-            $this->sendToWhatsApp($session, $response['message']);
-        }
-
-        return [
-            'user_message' => $userChatMessage,
-            'bot_message' => $botChatMessage,
-            'intent' => $intentResult['intent'],
-            'confidence' => $intentResult['confidence'],
-        ];
     }
 
     /**
@@ -327,8 +359,17 @@ class ChatBotService
         }
 
         // Default response for unknown intent
+        $defaultResponses = [
+            "Maaf, saya belum memahami pertanyaan Anda. Silakan ulangi dengan kata kunci yang berbeda atau hubungi petugas kami untuk bantuan lebih lanjut.",
+            "Maaf, saya belum dapat memproses pertanyaan tersebut. Mohon coba dengan pertanyaan lain atau hubungi kantor DUKCAPIL Ponorogo untuk bantuan langsung.",
+            "Mohon maaf, pertanyaan Anda belum dapat saya pahami. Silakan kirim pertanyaan dengan kata kunci seperti 'KTP', 'KK', atau 'Akta' untuk informasi layanan kami.",
+        ];
+        
+        // Randomly select a default response for variety
+        $randomResponse = $defaultResponses[array_rand($defaultResponses)];
+        
         return [
-            'message' => "Maaf, saya belum memahami pertanyaan Anda. Silakan hubungi petugas kami untuk bantuan lebih lanjut.",
+            'message' => $randomResponse,
             'intent' => 'unknown',
         ];
     }

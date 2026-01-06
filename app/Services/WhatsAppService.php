@@ -371,45 +371,77 @@ class WhatsAppService
      */
     protected function handleFonnteAutoReply(string $phoneNumber, string $message, ?BotInstance $bot): void
     {
-        $messageBody = trim($message);
-        
-        // Get active auto-reply configurations ordered by priority
-        $autoReplies = AutoReplyConfig::active()
-            ->byPriority()
-            ->get();
-        
-        // Check if message matches any auto-reply trigger
-        foreach ($autoReplies as $autoReply) {
-            $trigger = $autoReply->trigger;
-            $matches = false;
+        try {
+            $messageBody = trim($message);
             
-            if ($autoReply->case_sensitive) {
-                $matches = $messageBody === $trigger;
-            } else {
-                $matches = strtolower($messageBody) === strtolower($trigger);
+            // Get active auto-reply configurations ordered by priority
+            $autoReplies = AutoReplyConfig::active()
+                ->byPriority()
+                ->get();
+            
+            // Check if message matches any auto-reply trigger
+            $matched = false;
+            foreach ($autoReplies as $autoReply) {
+                $trigger = $autoReply->trigger;
+                $matches = false;
+                
+                if ($autoReply->case_sensitive) {
+                    $matches = $messageBody === $trigger;
+                } else {
+                    $matches = strtolower($messageBody) === strtolower($trigger);
+                }
+                
+                if ($matches) {
+                    // Replace dynamic placeholders in response
+                    $response = str_replace(
+                        ['{{timestamp}}', '{{date}}', '{{time}}'],
+                        [
+                            now()->format('d/m/Y H:i:s'),
+                            now()->format('d/m/Y'),
+                            now()->format('H:i:s'),
+                        ],
+                        $autoReply->response
+                    );
+                    
+                    // Send auto-reply
+                    $this->sendMessage($phoneNumber, $response, $bot);
+                    
+                    Log::info('Fonnte auto-reply sent', [
+                        'trigger' => $trigger,
+                        'to' => $phoneNumber,
+                    ]);
+                    
+                    $matched = true;
+                    break;
+                }
             }
             
-            if ($matches) {
-                // Replace dynamic placeholders in response
-                $response = str_replace(
-                    ['{{timestamp}}', '{{date}}', '{{time}}'],
-                    [
-                        now()->format('d/m/Y H:i:s'),
-                        now()->format('d/m/Y'),
-                        now()->format('H:i:s'),
-                    ],
-                    $autoReply->response
-                );
+            // If no auto-reply matched, send default "unknown" response
+            if (!$matched && !empty($messageBody)) {
+                $defaultResponse = "Maaf, saya belum memahami pesan Anda. Silakan kirim pertanyaan dengan kata kunci yang jelas atau hubungi kantor DUKCAPIL Ponorogo untuk bantuan langsung.\n\n📞 Kontak: (0352) 461019";
                 
-                // Send auto-reply
-                $this->sendMessage($phoneNumber, $response, $bot);
+                $this->sendMessage($phoneNumber, $defaultResponse, $bot);
                 
-                Log::info('Fonnte auto-reply sent', [
-                    'trigger' => $trigger,
+                Log::info('Fonnte default response sent', [
+                    'message' => $messageBody,
                     'to' => $phoneNumber,
                 ]);
-                
-                break;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in Fonnte auto-reply', [
+                'error' => $e->getMessage(),
+                'phone' => $phoneNumber,
+                'message' => $message,
+            ]);
+            
+            // Send error response to user
+            try {
+                $errorResponse = "Maaf, terjadi kesalahan dalam memproses pesan Anda. Mohon coba lagi atau hubungi petugas kami.";
+                $this->sendMessage($phoneNumber, $errorResponse, $bot);
+            } catch (\Exception $sendError) {
+                Log::error('Failed to send error response', [
+                    'error' => $sendError->getMessage(),
+                ]);
             }
         }
     }
@@ -525,50 +557,85 @@ class WhatsAppService
      */
     protected function handleAutoReply(array $message, ?BotInstance $bot): void
     {
-        // Skip if message is from bot itself
-        if (($message['fromMe'] ?? false) === true) {
-            return;
-        }
-
-        $messageBody = trim($message['text']['body'] ?? '');
-
-        // Get active auto-reply configurations ordered by priority
-        $autoReplies = AutoReplyConfig::active()
-            ->byPriority()
-            ->get();
-
-        // Check if message matches any auto-reply trigger
-        foreach ($autoReplies as $autoReply) {
-            $trigger = $autoReply->trigger;
-            $matches = false;
-
-            if ($autoReply->case_sensitive) {
-                $matches = $messageBody === $trigger;
-            } else {
-                $matches = strtolower($messageBody) === strtolower($trigger);
+        try {
+            // Skip if message is from bot itself
+            if (($message['fromMe'] ?? false) === true) {
+                return;
             }
 
-            if ($matches) {
-                // Replace dynamic placeholders in response
-                $response = str_replace(
-                    ['{{timestamp}}', '{{date}}', '{{time}}'],
-                    [
-                        now()->format('d/m/Y H:i:s'),
-                        now()->format('d/m/Y'),
-                        now()->format('H:i:s'),
-                    ],
-                    $autoReply->response
-                );
+            $messageBody = trim($message['text']['body'] ?? '');
+            
+            if (empty($messageBody)) {
+                return;
+            }
 
-                // Send auto-reply
-                $this->sendMessage($message['from'], $response, $bot);
+            // Get active auto-reply configurations ordered by priority
+            $autoReplies = AutoReplyConfig::active()
+                ->byPriority()
+                ->get();
 
-                Log::info('Auto-reply sent', [
-                    'trigger' => $trigger,
+            // Check if message matches any auto-reply trigger
+            $matched = false;
+            foreach ($autoReplies as $autoReply) {
+                $trigger = $autoReply->trigger;
+                $matches = false;
+
+                if ($autoReply->case_sensitive) {
+                    $matches = $messageBody === $trigger;
+                } else {
+                    $matches = strtolower($messageBody) === strtolower($trigger);
+                }
+
+                if ($matches) {
+                    // Replace dynamic placeholders in response
+                    $response = str_replace(
+                        ['{{timestamp}}', '{{date}}', '{{time}}'],
+                        [
+                            now()->format('d/m/Y H:i:s'),
+                            now()->format('d/m/Y'),
+                            now()->format('H:i:s'),
+                        ],
+                        $autoReply->response
+                    );
+
+                    // Send auto-reply
+                    $this->sendMessage($message['from'], $response, $bot);
+
+                    Log::info('Auto-reply sent', [
+                        'trigger' => $trigger,
+                        'to' => $message['from'],
+                    ]);
+
+                    $matched = true;
+                    break;
+                }
+            }
+            
+            // If no auto-reply matched, send default "unknown" response
+            if (!$matched) {
+                $defaultResponse = "Maaf, saya belum memahami pesan Anda. Silakan kirim pertanyaan dengan kata kunci yang jelas atau hubungi kantor DUKCAPIL Ponorogo untuk bantuan langsung.\n\n📞 Kontak: (0352) 461019";
+                
+                $this->sendMessage($message['from'], $defaultResponse, $bot);
+                
+                Log::info('Default response sent', [
+                    'message' => $messageBody,
                     'to' => $message['from'],
                 ]);
-
-                break;
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in auto-reply handler', [
+                'error' => $e->getMessage(),
+                'message_from' => $message['from'] ?? 'unknown',
+            ]);
+            
+            // Send error response to user
+            try {
+                $errorResponse = "Maaf, terjadi kesalahan dalam memproses pesan Anda. Mohon coba lagi atau hubungi petugas kami.";
+                $this->sendMessage($message['from'], $errorResponse, $bot);
+            } catch (\Exception $sendError) {
+                Log::error('Failed to send error response', [
+                    'error' => $sendError->getMessage(),
+                ]);
             }
         }
     }
