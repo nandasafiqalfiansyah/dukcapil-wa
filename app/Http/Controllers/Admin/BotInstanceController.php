@@ -43,13 +43,22 @@ class BotInstanceController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'bot_id' => 'required|string|unique:bot_instances,bot_id|max:255',
-                'fonnte_token' => 'nullable|string',
+                'fonnte_token' => 'required|string|min:10',
+                'api_url' => 'required|url',
+                'webhook_url' => 'nullable|url',
+            ], [
+                'fonnte_token.required' => 'Fonnte token is required to create a bot instance',
+                'fonnte_token.min' => 'Token appears to be invalid (too short)',
+                'api_url.required' => 'API URL is required',
+                'api_url.url' => 'API URL must be a valid URL',
             ]);
 
             $result = $this->whatsappService->initializeBot(
                 $validated['bot_id'],
                 $validated['name'],
-                $validated['fonnte_token'] ?? null
+                $validated['fonnte_token'] ?? null,
+                $validated['api_url'] ?? 'https://api.fonnte.com',
+                $validated['webhook_url'] ?? null
             );
 
             if ($result['success']) {

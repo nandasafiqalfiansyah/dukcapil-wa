@@ -36,7 +36,7 @@ return [
     ],
 
     'fonnte' => [
-        'api_url' => env('FONNTE_API_URL', 'https://md.fonnte.com'),
+        'api_url' => env('FONNTE_API_URL', 'https://api.fonnte.com'),
         'token' => env('FONNTE_TOKEN'),
     ],
 

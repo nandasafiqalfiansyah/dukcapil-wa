@@ -109,14 +109,45 @@
                             </p>
                         </div>
 
-                        <!-- WA Devices -->
-                        <a href="{{ route('admin.bots.index') }}" 
-                           class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bots.*') ? 'bg-whatsapp-100 text-whatsapp-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                            <svg class="mr-3 flex-shrink-0 h-6 w-6 {{ request()->routeIs('admin.bots.*') ? 'text-whatsapp-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                            </svg>
-                            WA Devices
-                        </a>
+                        <!-- Bot Management Section -->
+                        <div class="space-y-1">
+                            <button @click="openSection = openSection === 'bots' ? '' : 'bots'" 
+                                    class="group w-full flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bots.*') ? 'bg-whatsapp-100 text-whatsapp-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                <svg class="mr-3 flex-shrink-0 h-6 w-6 {{ request()->routeIs('admin.bots.*') ? 'text-whatsapp-600' : 'text-gray-400 group-hover:text-gray-500' }}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                </svg>
+                                Bot Instances
+                                <svg class="ml-auto h-5 w-5 transform transition-transform" :class="openSection === 'bots' ? 'rotate-90' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                            <div x-show="openSection === 'bots'" class="space-y-1 ml-8">
+                                <a href="{{ route('admin.bots.index') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bots.index') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    All Bots
+                                </a>
+                                <a href="{{ route('admin.bots.create') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bots.create') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Create New Bot
+                                </a>
+                                <a href="{{ route('admin.bot-logs.index') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bot-logs.*') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Bot Logs
+                                </a>
+                                <a href="{{ route('admin.bot-settings.index') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bot-settings.*') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Bot Settings
+                                </a>
+                                <a href="{{ route('admin.bot-analytics.index') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.bot-analytics.*') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Bot Analytics
+                                </a>
+                                <a href="{{ route('admin.audit-logs.index') }}" 
+                                   class="group flex items-center px-2 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.audit-logs.*') ? 'text-whatsapp-600' : 'text-gray-600 hover:text-gray-900' }}">
+                                    Audit Logs
+                                </a>
+                            </div>
+                        </div>
 
                         <!-- NLP Logs -->
                         <a href="{{ route('admin.nlp-logs.index') }}" 

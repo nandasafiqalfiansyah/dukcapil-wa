@@ -14,7 +14,7 @@ $dotenv->load();
 
 // Get token from command line argument or .env
 $token = $argv[1] ?? $_ENV['FONNTE_TOKEN'] ?? null;
-$apiUrl = $_ENV['FONNTE_API_URL'] ?? 'https://md.fonnte.com';
+$apiUrl = $_ENV['FONNTE_API_URL'] ?? 'https://api.fonnte.com';
 
 if (!$token) {
     echo "❌ Error: Fonnte token not provided\n";
@@ -32,8 +32,9 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 // Test connection
 try {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "$apiUrl/device");
+    curl_setopt($ch, CURLOPT_URL, "$apiUrl/get-devices");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true); // Use POST method
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         "Authorization: $token"
     ]);
