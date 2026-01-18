@@ -230,4 +230,77 @@ class BotInstanceController extends Controller
         return redirect()->route('admin.bots.index')
             ->with('success', 'Bot instance deleted successfully.');
     }
+
+    /**
+     * Update phone number for the bot instance.
+     */
+    public function updatePhone(Request $request, BotInstance $bot)
+    {
+        try {
+            $validated = $request->validate([
+                'phone_number' => 'required|string|min:10|max:20|regex:/^[0-9]+$/',
+            ], [
+                'phone_number.required' => 'Nomor telepon harus diisi',
+                'phone_number.regex' => 'Nomor telepon hanya boleh berisi angka',
+                'phone_number.min' => 'Nomor telepon minimal 10 digit',
+            ]);
+
+            $bot->update([
+                'phone_number' => $validated['phone_number'],
+            ]);
+
+            return redirect()->route('admin.bots.show', $bot)
+                ->with('success', 'Nomor telepon berhasil diperbarui.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error updating phone number', [
+                'error' => $e->getMessage(),
+                'bot_id' => $bot->id,
+            ]);
+
+            return back()
+                ->withErrors(['error' => 'Gagal memperbarui nomor telepon: ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
+    /**
+     * Update WhatsApp link and message for the bot instance.
+     */
+    public function updateLink(Request $request, BotInstance $bot)
+    {
+        try {
+            $validated = $request->validate([
+                'wa_link' => 'required|url',
+                'wa_message' => 'nullable|string|max:1000',
+            ], [
+                'wa_link.required' => 'Link WhatsApp harus diisi',
+                'wa_link.url' => 'Link WhatsApp harus berupa URL yang valid',
+                'wa_message.max' => 'Pesan maksimal 1000 karakter',
+            ]);
+
+            $metadata = $bot->metadata ?? [];
+            $metadata['wa_link'] = $validated['wa_link'];
+            $metadata['wa_message'] = $validated['wa_message'] ?? null;
+
+            $bot->update([
+                'metadata' => $metadata,
+            ]);
+
+            return redirect()->route('admin.bots.show', $bot)
+                ->with('success', 'Link WhatsApp berhasil diperbarui.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Error updating WhatsApp link', [
+                'error' => $e->getMessage(),
+                'bot_id' => $bot->id,
+            ]);
+
+            return back()
+                ->withErrors(['error' => 'Gagal memperbarui link WhatsApp: ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
 }

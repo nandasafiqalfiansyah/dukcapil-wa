@@ -14,11 +14,10 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\WhatsAppUserController;
 use App\Http\Controllers\ChatDemoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('welcome');
+Route::get('/', [WelcomeController::class, 'index'])->name('welcome');
 
 // Public Chat Demo Routes (no authentication required)
 Route::prefix('chat-demo')->name('chat-demo.')->group(function () {
@@ -85,6 +84,8 @@ Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name(
         Route::post('bots/{bot}/logout', [BotInstanceController::class, 'logout'])->name('bots.logout');
         Route::post('bots/{bot}/reinitialize', [BotInstanceController::class, 'reinitialize'])->name('bots.reinitialize');
         Route::get('bots/{bot}/status', [BotInstanceController::class, 'status'])->name('bots.status');
+        Route::put('bots/{bot}/phone', [BotInstanceController::class, 'updatePhone'])->name('bots.updatePhone');
+        Route::put('bots/{bot}/link', [BotInstanceController::class, 'updateLink'])->name('bots.updateLink');
 
         // Auto-reply configuration routes
         Route::resource('auto-replies', AutoReplyConfigController::class);

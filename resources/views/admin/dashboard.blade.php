@@ -174,6 +174,49 @@
                 </div>
             </div>
 
+            <!-- WhatsApp Chat Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-blue-500">
+                    <div class="p-6 flex items-center">
+                        <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h10" />
+                            </svg>
+                        </div>
+                        <div class="ml-5">
+                            <p class="text-sm text-gray-500 font-medium">Messages Received (WA)</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_messages_received'] ?? 0 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-purple-500">
+                    <div class="p-6 flex items-center">
+                        <div class="flex-shrink-0 bg-purple-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h4a2 2 0 012 2v6a2 2 0 01-2 2h-6l-5 4v-4H7" />
+                            </svg>
+                        </div>
+                        <div class="ml-5">
+                            <p class="text-sm text-gray-500 font-medium">Messages Sent (WA)</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_messages_sent'] ?? 0 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-green-500">
+                    <div class="p-6 flex items-center">
+                        <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4a2 2 0 00-2-2H4a2 2 0 00-2 2v16h5" />
+                            </svg>
+                        </div>
+                        <div class="ml-5">
+                            <p class="text-sm text-gray-500 font-medium">Total Conversations (WA)</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_total_conversations'] ?? 0 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Bot Instances Tracking -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl mb-6">
                 <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 p-4">
@@ -274,47 +317,156 @@
                 </div>
             </div>
 
-            <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-4">
-                        <h3 class="text-xl font-bold text-white">Requests by Status</h3>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            @foreach($requestsByStatus as $status => $count)
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-semibold text-gray-700">{{ ucfirst($status) }}</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $count }}</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
-                                        <div class="bg-whatsapp-500 h-3 rounded-full transition-all duration-300" style="width: {{ $stats['total_requests'] > 0 ? ($count / $stats['total_requests']) * 100 : 0 }}%"></div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
+            <!-- Available WhatsApp Links -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl mb-6">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white flex items-center">
+                            <svg class="h-6 w-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                            Available WhatsApp Links
+                        </h3>
+                        <span class="text-sm text-white font-medium bg-green-700 px-3 py-1 rounded-full">
+                            {{ $whatsappLinks->count() }} Available
+                        </span>
                     </div>
                 </div>
-
-                <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
-                    <div class="bg-gradient-to-r from-whatsapp-500 to-whatsapp-600 p-4">
-                        <h3 class="text-xl font-bold text-white">Requests by Service Type</h3>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            @foreach($requestsByType as $type => $count)
-                                <div>
-                                    <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-semibold text-gray-700">{{ strtoupper($type) }}</span>
-                                        <span class="text-sm font-bold text-gray-900">{{ $count }}</span>
+                <div class="p-6">
+                    @if($whatsappLinks->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            @foreach($whatsappLinks as $link)
+                                <div class="bg-gradient-to-br from-white to-green-50 rounded-lg border border-green-200 p-4 hover:shadow-md transition duration-150">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="flex-1">
+                                            <h4 class="font-bold text-gray-900 mb-1">{{ $link['name'] }}</h4>
+                                            <p class="text-xs text-gray-600 font-mono">{{ $link['phone_number'] }}</p>
+                                        </div>
+                                        <div class="bg-green-500 rounded-full p-2">
+                                            <svg class="h-5 w-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                            </svg>
+                                        </div>
                                     </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-3">
-                                        <div class="bg-blue-500 h-3 rounded-full transition-all duration-300" style="width: {{ $stats['total_requests'] > 0 ? ($count / $stats['total_requests']) * 100 : 0 }}%"></div>
+                                    
+                                    @if($link['message'])
+                                        <p class="text-xs text-gray-600 mb-3 bg-white px-2 py-1 rounded border border-green-100">
+                                            <strong>Pesan:</strong> {{ Str::limit($link['message'], 50) }}
+                                        </p>
+                                    @endif
+                                    
+                                    <div class="flex gap-2">
+                                        <a href="{{ $link['link'] }}" target="_blank" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-3 rounded text-center text-sm transition duration-150 flex items-center justify-center gap-1">
+                                            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                            </svg>
+                                            Chat
+                                        </a>
+                                        <a href="{{ route('admin.bots.show', $link['id']) }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded text-center text-sm transition duration-150">
+                                            Edit
+                                        </a>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
+                    @else
+                        <div class="text-center py-12">
+                            <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.658 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            </svg>
+                            <h3 class="text-lg font-bold text-gray-700 mb-2">No WhatsApp Links Available</h3>
+                            <p class="text-gray-500">Connect and configure your WhatsApp devices to show links here.</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Recent Chat Logs -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl mb-6">
+                <div class="bg-gradient-to-r from-whatsapp-600 to-whatsapp-700 p-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white flex items-center">
+                            <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                            Recent Chat Logs
+                        </h3>
+                        <a href="{{ route('admin.chatbot.index') }}" class="text-sm text-white hover:text-whatsapp-100 font-medium bg-whatsapp-800 px-4 py-2 rounded-lg">
+                            Open Chatbot →
+                        </a>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto overflow-y-auto max-h-96">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-whatsapp-50 sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Direction</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Message</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Intent</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Confidence</th>
+                                    <th class="px-6 py-3 text-left text-xs font-bold text-whatsapp-700 uppercase tracking-wider">Session</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($recentChatLogs as $msg)
+                                    <tr class="hover:bg-whatsapp-50 transition duration-150">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $msg->created_at->format('H:i:s') }}
+                                            <div class="text-xs text-gray-400">{{ $msg->created_at->format('d M') }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php
+                                                $isBot = $msg->role === 'bot';
+                                                $badgeClass = $isBot ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800';
+                                                $label = $isBot ? 'Outgoing (AI)' : 'Incoming (User)';
+                                            @endphp
+                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClass }}">
+                                                {{ $label }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-900">
+                                            <div class="max-w-md truncate">{{ $msg->message }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($msg->role === 'bot' && $msg->intent)
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                                    {{ $msg->intent }}
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php
+                                                $confidencePercent = $msg->confidence ? round($msg->confidence * 100) : null;
+                                                $colorClass = $confidencePercent >= 70 ? 'bg-green-100 text-green-800' : ($confidencePercent >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
+                                            @endphp
+                                            @if($confidencePercent !== null)
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
+                                                    {{ $confidencePercent }}%
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                            #{{ $msg->chat_session_id }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500">
+                                            <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                            </svg>
+                                            No chat logs yet
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -395,7 +547,7 @@
                 </div>
             </div>
 
-            <!-- Recent NLP Processing Logs -->
+            <!-- All Chat Logs -->
             <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl">
                 <div class="bg-gradient-to-r from-purple-600 to-purple-700 p-4">
                     <div class="flex justify-between items-center">
@@ -403,7 +555,7 @@
                             <svg class="h-6 w-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
-                            Recent NLP Processing
+                            All Chat Logs
                         </h3>
                         <a href="{{ route('admin.nlp-logs.index') }}" class="text-sm text-white hover:text-purple-100 font-medium bg-purple-800 px-4 py-2 rounded-lg">
                             View All Logs →
@@ -430,21 +582,35 @@
                                             <div class="text-xs text-gray-400">{{ $log->created_at->format('d M') }}</div>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-900">
-                                            <div class="max-w-md truncate">{{ $log->message }}</div>
+                                            <div class="flex items-center space-x-2 max-w-md">
+                                                @php $isBot = $log->role === 'bot'; @endphp
+                                                <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $isBot ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800' }}">
+                                                    {{ $isBot ? 'AI' : 'User' }}
+                                                </span>
+                                                <span class="truncate">{{ $log->message }}</span>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
-                                                {{ $log->intent }}
-                                            </span>
+                                            @if($log->role === 'bot' && $log->intent)
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                                    {{ $log->intent }}
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @php
-                                                $confidencePercent = round($log->confidence * 100);
+                                                $confidencePercent = $log->confidence ? round($log->confidence * 100) : null;
                                                 $colorClass = $confidencePercent >= 70 ? 'bg-green-100 text-green-800' : ($confidencePercent >= 50 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800');
                                             @endphp
-                                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
-                                                {{ $confidencePercent }}%
-                                            </span>
+                                            @if($confidencePercent !== null)
+                                                <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {{ $colorClass }}">
+                                                    {{ $confidencePercent }}%
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-400">-</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
                                             #{{ $log->chat_session_id }}
@@ -456,7 +622,7 @@
                                             <svg class="mx-auto h-12 w-12 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                             </svg>
-                                            No NLP processing logs yet
+                                            No chat logs yet
                                         </td>
                                     </tr>
                                 @endforelse

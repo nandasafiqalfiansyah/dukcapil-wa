@@ -182,12 +182,35 @@
                                 </div>
                             </div>
 
-                            @if($bot->phone_number)
-                                <div>
-                                    <label class="text-xs font-semibold text-gray-500 uppercase">Phone Number ID</label>
-                                    <p class="text-gray-900 font-mono text-sm">{{ $bot->phone_number }}</p>
+                            <div>
+                                <label class="text-xs font-semibold text-gray-500 uppercase">Phone Number</label>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-gray-900 font-mono text-sm flex-1">{{ $bot->phone_number ?? 'Not set' }}</p>
+                                    <button type="button" class="text-blue-500 hover:text-blue-700" onclick="openPhoneModal()">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
                                 </div>
-                            @endif
+                            </div>
+
+                            <div>
+                                <label class="text-xs font-semibold text-gray-500 uppercase">WhatsApp Link</label>
+                                <div class="flex items-center gap-2">
+                                    @if($bot->metadata['wa_link'] ?? null)
+                                        <a href="{{ $bot->metadata['wa_link'] }}" target="_blank" class="text-blue-500 hover:text-blue-700 underline text-sm flex-1 truncate">
+                                            {{ $bot->metadata['wa_link'] }}
+                                        </a>
+                                    @else
+                                        <p class="text-gray-500 text-sm flex-1">Not configured</p>
+                                    @endif
+                                    <button type="button" class="text-blue-500 hover:text-blue-700" onclick="openLinkModal()">
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
 
                             <div>
                                 <label class="text-xs font-semibold text-gray-500 uppercase">Platform</label>
@@ -217,6 +240,15 @@
                         
                         <div class="p-4 space-y-3">
                             @if($bot->isConnected())
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $bot->phone_number ?? '') }}{{ isset($bot->metadata['wa_message']) ? '?text=' . urlencode($bot->metadata['wa_message']) : '' }}" target="_blank" class="w-full block bg-whatsapp-500 hover:bg-whatsapp-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150 text-center">
+                                    <span class="flex items-center justify-center">
+                                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                        </svg>
+                                        Start Chat
+                                    </span>
+                                </a>
+
                                 <form action="{{ route('admin.bots.disconnect', $bot) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
@@ -274,6 +306,149 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal Edit Phone Number -->
+            <div id="phoneModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">Edit Phone Number</h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closePhoneModal()">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('admin.bots.updatePhone', $bot) }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Phone Number (format: 62812345678)
+                            </label>
+                            <input type="text" name="phone_number" id="phoneInput" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-whatsapp-500" 
+                                   value="{{ $bot->phone_number ?? '' }}" 
+                                   placeholder="62812345678"
+                                   pattern="[0-9]+"
+                                   required>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Masukkan nomor tanpa kode negara (+) atau tanda pemisah. Contoh: 62812345678
+                            </p>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-150"
+                                    onclick="closePhoneModal()">
+                                Batal
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-whatsapp-500 hover:bg-whatsapp-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal Edit WhatsApp Link -->
+            <div id="linkModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden overflow-y-auto h-full w-full z-50">
+                <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-900">Edit WhatsApp Link</h3>
+                        <button type="button" class="text-gray-400 hover:text-gray-600" onclick="closeLinkModal()">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <form action="{{ route('admin.bots.updateLink', $bot) }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                WhatsApp Link (wa.me format)
+                            </label>
+                            <input type="url" name="wa_link" id="linkInput" 
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-whatsapp-500" 
+                                   value="{{ $bot->metadata['wa_link'] ?? '' }}" 
+                                   placeholder="https://wa.me/62812345678"
+                                   required>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Contoh: https://wa.me/62812345678 atau https://wa.me/62812345678?text=Hello
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Pesan Default (Opsional)
+                            </label>
+                            <textarea name="wa_message" id="messageInput" 
+                                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-whatsapp-500" 
+                                      rows="3"
+                                      placeholder="Pesan otomatis yang akan dikirim saat user membuka chat">{{ $bot->metadata['wa_message'] ?? '' }}</textarea>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" 
+                                    class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-150"
+                                    onclick="closeLinkModal()">
+                                Batal
+                            </button>
+                            <button type="submit" 
+                                    class="flex-1 bg-whatsapp-500 hover:bg-whatsapp-600 text-white font-bold py-2 px-4 rounded-lg transition duration-150">
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Scripts for Modals -->
+            <script>
+                function openPhoneModal() {
+                    document.getElementById('phoneModal').classList.remove('hidden');
+                    document.getElementById('phoneInput').focus();
+                }
+
+                function closePhoneModal() {
+                    document.getElementById('phoneModal').classList.add('hidden');
+                }
+
+                function openLinkModal() {
+                    document.getElementById('linkModal').classList.remove('hidden');
+                    document.getElementById('linkInput').focus();
+                }
+
+                function closeLinkModal() {
+                    document.getElementById('linkModal').classList.add('hidden');
+                }
+
+                // Close modal when clicking outside
+                window.addEventListener('click', function(event) {
+                    const phoneModal = document.getElementById('phoneModal');
+                    const linkModal = document.getElementById('linkModal');
+                    
+                    if (event.target === phoneModal) {
+                        closePhoneModal();
+                    }
+                    if (event.target === linkModal) {
+                        closeLinkModal();
+                    }
+                });
+
+                // Allow closing with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closePhoneModal();
+                        closeLinkModal();
+                    }
+                });
+            </script>
         </div>
     </div>
 </x-app-layout>
