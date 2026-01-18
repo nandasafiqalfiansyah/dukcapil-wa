@@ -123,10 +123,12 @@ class ChatBotService
     {
         $messageBody = trim($message);
 
-        // Get active auto-reply configurations ordered by priority
-        $autoReplies = AutoReplyConfig::active()
-            ->byPriority()
-            ->get();
+        // Get active auto-reply configurations ordered by priority (with caching)
+        $autoReplies = Cache::remember('auto_reply_configs_active', 300, function () {
+            return AutoReplyConfig::active()
+                ->byPriority()
+                ->get();
+        });
 
         // Check if message matches any auto-reply trigger
         foreach ($autoReplies as $autoReply) {
@@ -182,28 +184,50 @@ class ChatBotService
         // Preprocess message
         $message = $this->preprocessMessage($message);
         
+        // Early exit for very short or likely random messages
+        $wordCount = str_word_count($message);
+        if ($wordCount === 1 && strlen($message) <= 8 && !preg_match('/[aeiou]{2,}/i', $message)) {
+            // Looks like random string (e.g., "dsada", "sdfsdf")
+            return [
+                'intent' => 'unknown',
+                'confidence' => 0,
+                'matched_pattern' => null,
+                'training_data' => null,
+                'processing_time_ms' => round((microtime(true) - $startTime) * 1000, 2),
+                'all_matches' => [],
+                'early_exit' => 'random_pattern',
+            ];
+        }
+        
         $this->logNlp('info', 'NLP Intent Detection Started', [
             'original_message' => $originalMessage,
             'preprocessed_message' => $message,
         ]);
         
-        // Get active training data ordered by priority
-        $trainingData = $this->getTrainingData();
-        
-        $this->logNlp('debug', 'Training Data Loaded', [
-            'total_records' => $trainingData->count(),
-        ]);
+        // Get active training data ordered by priority (with caching)
+        $trainingData = Cache::remember('cs_training_data_active', 300, function () {
+            return $this->getTrainingData();
+        });
 
         $bestMatch = null;
         $maxConfidence = 0;
         $allMatches = [];
         $confidenceThreshold = $this->getNlpConfig('nlp_confidence_threshold', 0.3);
+        $maxIterations = 50; // Limit iterations untuk prevent timeout
+        $iteration = 0;
 
         foreach ($trainingData as $data) {
+            $iteration++;
+            
+            // Break early if we found a very good match or exceeded max iterations
+            if ($maxConfidence >= 0.95 || $iteration > $maxIterations) {
+                break;
+            }
+            
             $confidence = $this->calculateConfidence($message, $data);
             
-            // Log individual match
-            if ($this->getNlpConfig('nlp_log_confidence_scores', true)) {
+            // Only log matches above minimal threshold
+            if ($confidence > 0.1) {
                 $allMatches[] = [
                     'intent' => $data->intent,
                     'pattern' => $data->pattern,
@@ -226,7 +250,7 @@ class ChatBotService
                 'threshold' => $confidenceThreshold,
                 'matched_pattern' => $bestMatch->pattern,
                 'processing_time_ms' => $processingTime,
-                'top_matches' => array_slice($allMatches, 0, 5),
+                'iterations' => $iteration ?? 0,
             ]);
             
             return [
@@ -240,12 +264,11 @@ class ChatBotService
         }
 
         // Default intent
-        $this->logNlp('warning', 'No Intent Matched', [
-            'message' => $message,
+        $this->logNlp('info', 'No Intent Matched', [
+            'message' => substr($message, 0, 50),
             'max_confidence' => round($maxConfidence, 4),
             'threshold' => $confidenceThreshold,
             'processing_time_ms' => $processingTime,
-            'top_matches' => array_slice($allMatches, 0, 5),
         ]);
         
         return [
@@ -265,29 +288,31 @@ class ChatBotService
     protected function calculateConfidence(string $message, CsTrainingData $data): float
     {
         $confidence = 0;
-        $details = [];
         
-        // Exact pattern match
+        // Exact pattern match - fastest check
         $pattern = strtolower($data->pattern);
-        if ($message === $pattern && $this->getNlpConfig('nlp_enable_exact_match', true)) {
-            $this->logNlp('debug', 'Exact Match Found', [
-                'pattern' => $pattern,
-                'message' => $message,
-            ]);
+        if ($message === $pattern) {
             return 1.0;
         }
 
-        // Partial pattern match
-        if ($this->getNlpConfig('nlp_enable_partial_match', true)) {
-            if (str_contains($message, $pattern) || str_contains($pattern, $message)) {
-                $partialWeight = $this->getNlpConfig('nlp_partial_match_weight', 0.6);
-                $confidence += $partialWeight;
-                $details['partial_match'] = $partialWeight;
-            }
+        // Quick length check - skip if too different
+        $lengthDiff = abs(strlen($message) - strlen($pattern));
+        if ($lengthDiff > max(strlen($message), strlen($pattern)) * 0.7) {
+            return 0; // Too different in length
         }
 
-        // Keyword matching
-        if ($this->getNlpConfig('nlp_enable_keyword_match', true) && $data->keywords && is_array($data->keywords)) {
+        // Partial pattern match
+        if (str_contains($message, $pattern) || str_contains($pattern, $message)) {
+            $confidence += 0.6;
+        }
+
+        // Early exit if no partial match and no keywords
+        if ($confidence === 0 && (!$data->keywords || !is_array($data->keywords) || count($data->keywords) === 0)) {
+            return 0;
+        }
+
+        // Keyword matching (simplified)
+        if ($data->keywords && is_array($data->keywords)) {
             $matchedKeywords = 0;
             $totalKeywords = count($data->keywords);
             
@@ -298,47 +323,24 @@ class ChatBotService
             }
             
             if ($totalKeywords > 0) {
-                $keywordWeight = $this->getNlpConfig('nlp_keyword_match_weight', 0.4);
-                $keywordScore = ($matchedKeywords / $totalKeywords) * $keywordWeight;
+                $keywordScore = ($matchedKeywords / $totalKeywords) * 0.4;
                 $confidence += $keywordScore;
-                $details['keyword_match'] = [
-                    'matched' => $matchedKeywords,
-                    'total' => $totalKeywords,
-                    'score' => $keywordScore,
-                ];
             }
         }
 
-        // Word similarity (simple approach)
-        if ($this->getNlpConfig('nlp_enable_word_similarity', true)) {
+        // Word similarity (only if we have some confidence already)
+        if ($confidence > 0) {
             $messageWords = explode(' ', $message);
             $patternWords = explode(' ', $pattern);
             $commonWords = array_intersect($messageWords, $patternWords);
             
             if (count($patternWords) > 0) {
-                $similarityWeight = $this->getNlpConfig('nlp_word_similarity_weight', 0.3);
-                $wordSimilarity = (count($commonWords) / count($patternWords)) * $similarityWeight;
+                $wordSimilarity = (count($commonWords) / count($patternWords)) * 0.3;
                 $confidence += $wordSimilarity;
-                $details['word_similarity'] = [
-                    'common_words' => count($commonWords),
-                    'total_words' => count($patternWords),
-                    'score' => $wordSimilarity,
-                ];
             }
         }
 
-        $finalConfidence = min($confidence, 1.0);
-        
-        if ($this->getNlpConfig('nlp_log_confidence_scores', true) && $finalConfidence > 0.1) {
-            $this->logNlp('debug', 'Confidence Calculated', [
-                'intent' => $data->intent,
-                'pattern' => $pattern,
-                'confidence' => round($finalConfidence, 4),
-                'details' => $details,
-            ]);
-        }
-
-        return $finalConfidence;
+        return min($confidence, 1.0);
     }
 
     /**

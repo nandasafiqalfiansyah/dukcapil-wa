@@ -14,11 +14,11 @@ return [
     // Minimum confidence threshold for accepting an intent match
     'confidence_threshold' => env('NLP_CONFIDENCE_THRESHOLD', 0.3),
 
-    // Enable detailed logging for NLP processing
-    'enable_detailed_logging' => env('NLP_ENABLE_LOGGING', true),
+    // Enable detailed logging for NLP processing (disable in production for performance)
+    'enable_detailed_logging' => env('NLP_ENABLE_LOGGING', false),
 
     // Log level for NLP operations (debug, info, warning, error)
-    'log_level' => env('NLP_LOG_LEVEL', 'debug'),
+    'log_level' => env('NLP_LOG_LEVEL', 'info'),
 
     // Algorithm weights for confidence calculation
     'algorithm' => [

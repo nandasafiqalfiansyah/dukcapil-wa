@@ -836,6 +836,10 @@
                 const typingIndicator = appendDemoTypingIndicator();
                 
                 try {
+                    // Create AbortController for timeout
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                    
                     const response = await fetch('/chat-demo/messages', {
                         method: 'POST',
                         headers: {
@@ -845,8 +849,11 @@
                         body: JSON.stringify({
                             session_id: demoSessionId,
                             message: message
-                        })
+                        }),
+                        signal: controller.signal
                     });
+                    
+                    clearTimeout(timeoutId);
                     
                     // Check if response is OK (status 200-299)
                     if (!response.ok) {
@@ -886,7 +893,15 @@
                 } catch (error) {
                     console.error('Error sending message:', error);
                     typingIndicator.remove();
-                    alert('Gagal mengirim pesan. Silakan coba lagi.');
+                    
+                    let errorMessage = 'Gagal mengirim pesan. Silakan coba lagi.';
+                    if (error.name === 'AbortError') {
+                        errorMessage = 'Permintaan timeout. Server membutuhkan waktu terlalu lama untuk merespons. Silakan coba lagi.';
+                    } else if (error.message && error.message.includes('Failed to fetch')) {
+                        errorMessage = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.';
+                    }
+                    
+                    alert(errorMessage);
                 }
             });
 

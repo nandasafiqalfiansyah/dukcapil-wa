@@ -76,7 +76,8 @@ class ChatDemoController extends Controller
                 'message' => 'required|string|max:5000',
             ]);
 
-            $session = ChatSession::findOrFail($request->session_id);
+            // Use eager loading to optimize query
+            $session = ChatSession::with('messages')->findOrFail($request->session_id);
             
             // Verify this session belongs to current guest session
             $guestSessionId = $request->session()->get('demo_chat_session_id');
