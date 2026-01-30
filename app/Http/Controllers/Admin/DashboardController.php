@@ -72,19 +72,34 @@ class DashboardController extends Controller
             ->take(20)
             ->get();
 
-        // WhatsApp chat statistics - count all if no WhatsApp-specific flag
-        $waMessagesReceived = ChatMessage::where('role', 'user')->count();
+        // Chat statistics (all devices)
+        $messagesReceived = ChatMessage::where('role', 'user')->count();
+        $messagesSent = ChatMessage::where('role', 'bot')->count();
+        $totalConversations = ChatSession::count();
 
-        $waMessagesSent = ChatMessage::where('role', 'bot')->count();
-
-        $waTotalConversations = ChatSession::count();
+        // WhatsApp specific statistics (separate)
+        $waMessagesReceived = ChatMessage::where('role', 'user')
+            ->whereHas('chatSession', function($q) {
+                $q->where('is_connected_to_whatsapp', true);
+            })->count();
+        $waMessagesSent = ChatMessage::where('role', 'bot')
+            ->whereHas('chatSession', function($q) {
+                $q->where('is_connected_to_whatsapp', true);
+            })->count();
+        $waConversations = ChatSession::where('is_connected_to_whatsapp', true)->count();
 
         // Merge into stats array for the view
         $stats = array_merge($stats, [
+            'messages_received' => $messagesReceived,
+            'messages_sent' => $messagesSent,
+            'total_conversations' => $totalConversations,
             'wa_messages_received' => $waMessagesReceived,
             'wa_messages_sent' => $waMessagesSent,
-            'wa_total_conversations' => $waTotalConversations,
+            'wa_conversations' => $waConversations,
         ]);
+
+        // WhatsApp devices detail stats (per device)
+        $waDeviceStats = $this->buildWaDeviceStats();
 
         return view('admin.dashboard', compact(
             'stats',
@@ -94,7 +109,79 @@ class DashboardController extends Controller
             'botInstances',
             'recentNlpLogs',
             'recentChatLogs',
-            'whatsappLinks'
+            'whatsappLinks',
+            'waDeviceStats'
         ));
+    }
+
+    public function waStats()
+    {
+        return response()->json([
+            'summary' => $this->waSummary(),
+            'devices' => $this->buildWaDeviceStats(),
+        ]);
+    }
+
+    private function waSummary(): array
+    {
+        $messagesReceived = ChatMessage::where('role', 'user')
+            ->whereHas('chatSession', function($q) {
+                $q->where('is_connected_to_whatsapp', true);
+            })
+            ->count();
+
+        $messagesSent = ChatMessage::where('role', 'bot')
+            ->whereHas('chatSession', function($q) {
+                $q->where('is_connected_to_whatsapp', true);
+            })
+            ->count();
+
+        $conversations = ChatSession::where('is_connected_to_whatsapp', true)->count();
+
+        return [
+            'messages_received' => $messagesReceived,
+            'messages_sent' => $messagesSent,
+            'conversations' => $conversations,
+        ];
+    }
+
+    private function buildWaDeviceStats()
+    {
+        return BotInstance::where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(function ($bot) {
+                $sessionFilter = function ($query) use ($bot) {
+                    $query->where('is_connected_to_whatsapp', true)
+                        ->where('bot_instance_id', $bot->id);
+                };
+
+                $conversations = ChatSession::where($sessionFilter)->count();
+
+                $messagesReceived = ChatMessage::where('role', 'user')
+                    ->whereHas('chatSession', $sessionFilter)
+                    ->count();
+
+                $messagesSent = ChatMessage::where('role', 'bot')
+                    ->whereHas('chatSession', $sessionFilter)
+                    ->count();
+
+                $lastMessage = ChatMessage::whereHas('chatSession', $sessionFilter)
+                    ->latest()
+                    ->first();
+
+                return [
+                    'id' => $bot->id,
+                    'name' => $bot->name,
+                    'phone_number' => $bot->phone_number,
+                    'status' => $bot->status,
+                    'received' => $messagesReceived,
+                    'sent' => $messagesSent,
+                    'conversations' => $conversations,
+                    'last_message' => $lastMessage?->message,
+                    'last_message_at' => optional($lastMessage?->created_at)->toDateTimeString(),
+                ];
+            })
+            ->values();
     }
 }

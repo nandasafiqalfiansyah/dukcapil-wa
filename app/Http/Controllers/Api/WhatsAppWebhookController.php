@@ -27,8 +27,22 @@ class WhatsAppWebhookController extends Controller
     public function webhook(Request $request): JsonResponse
     {
         $data = $request->all();
+        
+        \Log::info('Webhook received', [
+            'headers' => $request->headers->all(),
+            'data' => $data,
+            'ip' => $request->ip(),
+        ]);
 
-        $this->whatsappService->processIncomingMessage($data);
+        try {
+            $this->whatsappService->processIncomingMessage($data);
+            \Log::info('Webhook processed successfully');
+        } catch (\Exception $e) {
+            \Log::error('Webhook processing failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+        }
 
         return response()->json(['status' => 'success'], 200);
     }

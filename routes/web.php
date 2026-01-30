@@ -40,6 +40,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/wa-stats', [DashboardController::class, 'waStats'])->name('dashboard.wa-stats');
 
     // Chat Bot Testing routes
     Route::prefix('chatbot')->name('chatbot.')->group(function () {

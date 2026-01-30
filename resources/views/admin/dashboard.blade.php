@@ -174,7 +174,7 @@
                 </div>
             </div>
 
-            <!-- WhatsApp Chat Statistics -->
+            <!-- Chat Statistics -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl border-l-4 border-blue-500">
                     <div class="p-6 flex items-center">
@@ -184,8 +184,8 @@
                             </svg>
                         </div>
                         <div class="ml-5">
-                            <p class="text-sm text-gray-500 font-medium">Messages Received (WA)</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_messages_received'] ?? 0 }}</p>
+                            <p class="text-sm text-gray-500 font-medium">Messages Received</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['messages_received'] ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -197,8 +197,8 @@
                             </svg>
                         </div>
                         <div class="ml-5">
-                            <p class="text-sm text-gray-500 font-medium">Messages Sent (WA)</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_messages_sent'] ?? 0 }}</p>
+                            <p class="text-sm text-gray-500 font-medium">Messages Sent</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['messages_sent'] ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -210,10 +210,109 @@
                             </svg>
                         </div>
                         <div class="ml-5">
-                            <p class="text-sm text-gray-500 font-medium">Total Conversations (WA)</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $stats['wa_total_conversations'] ?? 0 }}</p>
+                            <p class="text-sm text-gray-500 font-medium">Total Conversations</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $stats['total_conversations'] ?? 0 }}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Statistics (Separate) -->
+            <div class="bg-gradient-to-r from-whatsapp-50 to-whatsapp-100 rounded-xl p-4 mb-6">
+                <h3 class="text-lg font-bold text-whatsapp-700 mb-3 flex items-center">
+                    <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                    WhatsApp Chat Statistics
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white overflow-hidden shadow-md rounded-lg border-l-4 border-whatsapp-500">
+                        <div class="p-4 flex items-center">
+                            <div class="flex-shrink-0 bg-whatsapp-500 rounded-md p-2">
+                                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h10" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-gray-500 font-medium">WA Received</p>
+                                    <p class="text-xl font-bold text-gray-900" data-wa-summary-received>{{ $stats['wa_messages_received'] ?? 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow-md rounded-lg border-l-4 border-whatsapp-600">
+                        <div class="p-4 flex items-center">
+                            <div class="flex-shrink-0 bg-whatsapp-600 rounded-md p-2">
+                                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8h4a2 2 0 012 2v6a2 2 0 01-2 2h-6l-5 4v-4H7" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-gray-500 font-medium">WA Sent</p>
+                                    <p class="text-xl font-bold text-gray-900" data-wa-summary-sent>{{ $stats['wa_messages_sent'] ?? 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white overflow-hidden shadow-md rounded-lg border-l-4 border-whatsapp-700">
+                        <div class="p-4 flex items-center">
+                            <div class="flex-shrink-0 bg-whatsapp-700 rounded-md p-2">
+                                <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5V4a2 2 0 00-2-2H4a2 2 0 00-2 2v16h5" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-xs text-gray-500 font-medium">WA Conversations</p>
+                                    <p class="text-xl font-bold text-gray-900" data-wa-summary-conv>{{ $stats['wa_conversations'] ?? 0 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Device Logs -->
+            <div class="bg-white overflow-hidden shadow-lg sm:rounded-xl mb-6">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                        <svg class="h-5 w-5 text-whatsapp-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                        </svg>
+                        WhatsApp Device Logs (Auto Update)
+                    </h3>
+                    <span class="text-xs text-gray-500">Refresh setiap 10 detik</span>
+                </div>
+                <div class="p-6 overflow-x-auto">
+                    <table class="min-w-full text-sm text-left">
+                        <thead>
+                            <tr class="text-gray-500 uppercase text-xs">
+                                <th class="pb-2 pr-4">Device</th>
+                                <th class="pb-2 pr-4">Received</th>
+                                <th class="pb-2 pr-4">Sent</th>
+                                <th class="pb-2 pr-4">Conversations</th>
+                                <th class="pb-2 pr-4">Last Message</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100" id="wa-device-logs">
+                            @forelse($waDeviceStats as $device)
+                                <tr data-wa-device="{{ $device['id'] }}" class="align-top">
+                                    <td class="py-3 pr-4">
+                                        <div class="font-semibold text-gray-900">{{ $device['name'] ?? 'Unnamed Bot' }}</div>
+                                        <div class="text-xs text-gray-500">{{ $device['phone_number'] ?? '-' }}</div>
+                                        <div class="text-xs text-{{ $device['status'] === 'connected' ? 'green' : 'red' }}-600 font-medium mt-1">{{ ucfirst($device['status'] ?? 'unknown') }}</div>
+                                    </td>
+                                    <td class="py-3 pr-4 font-semibold text-gray-900" data-wa-received>{{ $device['received'] }}</td>
+                                    <td class="py-3 pr-4 font-semibold text-gray-900" data-wa-sent>{{ $device['sent'] }}</td>
+                                    <td class="py-3 pr-4 font-semibold text-gray-900" data-wa-conv>{{ $device['conversations'] }}</td>
+                                    <td class="py-3 pr-4">
+                                        <div class="text-gray-900 text-sm" data-wa-last-message>{{ $device['last_message'] ?? '—' }}</div>
+                                        <div class="text-xs text-gray-500" data-wa-last-at>{{ $device['last_message_at'] ?? '-' }}</div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="py-3 text-center text-gray-500">Belum ada device WhatsApp aktif.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -633,4 +732,52 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const endpoint = '{{ route('admin.dashboard.wa-stats') }}';
+
+            async function refreshWaStats() {
+                try {
+                    const response = await fetch(endpoint, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+                    const summary = data.summary || {};
+                    const map = Object.fromEntries((data.devices || []).map(d => [String(d.id), d]));
+
+                    // Update WA summary cards
+                    const setSummary = (selector, value) => {
+                        const el = document.querySelector(selector);
+                        if (el) el.textContent = value ?? 0;
+                    };
+                    setSummary('[data-wa-summary-received]', summary.messages_received);
+                    setSummary('[data-wa-summary-sent]', summary.messages_sent);
+                    setSummary('[data-wa-summary-conv]', summary.conversations);
+
+                    document.querySelectorAll('[data-wa-device]').forEach(row => {
+                        const id = row.dataset.waDevice;
+                        const d = map[id];
+                        if (!d) return;
+
+                        const setText = (selector, value) => {
+                            const el = row.querySelector(selector);
+                            if (el) el.textContent = value ?? '-';
+                        };
+
+                        setText('[data-wa-received]', d.received);
+                        setText('[data-wa-sent]', d.sent);
+                        setText('[data-wa-conv]', d.conversations);
+                        setText('[data-wa-last-message]', d.last_message || '—');
+                        setText('[data-wa-last-at]', d.last_message_at || '-');
+                    });
+                } catch (error) {
+                    console.error('Failed to refresh WA stats', error);
+                }
+            }
+
+            refreshWaStats();
+            setInterval(refreshWaStats, 10000);
+        });
+    </script>
 </x-app-layout>

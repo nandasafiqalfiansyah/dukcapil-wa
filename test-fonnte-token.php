@@ -56,13 +56,29 @@ try {
     echo "Response:\n";
     echo json_encode($data, JSON_PRETTY_PRINT) . "\n\n";
     
-    if ($httpCode === 200 && isset($data['device'])) {
-        echo "✅ SUCCESS! Token is valid\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        echo "Device Number: {$data['device']}\n";
-        echo "Status: " . ($data['status'] ?? 'unknown') . "\n";
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-        exit(0);
+    // Check if response is successful
+    if ($httpCode === 200 && isset($data['status']) && $data['status'] === true) {
+        // Check if there are connected devices
+        if (isset($data['data']) && is_array($data['data']) && count($data['data']) > 0) {
+            $device = $data['data'][0];
+            
+            echo "✅ SUCCESS! Token is valid\n";
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+            echo "Device Number: {$device['device']}\n";
+            echo "Status: {$device['status']}\n";
+            echo "Name: {$device['name']}\n";
+            echo "Package: {$device['package']}\n";
+            echo "Quota: {$device['quota']} messages\n";
+            echo "Auto Read: {$device['autoread']}\n";
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+            echo "✅ Bot is ready to receive and reply messages!\n";
+            exit(0);
+        } else {
+            echo "⚠️  WARNING: Token valid but no devices connected\n";
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
+            echo "Please connect a WhatsApp device at: https://fonnte.com\n";
+            exit(1);
+        }
     } elseif ($httpCode === 401) {
         echo "❌ FAILED: Invalid token\n";
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";

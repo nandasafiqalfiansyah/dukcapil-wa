@@ -299,20 +299,27 @@ class WhatsAppService
      */
     protected function processFonnteWebhook(array $data): void
     {
+        Log::info('Processing Fonnte webhook', ['data' => $data]);
+        
         try {
             // Fonnte can send single message or multiple messages
             if (isset($data['message'])) {
                 // Single message format
+                Log::info('Handling single Fonnte message');
                 $this->handleFonnteMessage($data);
             } elseif (isset($data['messages']) && is_array($data['messages'])) {
                 // Multiple messages format
+                Log::info('Handling multiple Fonnte messages', ['count' => count($data['messages'])]);
                 foreach ($data['messages'] as $message) {
                     $this->handleFonnteMessage($message);
                 }
+            } else {
+                Log::warning('Fonnte webhook: unrecognized format', ['data' => $data]);
             }
         } catch (\Exception $e) {
             Log::error('Error processing Fonnte webhook', [
                 'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
                 'data' => $data,
             ]);
         }
@@ -323,6 +330,8 @@ class WhatsAppService
      */
     protected function handleFonnteMessage(array $data): void
     {
+        Log::info('Handling Fonnte message', ['raw_data' => $data]);
+        
         // Extract phone number (remove @ suffix if present)
         $phoneNumber = preg_replace('/@.*$/', '', $data['from'] ?? $data['sender'] ?? '');
         
@@ -330,6 +339,8 @@ class WhatsAppService
             Log::warning('Fonnte webhook: missing phone number', ['data' => $data]);
             return;
         }
+        
+        Log::info('Extracted phone number', ['phone' => $phoneNumber]);
         
         // Get message content
         $messageContent = $data['message'] ?? $data['text'] ?? '';
@@ -371,7 +382,23 @@ class WhatsAppService
      */
     protected function handleFonnteAutoReply(string $phoneNumber, string $message, ?BotInstance $bot): void
     {
+        Log::info('Handling Fonnte auto-reply', [
+            'phone' => $phoneNumber,
+            'message' => $message,
+            'bot_id' => $bot?->id,
+        ]);
+        
         try {
+            // Validate token before processing
+            $token = $this->getTokenForBot($bot);
+            if (empty($token)) {
+                Log::error('Cannot process auto-reply: Token not configured', [
+                    'phone' => $phoneNumber,
+                    'bot_id' => $bot?->id,
+                ]);
+                return;
+            }
+            
             $messageBody = trim($message);
             
             // Get active auto-reply configurations ordered by priority
@@ -404,12 +431,21 @@ class WhatsAppService
                     );
                     
                     // Send auto-reply
-                    $this->sendMessage($phoneNumber, $response, $bot);
+                    $sendResult = $this->sendMessage($phoneNumber, $response, $bot);
                     
-                    Log::info('Fonnte auto-reply sent', [
-                        'trigger' => $trigger,
-                        'to' => $phoneNumber,
-                    ]);
+                    if ($sendResult['success']) {
+                        Log::info('Fonnte auto-reply sent successfully', [
+                            'trigger' => $trigger,
+                            'to' => $phoneNumber,
+                            'response' => $response,
+                        ]);
+                    } else {
+                        Log::error('Fonnte auto-reply failed to send', [
+                            'trigger' => $trigger,
+                            'to' => $phoneNumber,
+                            'error' => $sendResult['error'] ?? 'Unknown error',
+                        ]);
+                    }
                     
                     $matched = true;
                     break;
@@ -420,12 +456,20 @@ class WhatsAppService
             if (!$matched && !empty($messageBody)) {
                 $defaultResponse = "Maaf, saya belum memahami pesan Anda. Silakan kirim pertanyaan dengan kata kunci yang jelas atau hubungi kantor DUKCAPIL Ponorogo untuk bantuan langsung.\n\n📞 Kontak: (0352) 461019";
                 
-                $this->sendMessage($phoneNumber, $defaultResponse, $bot);
+                $sendResult = $this->sendMessage($phoneNumber, $defaultResponse, $bot);
                 
-                Log::info('Fonnte default response sent', [
-                    'message' => $messageBody,
-                    'to' => $phoneNumber,
-                ]);
+                if ($sendResult['success']) {
+                    Log::info('Fonnte default response sent successfully', [
+                        'message' => $messageBody,
+                        'to' => $phoneNumber,
+                    ]);
+                } else {
+                    Log::error('Fonnte default response failed to send', [
+                        'message' => $messageBody,
+                        'to' => $phoneNumber,
+                        'error' => $sendResult['error'] ?? 'Unknown error',
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             Log::error('Error in Fonnte auto-reply', [
