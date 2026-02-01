@@ -980,7 +980,7 @@ class WhatsAppService
      * Verify webhook for WhatsApp Business API (Meta only).
      * Fonnte doesn't require webhook verification.
      */
-    public function verifyWebhook(string $mode, string $token, string $challenge): ?string
+    public function verifyWebhook(?string $mode, ?string $token, ?string $challenge): ?string
     {
         if ($this->isFonnte()) {
             // Fonnte doesn't need webhook verification
