@@ -984,7 +984,7 @@ class WhatsAppService
     {
         if ($this->isFonnte()) {
             // Fonnte doesn't need webhook verification
-            return $challenge;
+            return $challenge ?: 'OK';
         }
         
         // Meta webhook verification
