@@ -129,6 +129,22 @@ class WhatsAppService
                         'to' => $to,
                     ]);
 
+                    $whatsappUser = WhatsAppUser::firstOrCreate(
+                        ['phone_number' => $phoneNumber],
+                        ['status' => 'active']
+                    );
+
+                    ConversationLog::create([
+                        'bot_instance_id' => $bot?->id,
+                        'whatsapp_user_id' => $whatsappUser->id,
+                        'message_id' => $data['id'] ?? uniqid('msg_'),
+                        'direction' => 'outgoing',
+                        'message_content' => $message,
+                        'message_type' => 'text',
+                        'status' => 'failed',
+                        'metadata' => $data,
+                    ]);
+
                     return [
                         'success' => false,
                         'error' => $data['reason'] ?? $data['message'] ?? 'Fonnte API returned failure status',
@@ -159,17 +175,51 @@ class WhatsAppService
                 ];
             }
 
+            $errorData = $response->json();
+
             Log::error('Fonnte API request failed', [
-                'response' => $response->json(),
+                'response' => $errorData,
+            ]);
+
+            $whatsappUser = WhatsAppUser::firstOrCreate(
+                ['phone_number' => $phoneNumber],
+                ['status' => 'active']
+            );
+
+            ConversationLog::create([
+                'bot_instance_id' => $bot?->id,
+                'whatsapp_user_id' => $whatsappUser->id,
+                'message_id' => uniqid('msg_'),
+                'direction' => 'outgoing',
+                'message_content' => $message,
+                'message_type' => 'text',
+                'status' => 'failed',
+                'metadata' => $errorData,
             ]);
 
             return [
                 'success' => false,
-                'error' => $response->json()['reason'] ?? $response->json(),
+                'error' => $errorData['reason'] ?? $errorData,
             ];
         } catch (\Exception $e) {
             Log::error('Fonnte API request exception', [
                 'error' => $e->getMessage(),
+            ]);
+
+            $whatsappUser = WhatsAppUser::firstOrCreate(
+                ['phone_number' => $phoneNumber],
+                ['status' => 'active']
+            );
+
+            ConversationLog::create([
+                'bot_instance_id' => $bot?->id,
+                'whatsapp_user_id' => $whatsappUser->id,
+                'message_id' => uniqid('msg_'),
+                'direction' => 'outgoing',
+                'message_content' => $message,
+                'message_type' => 'text',
+                'status' => 'failed',
+                'metadata' => ['error' => $e->getMessage()],
             ]);
 
             return [
