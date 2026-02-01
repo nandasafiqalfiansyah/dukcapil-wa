@@ -99,8 +99,8 @@ class WhatsAppService
         // Clean phone number (ensure it has only digits)
         $phoneNumber = preg_replace('/[^0-9]/', '', $to);
         
-        // Fonnte expects international format with + prefix
-        $to = '+' . $phoneNumber;
+        // Fonnte expects international format without + prefix
+        $to = $phoneNumber;
 
         try {
             $payload = [
@@ -122,6 +122,18 @@ class WhatsAppService
 
             if ($response->successful()) {
                 $data = $response->json();
+
+                if (isset($data['status']) && $data['status'] !== true) {
+                    Log::error('Fonnte API responded with failure status', [
+                        'response' => $data,
+                        'to' => $to,
+                    ]);
+
+                    return [
+                        'success' => false,
+                        'error' => $data['reason'] ?? $data['message'] ?? 'Fonnte API returned failure status',
+                    ];
+                }
 
                 // Find or create WhatsApp user (use cleaned number without +)
                 $whatsappUser = WhatsAppUser::firstOrCreate(
