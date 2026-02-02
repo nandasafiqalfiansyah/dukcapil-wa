@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ChatConfigController;
 use App\Http\Controllers\Admin\ConversationLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DocumentValidationController;
+use App\Http\Controllers\Admin\MessageTestController;
 use App\Http\Controllers\Admin\NlpConfigController;
 use App\Http\Controllers\Admin\NlpLogController;
 use App\Http\Controllers\Admin\ServiceRequestController;
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'role:admin,officer,viewer'])->prefix('admin')->name(
     });
 
     Route::resource('conversations', ConversationLogController::class)->only(['index', 'show']);
+
+    // Message Test routes
+    Route::get('message-test', [MessageTestController::class, 'index'])->name('message-test.index');
+    Route::post('message-test/send', [MessageTestController::class, 'send'])->name('message-test.send');
 
     Route::resource('service-requests', ServiceRequestController::class)->only(['index', 'show']);
     Route::middleware('role:admin,officer')->group(function () {

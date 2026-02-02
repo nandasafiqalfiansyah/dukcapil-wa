@@ -72,6 +72,9 @@
             <x-responsive-nav-link :href="route('admin.conversations.index')" :active="request()->routeIs('admin.conversations.*')" class="text-white">
                 {{ __('Conversations') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.message-test.index')" :active="request()->routeIs('admin.message-test.*')" class="text-white">
+                {{ __('Test Kirim Pesan') }}
+            </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.service-requests.index')" :active="request()->routeIs('admin.service-requests.*')" class="text-white">
                 {{ __('Requests') }}
             </x-responsive-nav-link>

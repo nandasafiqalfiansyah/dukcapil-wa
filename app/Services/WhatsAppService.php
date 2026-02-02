@@ -134,10 +134,13 @@ class WhatsAppService
                         ['status' => 'active']
                     );
 
+                    // Fonnte returns id as array, extract first element
+                    $messageId = isset($data['id']) && is_array($data['id']) ? ($data['id'][0] ?? uniqid('msg_')) : ($data['id'] ?? uniqid('msg_'));
+                    
                     ConversationLog::create([
                         'bot_instance_id' => $bot?->id,
                         'whatsapp_user_id' => $whatsappUser->id,
-                        'message_id' => $data['id'] ?? uniqid('msg_'),
+                        'message_id' => (string) $messageId,
                         'direction' => 'outgoing',
                         'message_content' => $message,
                         'message_type' => 'text',
@@ -159,10 +162,13 @@ class WhatsAppService
                 );
 
                 // Log the outgoing message
+                // Fonnte returns id as array, extract first element
+                $messageId = isset($data['id']) && is_array($data['id']) ? ($data['id'][0] ?? uniqid('msg_')) : ($data['id'] ?? uniqid('msg_'));
+                
                 ConversationLog::create([
                     'bot_instance_id' => $bot?->id,
                     'whatsapp_user_id' => $whatsappUser->id,
-                    'message_id' => $data['id'] ?? uniqid('msg_'),
+                    'message_id' => (string) $messageId,
                     'direction' => 'outgoing',
                     'message_content' => $message,
                     'message_type' => 'text',
