@@ -20,6 +20,7 @@ class ConversationLog extends Model
         'metadata',
         'status',
         'intent',
+        'error_message',
     ];
 
     protected $casts = [

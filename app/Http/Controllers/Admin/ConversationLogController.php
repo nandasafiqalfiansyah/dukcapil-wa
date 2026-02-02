@@ -76,10 +76,13 @@ class ConversationLogController extends Controller
     {
         $conversationLog->load('whatsappUser', 'botInstance');
 
-        // Get conversation thread for this user
-        $relatedConversations = ConversationLog::where('whatsapp_user_id', $conversationLog->whatsapp_user_id)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        // Get conversation thread for this user (only if whatsapp_user_id exists)
+        $relatedConversations = [];
+        if ($conversationLog->whatsapp_user_id) {
+            $relatedConversations = ConversationLog::where('whatsapp_user_id', $conversationLog->whatsapp_user_id)
+                ->orderBy('created_at', 'asc')
+                ->get();
+        }
 
         return view('admin.conversations.show', compact('conversationLog', 'relatedConversations'));
     }

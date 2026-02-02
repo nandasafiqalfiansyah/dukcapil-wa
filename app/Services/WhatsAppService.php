@@ -142,6 +142,7 @@ class WhatsAppService
                         'message_content' => $message,
                         'message_type' => 'text',
                         'status' => 'failed',
+                        'error_message' => $data['reason'] ?? $data['message'] ?? json_encode($data),
                         'metadata' => $data,
                     ]);
 
@@ -194,6 +195,7 @@ class WhatsAppService
                 'message_content' => $message,
                 'message_type' => 'text',
                 'status' => 'failed',
+                'error_message' => $errorData['reason'] ?? json_encode($errorData),
                 'metadata' => $errorData,
             ]);
 
@@ -219,6 +221,7 @@ class WhatsAppService
                 'message_content' => $message,
                 'message_type' => 'text',
                 'status' => 'failed',
+                'error_message' => $e->getMessage(),
                 'metadata' => ['error' => $e->getMessage()],
             ]);
 

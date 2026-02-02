@@ -21,8 +21,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <h3 class="text-sm font-medium text-gray-600 mb-1">From</h3>
-                        <p class="text-lg font-semibold text-gray-900">{{ $conversationLog->whatsappUser->name ?? 'Unknown' }}</p>
-                        <p class="text-gray-600 font-mono">{{ $conversationLog->whatsappUser->phone_number }}</p>
+                        <p class="text-lg font-semibold text-gray-900">{{ $conversationLog->whatsappUser?->name ?? 'Unknown' }}</p>
+                        <p class="text-gray-600 font-mono">{{ $conversationLog->whatsappUser?->phone_number ?? 'No phone number' }}</p>
                     </div>
                     <div>
                         <h3 class="text-sm font-medium text-gray-600 mb-1">Direction</h3>
@@ -36,8 +36,12 @@
                     </div>
                     <div>
                         <h3 class="text-sm font-medium text-gray-600 mb-1">Timestamp</h3>
-                        <p class="text-lg font-semibold text-gray-900">{{ $conversationLog->created_at->format('d M Y') }}</p>
-                        <p class="text-gray-600">{{ $conversationLog->created_at->format('H:i:s') }}</p>
+                        @if($conversationLog->created_at)
+                            <p class="text-lg font-semibold text-gray-900">{{ $conversationLog->created_at->format('d M Y') }}</p>
+                            <p class="text-gray-600">{{ $conversationLog->created_at->format('H:i:s') }}</p>
+                        @else
+                            <p class="text-gray-600">No timestamp recorded</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -58,7 +62,26 @@
                 </div>
                 <div>
                     <h4 class="text-xs font-semibold text-gray-600 uppercase mb-1">Status</h4>
-                    <p class="text-sm text-gray-900">{{ $conversationLog->status }}</p>
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm text-gray-900">
+                            @if($conversationLog->status === 'delivered')
+                                ✅ Delivered
+                            @elseif($conversationLog->status === 'sent')
+                                📤 Sent
+                            @elseif($conversationLog->status === 'failed')
+                                ❌ Failed
+                            @else
+                                {{ $conversationLog->status }}
+                            @endif
+                        </p>
+                        @if($conversationLog->status === 'failed' && $conversationLog->error_message)
+                            <button type="button" 
+                                    class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-semibold hover:bg-red-200"
+                                    onclick="document.getElementById('errorDetails').style.display = 'block'">
+                                Details
+                            </button>
+                        @endif
+                    </div>
                 </div>
                 <div>
                     <h4 class="text-xs font-semibold text-gray-600 uppercase mb-1">Bot Instance</h4>
@@ -77,13 +100,22 @@
                     <pre class="bg-gray-900 text-gray-100 p-4 rounded-lg text-xs overflow-auto">{{ json_encode($conversationLog->metadata, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) }}</pre>
                 </div>
             @endif
+
+            @if($conversationLog->status === 'failed' && $conversationLog->error_message)
+                <div id="errorDetails" class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <h3 class="text-sm font-semibold text-red-900 mb-2">❌ Error Details</h3>
+                    <div class="bg-white p-3 rounded border border-red-200">
+                        <pre class="text-sm text-gray-900 whitespace-pre-wrap break-words font-mono">{{ $conversationLog->error_message }}</pre>
+                    </div>
+                </div>
+            @endif
         </div>
 
         <!-- Conversation Thread -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
                 <h2 class="text-lg font-semibold text-gray-900">💬 Conversation Thread</h2>
-                <p class="text-sm text-gray-600 mt-1">All messages from {{ $conversationLog->whatsappUser->name ?? 'this user' }}</p>
+                <p class="text-sm text-gray-600 mt-1">All messages from {{ $conversationLog->whatsappUser?->name ?? 'this user' }}</p>
             </div>
 
             <div class="p-6 space-y-6">
@@ -100,9 +132,9 @@
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
                                 <span class="font-semibold text-gray-900">
-                                    {{ $msg->direction === 'incoming' ? $msg->whatsappUser->name ?? 'User' : 'Bot' }}
+                                    {{ $msg->direction === 'incoming' ? $msg->whatsappUser?->name ?? 'User' : 'Bot' }}
                                 </span>
-                                <span class="text-xs text-gray-500">{{ $msg->created_at->format('d M H:i') }}</span>
+                                <span class="text-xs text-gray-500">{{ $msg->created_at?->format('d M H:i') ?? 'Unknown time' }}</span>
                             </div>
                             <div class="bg-gray-50 rounded-lg p-3 border border-gray-200 {{ $msg->id === $conversationLog->id ? 'border-2 border-blue-500 bg-blue-50' : '' }}">
                                 <p class="text-gray-900 text-sm">{{ $msg->message_content }}</p>

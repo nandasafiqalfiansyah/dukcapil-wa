@@ -147,6 +147,17 @@
                                                 <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">✅ Delivered</span>
                                             @elseif($msg->status === 'sent')
                                                 <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">📤 Sent</span>
+                                            @elseif($msg->status === 'failed')
+                                                <div class="flex items-center gap-1">
+                                                    <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">❌ Failed</span>
+                                                    @if($msg->error_message)
+                                                        <button type="button" 
+                                                                class="text-red-600 hover:text-red-900 font-semibold"
+                                                                onclick="alert('Error:\n\n{{ addslashes($msg->error_message) }}')">
+                                                            ?
+                                                        </button>
+                                                    @endif
+                                                </div>
                                             @else
                                                 <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">⏳ {{ $msg->status }}</span>
                                             @endif
