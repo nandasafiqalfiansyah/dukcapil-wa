@@ -81,9 +81,6 @@
             <x-responsive-nav-link :href="route('admin.documents.index')" :active="request()->routeIs('admin.documents.*')" class="text-white">
                 {{ __('Documents') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('admin.whatsapp-users.index')" :active="request()->routeIs('admin.whatsapp-users.*')" class="text-white">
-                {{ __('WhatsApp Users') }}
-            </x-responsive-nav-link>
             
             <x-responsive-nav-link :href="route('admin.chat-config.index')" :active="request()->routeIs('admin.chat-config.*')" class="text-white">
                 {{ __('Chat Config') }}

@@ -15,7 +15,7 @@ class NlpLogController extends Controller
     {
         $query = ChatMessage::where('role', 'bot')
             ->whereNotNull('intent')
-            ->with('chatSession')
+            ->with('chatSession:id')
             ->orderBy('created_at', 'desc');
 
         // Filter by intent
@@ -39,12 +39,14 @@ class NlpLogController extends Controller
 
         $logs = $query->paginate(20);
 
-        // Get unique intents for filter
-        $intents = ChatMessage::where('role', 'bot')
-            ->whereNotNull('intent')
-            ->distinct()
-            ->pluck('intent')
-            ->sort();
+        // Get unique intents for filter - cache for better performance
+        $intents = cache()->remember('nlp_intents', 600, function () {
+            return ChatMessage::where('role', 'bot')
+                ->whereNotNull('intent')
+                ->distinct()
+                ->pluck('intent')
+                ->sort();
+        });
 
         return view('admin.nlp-logs.index', compact('logs', 'intents'));
     }
@@ -58,7 +60,7 @@ class NlpLogController extends Controller
         
         $query = ChatMessage::where('role', 'bot')
             ->whereNotNull('intent')
-            ->with('chatSession')
+            ->with('chatSession:id')
             ->orderBy('created_at', 'desc');
 
         if ($since) {
@@ -92,36 +94,40 @@ class NlpLogController extends Controller
      */
     public function statistics()
     {
-        $totalProcessed = ChatMessage::where('role', 'bot')
-            ->whereNotNull('intent')
-            ->count();
+        // Cache statistics for 5 minutes to improve performance
+        $cacheKey = 'nlp_statistics';
+        $cacheDuration = 300; // 5 minutes
+        
+        $statistics = cache()->remember($cacheKey, $cacheDuration, function () {
+            // Use a single optimized query to get counts and averages
+            $stats = ChatMessage::where('role', 'bot')
+                ->whereNotNull('intent')
+                ->selectRaw('
+                    COUNT(*) as total_processed,
+                    AVG(CASE WHEN confidence IS NOT NULL THEN confidence END) as avg_confidence,
+                    SUM(CASE WHEN confidence < 0.5 THEN 1 ELSE 0 END) as low_confidence_count
+                ')
+                ->first();
 
-        $avgConfidence = ChatMessage::where('role', 'bot')
-            ->whereNotNull('intent')
-            ->whereNotNull('confidence')
-            ->avg('confidence');
+            $intentDistribution = ChatMessage::where('role', 'bot')
+                ->whereNotNull('intent')
+                ->selectRaw('intent, COUNT(*) as count')
+                ->groupBy('intent')
+                ->orderBy('count', 'desc')
+                ->limit(10)
+                ->get();
 
-        $intentDistribution = ChatMessage::where('role', 'bot')
-            ->whereNotNull('intent')
-            ->selectRaw('intent, COUNT(*) as count')
-            ->groupBy('intent')
-            ->orderBy('count', 'desc')
-            ->limit(10)
-            ->get();
-
-        $lowConfidenceCount = ChatMessage::where('role', 'bot')
-            ->whereNotNull('confidence')
-            ->where('confidence', '<', 0.5)
-            ->count();
+            return [
+                'total_processed' => $stats->total_processed ?? 0,
+                'average_confidence' => round(($stats->avg_confidence ?? 0) * 100, 2),
+                'low_confidence_count' => $stats->low_confidence_count ?? 0,
+                'intent_distribution' => $intentDistribution,
+            ];
+        });
 
         return response()->json([
             'success' => true,
-            'statistics' => [
-                'total_processed' => $totalProcessed,
-                'average_confidence' => round(($avgConfidence ?? 0) * 100, 2),
-                'low_confidence_count' => $lowConfidenceCount,
-                'intent_distribution' => $intentDistribution,
-            ],
+            'statistics' => $statistics,
         ]);
     }
 }
