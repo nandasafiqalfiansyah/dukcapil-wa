@@ -13,8 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Trust all proxies to fix Mixed Content errors when behind reverse proxy
-        $middleware->trustProxies(at: '*');
+        // Trust proxies to fix Mixed Content errors when behind reverse proxy
+        // In production, configure TRUSTED_PROXIES env var with specific proxy IPs/CIDRs
+        $trustedProxies = env('TRUSTED_PROXIES', '*');
+        $middleware->trustProxies(at: $trustedProxies);
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
