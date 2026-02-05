@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
                 {{ __('Manajemen Pengguna Admin') }}
             </h2>
             @if(auth()->user()->isAdmin())
-                <a href="{{ route('admin.users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <a href="{{ route('admin.users.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white dark:text-white font-bold py-2 px-4 rounded">
                     Tambah Pengguna
                 </a>
             @endif
